@@ -28,11 +28,9 @@ class VisibleElement(Element):
 		
 	def setUsable(self,status):
 		self.usable = status
-		
-	def isCharacter(self,status):
+
+	def setCharacter(self,status):
 		self.isCharacter = status
-		
-		
 		
 class AnimatedElement(VisibleElement):
 	def __init__(self):
@@ -60,7 +58,6 @@ class Area(Element):
 	
 	def setPosition(pos):
 		self.rect.move_ip(pos)
-		
 
 class Puzzle(VisibleElement):
 	def __init__(self):
@@ -71,8 +68,6 @@ class Character(AnimatedElement):
 		self.character = True
 		self.name = None
 		self.topics = ()
-
-	
 		def addTopic(topic):
 			self.topics.append(topic)
 			
@@ -80,9 +75,7 @@ class Widget(AnimatedElement):
 	def __init__(self):
 		print self.__class__.__name__
 
-
 class Topic:
-
 	def __init__(self,topicName):
 		self.topicName
 		self.dialouge

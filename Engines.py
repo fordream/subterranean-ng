@@ -1,4 +1,5 @@
 import os,pygame
+from time import time
 import pygame.locals as pygl
 	
 class Timer:
@@ -31,12 +32,12 @@ class Renderer:
 		self.loadIcon()
 
 		pygame.font.init()
-		self.defaultFontColor = (235,204,102)
-		self.defaultShadowColor = (23,24,12)
+		self.defaultFontColor = (255,255,255)
+		self.defaultOutlineFontColor = (0,0,0)
 		self.systemFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),18)
-		self.generalFont = pygame.font.Font(os.path.join('data','fonts','prviking.ttf'),24)
+		self.generalFont = pygame.font.Font(os.path.join('data','fonts','prviking.ttf'),20)
 		self.symbolFont = pygame.font.Font(os.path.join('data','fonts','prvikingsymbols.ttf'),18)
-		self.screen = pygame.display.set_mode((1024,768))
+		self.screen = pygame.display.set_mode((1025,768))
 		pygame.display.set_caption('Subterranean')
 		self.Timer = Timer()
 		self.Timer.setFPS(32)
@@ -68,49 +69,57 @@ class Renderer:
 				self.screen.blit(element.image,(element.rect.left,element.rect.bottom))
 		
 			#Draw main character
+			if len(self.Game.Player.path):
+				pygame.draw.lines(self.screen, (255,255,255,255), 0, self.Game.Player.path)
 			self.screen.blit(self.Game.Player.defaultImage,(self.Game.Player.x,self.Game.Player.y))
 		
 		#Draw conversations
 		if self.Game.Conversation.isActive:
+			s = time()
+			#THIS IS ONLY FOR TESTING ATM. WILL BE DYNAMIC LATER OF COURSE
+			posX = 150
+			posY = 150
+			
 			text = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultFontColor)
-			textShadow = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultShadowColor)
-			self.screen.blit(textShadow,(401,301))
-			self.screen.blit(text,(400,300))
-		
+			textOutline = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultOutlineFontColor)
+			
+			self.screen.blit(textOutline,(posX,posY-1))
+			self.screen.blit(textOutline,(posX+1,posY))
+			self.screen.blit(textOutline,(posX-1,posY))
+			self.screen.blit(textOutline,(posX,posY+1))
+			self.screen.blit(text,(posX,posY))
+
 		#Draw mouse cursor
 		self.Game.Cursor.checkCollisions()
 		self.screen.blit(self.cursors.get(self.Game.Cursor.cursor),pygame.mouse.get_pos())
     		
 		#Aaaand flip the burger
 		pygame.display.flip()
+		e = time()
+		#print s-e
 	    
 class AudioController:
 
 	def __init__(self,game):
 		pygame.mixer.init()
-		
-
+		self.soundEnabled = True
+		self.musicEnabled = True
 		self.musicState = None
 		self.musicVolume= None
 		self.currentMusicTrack = None
-		
 		self.ambienceChannel = pygame.mixer.Channel(2)
 		self.currentAmbienceTrack = None		
-		
 		self.speechChannel = pygame.mixer.Channel(3)
-		
 		self.musicTracks = {
 			'FOO':os.path.join('data','music','default.ogg')
 		}
-		
 		self.ambienceTracks = {
 			
 		}
-		
 		self.playMusic('FOO')
 
 	def playMusic(self,trackName):
-		if trackName in self.musicTracks:
+		if self.musicEnabled and trackName in self.musicTracks:
 			if self.currentMusicTrack is not None and self.currentMusicTrack != trackName:
 				pygame.mixer.music.fadeout(1500)
 				pygame.mixer.music.stop()
@@ -119,7 +128,7 @@ class AudioController:
 			pygame.mixer.music.play()
 			self.musicState = 'unpaused'
 			self.musicVolume= 'normal'
-			
+
 	def stopMusic(self):
 		pygame.mixer.music.stop()
 		
@@ -154,8 +163,26 @@ class AudioController:
 	
 	def playAmbience(self):
 		pass
+		
+	def stopSound(self):
+		pass
+		
+	def enableMusic(self):
+		self.musicEnabled = True
 
+	def disableMusic(self):
+		print "STOPPING MUSIC"
+		self.stopMusic()
+		self.musicEnabled = False
+		
+	def enableSound(self):
+		self.soundEnabled = True
 
+	def disableSound(self):
+		self.stopMusic()
+		self.stopSound()
+		self.soundEnabled = False
+		
 class EventManager:
 	def __init__(self,game):
 		self.Game = game
