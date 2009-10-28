@@ -1,4 +1,4 @@
 import sys
 from Game import Game
 
-Game(sys.argv)
+Game(sys.argv[1])

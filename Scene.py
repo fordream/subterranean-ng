@@ -5,8 +5,10 @@ class Scene:
 	def __init__(self):
 		self.visible = False
 		self.name = None
+		self.mapFileName = None
 		self.visibleElements = []
 		self.hiddenElements = []
+		self.mapData = []
 		self.insertPoint = ()
 
 	def getName(self,sceneName):
@@ -29,3 +31,15 @@ class Scene:
 
 	def show(self):
 		self.visible = True
+		
+	def setMap(self,mapFileName):
+		self.mapFileName = mapFileName
+		self.loadMap(mapFileName)
+
+	def loadMap(self,mapFileName):
+		self.mapFile = open(os.path.join('Scenes',mapFileName))
+		for line in self.mapFile:
+			for char in line.rsplit(','):
+				if char == '1' or char == '-1':
+					self.mapData.append(int(char))
+		self.mapFile.close()

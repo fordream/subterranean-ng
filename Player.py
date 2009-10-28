@@ -9,47 +9,61 @@ class Player:
 		self.visible = False
 		self.defaultImage = pygame.image.load(os.path.join('data','maincharacter','ss.png'))
 		self.rect = self.defaultImage.get_rect()
-		self.x = 0
-		self.y = 0
-		self.destinationX = 0
-		self.destinationY = 0
-		self.moving = False
+		self.pos = (0,0)
+		self.walking = False
 		
 		self.path = []
-		self.mapdata = []
-		size = 64*48;
-		for i in range(size):
-			self.mapdata.append(1)
+
+	def findPath(self,x,y):
+		startX = self.getX()/16
+		startY = self.getY()/16
+		endX = x/16
+		endY = y/16
+		astar = AStar.AStar(AStar.SQ_MapHandler(self.Game.currentScene.mapData,64,48))
+		start = AStar.SQ_Location(startX,startY)
+		end = AStar.SQ_Location(endX,endY)
+		path = astar.findPath(start,end)
+		if path is not None:
+			self.path = []
+			self.path.append((start.x*16,start.y*16))
+			for node in path.nodes:
+				self.path.append((node.location.x*16,node.location.y*16))
+			self.path.append((end.x*16,end.y*16))
+			return True
+		else:
+			return False
 
 	def walkTo(self,(x,y)):
-	
-		sx = self.x/16
-		sy = self.y/16
-		
-		ex = x/16
-		ey = y/16
-		
-		astar = AStar.AStar(AStar.SQ_MapHandler(self.mapdata,64,48))
-		start = AStar.SQ_Location(sx,sy)
-		end = AStar.SQ_Location(ex,ey)
-		s = time()
-		p = astar.findPath(start,end)
-		e = time()
-		print "Found path in %d moves and %f seconds." % (len(p.nodes),(e-s))
-		self.path = []
-		self.path.append((start.x*16+8,start.y*16+8))
-		for n in p.nodes:
-			self.path.append((n.location.x*16+8,n.location.y*16+8))
-		self.path.append((end.x*16+8,end.y*16+8))
-		
-		self.x = x
-		self.y = y
-		self.rect.move_ip(x,y)
-		
-		print self.path
-		self.step()
-	
-	def step(self):
+		if not self.walking:
+			if self.findPath(x,y):
+				self.walking = True
+				self.walk()
+				
+	def walk(self):
 		if len(self.path):
-			print self.path[0]
+			self.setPosition(self.path[0])
+			self.path.pop(0)
+		else:
+			self.walking = False
+		
+	def walkToAnd(self,x,y,callbackMethod):
+		self.walkTo(x,y)
+		while not self.walking:
+			print "AS"
 			
+	def setPosition(self,pos):
+		self.rect.move_ip(pos[0],pos[1])
+		self.lastPos = self.pos
+		self.pos = pos
+			
+	def getPosition(self):
+		return self.pos
+		
+	def getRenderPosition(self):
+		return (self.getX(),self.getY()-215)
+		
+	def getX(self):
+		return self.pos[0]
+		
+	def getY(self):
+		return self.pos[1]

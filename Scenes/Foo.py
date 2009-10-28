@@ -6,6 +6,7 @@ class Room(Scene):
 	def __init__(self):
 		Scene.__init__(self)
 		self.setBackground('foo.jpg')
+		self.setMap('Foo.map')
 		
 		self.setInsertPoint((10,10))
 				

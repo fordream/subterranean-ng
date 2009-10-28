@@ -60,18 +60,19 @@ class Renderer:
 		#Draw game background
 		self.screen.blit(self.backgroundImage,(0,0))
 
-		if self.Game.currentRoom.visible:
+		if self.Game.currentScene.visible:
 			#Draw current background
-			self.screen.blit(self.Game.currentRoom.getBackground(),(0,0))
+			self.screen.blit(self.Game.currentScene.getBackground(),(0,0))
 			
 			#Draw room objects
-			for element in self.Game.currentRoom.visibleElements:
+			for element in self.Game.currentScene.visibleElements:
 				self.screen.blit(element.image,(element.rect.left,element.rect.bottom))
 		
 			#Draw main character
-			if len(self.Game.Player.path):
+			self.Game.Player.walk()
+			self.screen.blit(self.Game.Player.defaultImage,self.Game.Player.getRenderPosition())
+			if len(self.Game.Player.path) > 1:
 				pygame.draw.lines(self.screen, (255,255,255,255), 0, self.Game.Player.path)
-			self.screen.blit(self.Game.Player.defaultImage,(self.Game.Player.x,self.Game.Player.y))
 		
 		#Draw conversations
 		if self.Game.Conversation.isActive:
@@ -171,7 +172,6 @@ class AudioController:
 		self.musicEnabled = True
 
 	def disableMusic(self):
-		print "STOPPING MUSIC"
 		self.stopMusic()
 		self.musicEnabled = False
 		
@@ -211,7 +211,6 @@ class EventManager:
 			eventMethod()
 
 	def readMouseClick(self,event):
-		print event.button
 		if self.Game.Cursor.currentElement is not None:
 			#TODO
 			if self.Game.Cursor.currentElement.retrievable:

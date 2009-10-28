@@ -7,7 +7,7 @@ class Inventory:
 		
 	def addItem(self,item):
 		self.items.append(item)
-		self.Game.currentRoom.visibleElements.remove(item)
+		self.Game.currentScene.visibleElements.remove(item)
 		
 class Menu:
 	def __init__(self,game):
@@ -35,7 +35,7 @@ class Cursor():
 			self.cursor = cursorName
 			
 	def checkCollisions(self):
-		for element in self.Game.currentRoom.visibleElements:
+		for element in self.Game.currentScene.visibleElements:
 			#FIXME: Weird Y offset by 24px
 			weirdOffset = (pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]-40)
 			if(element.rect.collidepoint(weirdOffset)):

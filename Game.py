@@ -7,6 +7,8 @@ from Interfaces import Conversation,Cursor,Inventory,Menu
 class Game:
 	def __init__(self,arguments):
 		self.running = True;
+		self.currentScene = None;
+
 		self.Cursor = Cursor(self)
 		self.Renderer = Renderer(self)
 		self.Inventory = Inventory(self)
@@ -21,21 +23,15 @@ class Game:
 		
 	def parseArguments(self,arguments):
 		avalibleArguments = {
-			'--ohai':self.hello,
-			'--nomusic':self.AudioController.disableMusic,
+ 			'--nomusic':self.AudioController.disableMusic,
 			'--nosound':self.AudioController.disableSound,
 		}
 		
-		for argument in arguments:
-			if argument in avalibleArguments:
-				print argument
+		for argument in avalibleArguments.keys():
+			if argument in arguments:
 				argumentMethod = avalibleArguments.get(argument)
 				argumentMethod()
-				
-	def hello(self):
-		print "HELLO"
-
-		
+	
 	def loop(self):
 		while self.running:
 			self.EventManager.checkEvents()
@@ -44,7 +40,7 @@ class Game:
 
 	def loadScene(self,sceneName):
 		from Scenes.Foo import Room
-		self.currentRoom = Room()
+		self.currentScene = Room()
 		
 	def quit(self):
 		self.running = False
