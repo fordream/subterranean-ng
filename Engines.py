@@ -34,8 +34,8 @@ class Renderer:
 		pygame.font.init()
 		self.defaultFontColor = (255,255,255)
 		self.defaultOutlineFontColor = (0,0,0)
-		self.systemFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),18)
 		self.generalFont = pygame.font.Font(os.path.join('data','fonts','prviking.ttf'),20)
+		self.elementFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),12)
 		self.symbolFont = pygame.font.Font(os.path.join('data','fonts','prvikingsymbols.ttf'),18)
 		self.screen = pygame.display.set_mode((1025,768))
 		pygame.display.set_caption('Subterranean')
@@ -68,20 +68,21 @@ class Renderer:
 			
 			#Draw room objects
 			for element in self.Game.currentScene.visibleElements:
-				self.screen.blit(element.image,(element.rect.left,element.rect.bottom))
+				self.screen.blit(element.image,element.getPosition())
+				text = self.elementFont.render(element.title,1,self.defaultFontColor)
+				self.screen.blit(text,element.getBasePosition())
+
 		
 			#Draw main character
 			self.Game.Player.walk()
-			self.screen.blit(self.Game.Player.getFrame(),self.Game.Player.getRenderPosition())
-			if len(self.Game.Player.path) > 1:
-				pygame.draw.lines(self.screen, (255,255,255,255), 0, self.Game.Player.path)
+			self.screen.blit(self.Game.Player.getFrame(),self.Game.Player.getRenderPos())
 		
 		#Draw conversations
 		if self.Game.Conversation.isActive:
 			s = time()
 			#THIS IS ONLY FOR TESTING ATM. WILL BE DYNAMIC LATER OF COURSE
-			posX = 150
-			posY = 150
+			posX = 50
+			posY = 700
 			
 			text = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultFontColor)
 			textOutline = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultOutlineFontColor)
@@ -98,12 +99,16 @@ class Renderer:
     		
     		
 		if self.Game.debug:
-			self.screen.blit(self.debugPoint,self.Game.Player.getRenderPosition())
-			self.screen.blit(self.debugPoint,self.Game.Player.getPosition())
+			if len(self.Game.Player.path) > 1:
+				pygame.draw.lines(self.screen, (255,255,255,255), 0, self.Game.Player.path)
+			for element in self.Game.currentScene.visibleElements:
+				pygame.draw.lines(self.screen,(255,0,255),1,[element.rect.topleft,element.rect.topright,element.rect.bottomright,element.rect.bottomleft])
+			self.screen.blit(self.debugPoint,pygame.mouse.get_pos())
+			pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
+
 		#Aaaand flip the burger
 		pygame.display.flip()
 		e = time()
-		#print s-e
 	    
 class AudioController:
 
@@ -152,7 +157,6 @@ class AudioController:
 	def restoreMusicVolume(self):
 		pygame.mixer.music.set_volume(1.0)
 		self.musicVolume = 'normal'
-		print pygame.mixer.music.get_volume()
 		
 	def toggleMusicPause(self):
 		if self.musicState == 'unpaused':
@@ -218,15 +222,15 @@ class EventManager:
 			eventMethod()
 
 	def readMouseClick(self,event):
-		pos = pygame.mouse.get_pos()
 		if self.Game.Cursor.currentElement is not None:
+			pos = self.Game.Cursor.currentElement.getBasePosition()
 			if self.Game.Cursor.currentElement.retrievable:
 				self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
 			elif self.Game.Cursor.currentElement.usable:
-				self.Game.Player.walkTo(pos,self.Player.use,self.Game.Cursor.currentElement)
+				self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.currentElement)
 			elif self.Game.Cursor.currentElement.isCharacter:
-				pass
+				self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
 			else:
 				print self.Game.Cursor.currentElement.debugMessage
 		else:
-			self.Game.Player.walkTo(pos)
+			self.Game.Player.walkTo(pygame.mouse.get_pos())

@@ -54,8 +54,3 @@ class Game:
 			self.debug = False
 		else:
 			self.debug = True
-		
-		print 'Inventory:',self.Inventory.items
-		print 'Player position:',self.Player.getPosition()
-		print 'Player feet:',self.Player.getRenderPosition()
-		print 'Scene elements:',self.currentScene.elements

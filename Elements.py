@@ -3,13 +3,22 @@ import os,pygame
 class Element:
 	def __init__(self):
 		self.debugMessage = self.__class__.__name__
+		self.title = None
 		
+	def setTitle(self,title):
+		self.title = title
+
+	def getTitle(self):
+		return self.title
+
 	def setDebugText(self,text):
 		self.debugMessage = text
 			
 class VisibleElement(Element):
 	def __init__(self):
+		Element.__init__(self)
 		self.pos = (0,0)
+		self.basePos = (0,0)
 		self.image = None
 		self.rect = None
 		self.retrievable = False
@@ -24,9 +33,17 @@ class VisibleElement(Element):
 	def setPosition(self,pos):
 		self.pos = pos
 		self.rect.move_ip(pos)
-		
+		if self.rect is not None:
+			self.setBasePosition()
+				
 	def getPosition(self):
 		return self.pos
+
+	def setBasePosition(self):
+		self.basePos = self.rect.midbottom
+
+	def getBasePosition(self):
+		return self.basePos
 		
 	def setRetrievable(self,status):
 		self.retrievable = status
@@ -39,6 +56,7 @@ class VisibleElement(Element):
 		
 class AnimatedElement(VisibleElement):
 	def __init__(self):
+		VisibleElement.__init__(self)
 		self.sequences = {}
 		self.currentFrame = 0
 		self.currentSequence = None
@@ -70,6 +88,7 @@ class Puzzle(VisibleElement):
 
 class Character(AnimatedElement):
 	def __init__(self):
+		AnimatedElement.__init__(self)
 		self.character = True
 		self.name = None
 		self.topics = ()

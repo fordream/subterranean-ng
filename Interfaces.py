@@ -14,10 +14,16 @@ class Menu:
 		
 class Conversation:
 	def __init__(self,game):
-		self.isActive = True
 		self.Game = game
-		self.currentText="This is sparta!"
-	
+		self.isActive = False
+		self.currentText="Y ello thar, how fare thee young padawan?"
+		
+	def activate(self):
+		self.isActive = True
+
+	def deactivate(self):
+		self.isActive = False
+			
 class Cursor():
 	def __init__(self,game):
 		self.Game = game
@@ -36,8 +42,7 @@ class Cursor():
 	def checkCollisions(self):
 		for element in self.Game.currentScene.visibleElements:
 			#FIXME: Weird Y offset by 24px
-			weirdOffset = (pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]-40)
-			if(element.rect.collidepoint(weirdOffset)):
+			if(element.rect.collidepoint(pygame.mouse.get_pos())):
 				if element.usable:
 					self.setCursor('USE')
 					self.currentElement = element;

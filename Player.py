@@ -9,7 +9,7 @@ class Player:
 		self.visible = False
 		self.callbackMethod = None
 		self.callbackArgument = None
-		self.rect = self.loadFrame('north','stand').get_rect()
+		self.rect = pygame.Rect(0,0,60,20)
 		self.direction = 's'
 		self.directions = {
 			'ns':self.loadFrame('north','stand'),
@@ -22,6 +22,7 @@ class Player:
 			'nws':self.loadFrame('northwest','stand'),
 		}
 		self.pos = (0,0)
+		self.renderPos = (0,0)
 		self.walking = False
 		
 		self.path = []
@@ -61,10 +62,10 @@ class Player:
 				self.walking = True
 				self.walk()
 			else:
-				print "CANT GO THAR"
+				print "No avalible tiles at",x,y
 		
 	def walk(self):
-		if len(self.path):
+		if len(self.path) and self.walking:
 			self.setPosition(self.path[0])
 			self.path.pop(0)
 		else:
@@ -81,10 +82,14 @@ class Player:
 		#Todo, fix frames for walking
 		#if not self.walking:
 		return self.directions.get(self.getDirection()+'s')
+		
+	def getRenderPos(self):
+		return self.renderPos
 
 	def setPosition(self,pos):
 		self.rect.move_ip(pos[0],pos[1])
 		self.pos = pos
+		self.renderPos = (self.pos[0],self.pos[1]-180)
 		
 	def setDirection(self,newPos):
 		if self.getPosition()[0] < newPos[0] and self.getPosition()[1] == newPos[1]:
@@ -109,10 +114,7 @@ class Player:
 			
 	def getPosition(self):
 		return self.pos
-		
-	def getRenderPosition(self):
-		return (self.getX()-self.rect.width/2,self.getY()-self.rect.height+10)
-		
+						
 	def getX(self):
 		return self.pos[0]
 		
@@ -121,19 +123,23 @@ class Player:
 		
 	def inRange(self,element):
 		#TODO: Refine this? Currently has a range of 100px
-		closenessX = self.getPosition()[0] - element.getPosition()[0]
-		closenessY = self.getPosition()[1] - element.getPosition()[1]
+		closenessX = self.getPosition()[0] - element.getBasePosition()[0]
+		closenessY = self.getPosition()[1] - element.getBasePosition()[1]
+		print closenessX
+		print closenessY
 		return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
 		
 	def pickUp(self,item):
 		if self.inRange(item):
 			self.Game.currentScene.visibleElements.remove(item)
 			self.Game.Inventory.addItem(item)
+			print "Picked up",item.getTitle()
 		
 	def use(self,widget):
 		if self.inRange(widget):
-			print "IUSETHIS!"
+			print "Used",widget.getTitle()
 
 	def talk(self,person):
 		if self.inRange(person):
-			print "WHO IS MARCELLUS WALLACE!?"
+			print "Talking to",person.getTitle()
+			self.Game.Conversation.activate()

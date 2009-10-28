@@ -8,15 +8,24 @@ class Room(Scene):
 		Scene.__init__(self,self.Game)
 		self.setBackground('foo.jpg')
 		self.setMap('Foo.map')
-		self.setInsertPoint((16,352))
+		self.setInsertPoint((0,300))
+
+		wastebin = VisibleElement()
+		wastebin.setTitle("Wastebin")
+		wastebin.setImage('wastebin.png')	
+		wastebin.setPosition((650,550))	
+		wastebin.setDebugText("USE THE BIN")	
+		wastebin.setUsable(True)	
+		self.addVisibleElement(wastebin)
+	
+		worm = VisibleElement()
+		worm.setTitle("Worm")
+		worm.setImage('worm.png')	
+		worm.setPosition((550,610))	
+		worm.setDebugText("WORMZOR")	
+		worm.setRetrievable(True)	
+		self.addVisibleElement(worm)
 				
-		fooElement = VisibleElement()
-		fooElement.setImage('worm.png')	
-		fooElement.setPosition((550,650))	
-		fooElement.setDebugText("OMGLAWLS")	
-		fooElement.setRetrievable(True)	
-		self.addVisibleElement(fooElement)
-		
 		self.show()
 		
 		#self.Game.Player.walkTo((500,670))
