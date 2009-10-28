@@ -6,6 +6,7 @@ from Interfaces import Conversation,Cursor,Inventory,Menu
 
 class Game:
 	def __init__(self,arguments):
+		self.debug = False;
 		self.running = True;
 		self.currentScene = None;
 
@@ -40,10 +41,20 @@ class Game:
 
 	def loadScene(self,sceneName):
 		from Scenes.Foo import Room
-		self.currentScene = Room()
+		self.currentScene = Room(self)
 		
 	def quit(self):
 		self.running = False
 
 	def run(self):
 		self.loop()
+		
+	def dump(self):
+		if self.debug:
+			self.debug = False
+		else:
+			self.debug = True
+		
+		print 'Inventory:',self.Inventory.items
+		print 'Player position:',self.Player.getPosition()
+		print 'Player feet:',self.Player.getRenderPosition()

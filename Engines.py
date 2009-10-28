@@ -53,6 +53,8 @@ class Renderer:
 		   	'TALK': pygame.image.load(os.path.join('data','cursors','cursor_talk.png'))
 	   	}
 	   	
+	   	self.debugPoint = pygame.Surface((2,2));
+	   	self.debugPoint.fill((255,0,0))
 	def loadIcon(self):
 		pygame.display.set_icon(pygame.image.load(os.path.join('data','icons','gameicon.png')))
 		
@@ -70,7 +72,7 @@ class Renderer:
 		
 			#Draw main character
 			self.Game.Player.walk()
-			self.screen.blit(self.Game.Player.defaultImage,self.Game.Player.getRenderPosition())
+			self.screen.blit(self.Game.Player.getFrame(),self.Game.Player.getRenderPosition())
 			if len(self.Game.Player.path) > 1:
 				pygame.draw.lines(self.screen, (255,255,255,255), 0, self.Game.Player.path)
 		
@@ -94,6 +96,10 @@ class Renderer:
 		self.Game.Cursor.checkCollisions()
 		self.screen.blit(self.cursors.get(self.Game.Cursor.cursor),pygame.mouse.get_pos())
     		
+    		
+		if self.Game.debug:
+			self.screen.blit(self.debugPoint,self.Game.Player.getRenderPosition())
+			self.screen.blit(self.debugPoint,self.Game.Player.getPosition())
 		#Aaaand flip the burger
 		pygame.display.flip()
 		e = time()
@@ -193,7 +199,8 @@ class EventManager:
 		self.keySignals = {pygl.K_q: self.Game.quit,
 							pygl.K_ESCAPE: self.Game.quit,
 							pygl.K_m: self.Game.AudioController.toggleMusicPause,
-							pygl.K_l: self.Game.AudioController.toggleMusicVolume
+							pygl.K_l: self.Game.AudioController.toggleMusicVolume,
+							pygl.K_d: self.Game.dump
 							}
 							
 		self.mouseSignals = {1: self.Game.quit}
@@ -211,17 +218,15 @@ class EventManager:
 			eventMethod()
 
 	def readMouseClick(self,event):
+		pos = pygame.mouse.get_pos()
 		if self.Game.Cursor.currentElement is not None:
-			#TODO
 			if self.Game.Cursor.currentElement.retrievable:
-				self.Game.Inventory.addItem(self.Game.Cursor.currentElement)
+				self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
 			elif self.Game.Cursor.currentElement.usable:
-				pass
+				self.Game.Player.walkTo(pos,self.Player.use,self.Game.Cursor.currentElement)
 			elif self.Game.Cursor.currentElement.isCharacter:
 				pass
 			else:
 				print self.Game.Cursor.currentElement.debugMessage
 		else:
-			self.Game.Player.walkTo(pygame.mouse.get_pos())
-	
-
+			self.Game.Player.walkTo(pos)

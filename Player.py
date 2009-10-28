@@ -7,13 +7,31 @@ class Player:
 		self.Game = game
 		self.rect = None
 		self.visible = False
-		self.defaultImage = pygame.image.load(os.path.join('data','maincharacter','ss.png'))
-		self.rect = self.defaultImage.get_rect()
+		self.callbackMethod = None
+		self.callbackArgument = None
+		self.rect = self.loadFrame('north','stand').get_rect()
+		self.direction = 's'
+		self.directions = {
+			'ns':self.loadFrame('north','stand'),
+			'es':self.loadFrame('east','stand'),
+			'ss':self.loadFrame('south','stand'),
+			'ws':self.loadFrame('west','stand'),
+			'nes':self.loadFrame('northeast','stand'),
+			'ses':self.loadFrame('southeast','stand'),
+			'sws':self.loadFrame('southwest','stand'),
+			'nws':self.loadFrame('northwest','stand'),
+		}
 		self.pos = (0,0)
 		self.walking = False
 		
 		self.path = []
-
+		
+	def loadFrame(self,direction,status,frame=None):
+		if frame is not None:
+			return pygame.image.load(os.path.join('data','maincharacter',direction+'-'+status+'-'+frame+'.png'))
+		else:
+			return pygame.image.load(os.path.join('data','maincharacter',direction+'-'+status+'.png'))
+			
 	def findPath(self,x,y):
 		startX = self.getX()/16
 		startY = self.getY()/16
@@ -33,37 +51,89 @@ class Player:
 		else:
 			return False
 
-	def walkTo(self,(x,y)):
+	def walkTo(self,(x,y),callbackMethod=None,argument=None):
+		if callbackMethod is not None and argument is not None:
+			self.callbackMethod = callbackMethod
+			self.argument = argument
 		if not self.walking:
+			self.setDirection((x,y))
 			if self.findPath(x,y):
 				self.walking = True
 				self.walk()
-				
+			else:
+				print "CANT GO THAR"
+		
 	def walk(self):
 		if len(self.path):
 			self.setPosition(self.path[0])
 			self.path.pop(0)
 		else:
 			self.walking = False
+			if self.callbackMethod is not None:
+				self.runCallback()
+				
+	def runCallback(self):
+		self.callbackMethod(self.argument)
+		self.callbackMethod = None
+		self.callbackArgument = None
 		
-	def walkToAnd(self,x,y,callbackMethod):
-		self.walkTo(x,y)
-		while not self.walking:
-			print "AS"
-			
+	def getFrame(self):
+		#Todo, fix frames for walking
+		#if not self.walking:
+		return self.directions.get(self.getDirection()+'s')
+
 	def setPosition(self,pos):
 		self.rect.move_ip(pos[0],pos[1])
-		self.lastPos = self.pos
 		self.pos = pos
+		
+	def setDirection(self,newPos):
+		if self.getPosition()[0] < newPos[0] and self.getPosition()[1] == newPos[1]:
+			self.direction = 'e'
+		elif self.getPosition()[0] > newPos[0] and self.getPosition()[1] == newPos[1]:
+			self.direction = 'w'
+		elif self.getPosition()[0] == newPos[0] and self.getPosition()[1] < newPos[1]:
+			self.direction = 's'
+		elif self.getPosition()[0] == newPos[0] and self.getPosition()[1] > newPos[1]:
+			self.direction = 'n'
+		elif self.getPosition()[0] < newPos[0] and self.getPosition()[1] < newPos[1]:
+			self.direction = 'se'
+		elif self.getPosition()[0] > newPos[0] and self.getPosition()[1] > newPos[1]:
+			self.direction = 'nw'
+		elif self.getPosition()[0] < newPos[0] and self.getPosition()[1] > newPos[1]:
+			self.direction = 'ne'
+		elif self.getPosition()[0] > newPos[0] and self.getPosition()[1] < newPos[1]:
+			self.direction = 'sw'
+		
+	def getDirection(self):
+		return self.direction
 			
 	def getPosition(self):
 		return self.pos
 		
 	def getRenderPosition(self):
-		return (self.getX(),self.getY()-215)
+		return (self.getX()-self.rect.width/2,self.getY()-self.rect.height+10)
 		
 	def getX(self):
 		return self.pos[0]
 		
 	def getY(self):
 		return self.pos[1]
+		
+	def inRange(self,element):
+		#TODO: Refine this? Currently has a range of 100px
+		closenessX = self.getPosition()[0] - element.getPosition()[0]
+		closenessY = self.getPosition()[1] - element.getPosition()[1]
+		return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
+		
+	def pickUp(self,item):
+		if self.inRange(item):
+			self.Game.currentScene.visibleElements.remove(item)
+			self.Game.Inventory.addItem(item)
+		
+	def use(self,widget):
+		if self.inRange(widget):
+			print "IUSETHIS!"
+
+	def talk(self,person):
+		if self.inRange(person):
+			print "WHO IS MARCELLUS WALLACE!?"

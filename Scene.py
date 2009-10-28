@@ -2,7 +2,8 @@ import os
 import pygame
 
 class Scene:
-	def __init__(self):
+	def __init__(self,game):
+		self.Game = game
 		self.visible = False
 		self.name = None
 		self.mapFileName = None
@@ -27,7 +28,13 @@ class Scene:
 		self.visibleElements.append(element)
 		
 	def setInsertPoint(self,pos):
+		#TODO: Check that it is a valid placement on the map
+		posX = pos[0]/16
+		posY = pos[0]/16
+		
+		
 		self.insertPoint = pos
+		self.Game.Player.setPosition(pos)
 
 	def show(self):
 		self.visible = True
@@ -36,10 +43,23 @@ class Scene:
 		self.mapFileName = mapFileName
 		self.loadMap(mapFileName)
 
+	#This is just me being lazy. Coda makes a neat line of the syntax highlight if I have 1 and x.
 	def loadMap(self,mapFileName):
 		self.mapFile = open(os.path.join('Scenes',mapFileName))
+		mapTiles = self.mapFile.read().rsplit(',')
+		for tile in mapTiles:
+			tile = tile.replace('x','-1')
+			try:
+				self.mapData.append(int(tile))
+			except:
+				pass
+		
+		return 
 		for line in self.mapFile:
 			for char in line.rsplit(','):
-				if char == '1' or char == '-1':
+				if char == 'x':
+					self.mapData.append(-1)
+				elif char == '1':
 					self.mapData.append(int(char))
+		print self.mapData
 		self.mapFile.close()

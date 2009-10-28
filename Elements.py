@@ -9,6 +9,7 @@ class Element:
 			
 class VisibleElement(Element):
 	def __init__(self):
+		self.pos = (0,0)
 		self.image = None
 		self.rect = None
 		self.retrievable = False
@@ -21,7 +22,11 @@ class VisibleElement(Element):
 			self.rect = self.image.get_rect()
 	
 	def setPosition(self,pos):
+		self.pos = pos
 		self.rect.move_ip(pos)
+		
+	def getPosition(self):
+		return self.pos
 		
 	def setRetrievable(self,status):
 		self.retrievable = status

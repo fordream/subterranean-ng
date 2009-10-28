@@ -7,7 +7,6 @@ class Inventory:
 		
 	def addItem(self,item):
 		self.items.append(item)
-		self.Game.currentScene.visibleElements.remove(item)
 		
 class Menu:
 	def __init__(self,game):
