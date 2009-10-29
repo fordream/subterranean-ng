@@ -36,7 +36,6 @@ class Renderer:
 		self.loadCursors()
 		self.loadGraphics()
 		self.setupTimer()
-		self.frame = 0
 		
 	def setupTimer(self):
 		self.Timer = Timer()
@@ -49,7 +48,7 @@ class Renderer:
 		else:
 			self.screen = pygame.display.set_mode((1025,768))
 		pygame.display.set_caption('Subterranean')
-		
+
 	def loadCursors(self):
 		pygame.mouse.set_visible(0)
 	   	self.cursors = {
