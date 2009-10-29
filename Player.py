@@ -7,6 +7,9 @@ class Player:
 		self.Game = game
 		self.rect = None
 		self.visible = False
+		self.currentKeyframe = 0
+		self.currentFrame = 0
+		self.frameDuration = 3
 		self.callbackMethod = None
 		self.callbackArgument = None
 		self.rect = pygame.Rect(0,0,60,20)
@@ -20,10 +23,13 @@ class Player:
 			'ses':self.loadFrame('southeast','stand'),
 			'sws':self.loadFrame('southwest','stand'),
 			'nws':self.loadFrame('northwest','stand'),
+			'ew':[self.loadFrame('east','walk','1'),self.loadFrame('east','walk','2'),self.loadFrame('east','walk','3'),self.loadFrame('east','walk','4')],
+			'ww':[self.loadFrame('west','walk','1'),self.loadFrame('west','walk','2'),self.loadFrame('west','walk','3'),self.loadFrame('west','walk','4')],
 		}
 		self.pos = (0,0)
 		self.renderPos = (0,0)
 		self.walking = False
+		self.talking = False
 		
 		self.path = []
 		
@@ -57,7 +63,6 @@ class Player:
 			self.callbackMethod = callbackMethod
 			self.argument = argument
 		if not self.walking:
-			self.setDirection((x,y))
 			if self.findPath(x,y):
 				self.walking = True
 				self.walk()
@@ -65,9 +70,11 @@ class Player:
 				print "No avalible tiles at",x,y
 		
 	def walk(self):
-		if len(self.path) and self.walking:
+		if len(self.path):
 			self.setPosition(self.path[0])
 			self.path.pop(0)
+			if len(self.path) > 1:
+				self.setDirection(self.path[1])
 		else:
 			self.walking = False
 			if self.callbackMethod is not None:
@@ -79,10 +86,30 @@ class Player:
 		self.callbackArgument = None
 		
 	def getFrame(self):
-		#Todo, fix frames for walking
-		#if not self.walking:
-		return self.directions.get(self.getDirection()+'s')
-		
+		if self.walking:
+			sequence = self.directions.get(self.getDirection()+'w')
+			if sequence is not None:
+				if self.currentFrame <= self.frameDuration:
+					print "FRAMECOUNT"
+					self.currentFrame += 1
+				else:
+					self.currentFrame = 0
+					print "NEXT"
+					if self.currentKeyframe < len(sequence)-1:
+						self.currentKeyframe += 1
+					else:
+						self.currentKeyframe = 0
+				print self.currentKeyframe
+				print self.currentFrame
+				return sequence[self.currentKeyframe]
+			else:
+				#Stand if fail
+				return self.directions.get(self.getDirection()+'s')
+		elif self.talking:
+			pass
+		else:
+			return self.directions.get(self.getDirection()+'s')
+			
 	def getRenderPos(self):
 		return self.renderPos
 
@@ -125,8 +152,6 @@ class Player:
 		#TODO: Refine this? Currently has a range of 100px
 		closenessX = self.getPosition()[0] - element.getBasePosition()[0]
 		closenessY = self.getPosition()[1] - element.getBasePosition()[1]
-		print closenessX
-		print closenessY
 		return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
 		
 	def pickUp(self,item):
