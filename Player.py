@@ -106,7 +106,7 @@ class Player:
 		self.frameKey = 0
 		
 	def getFrameKey(self,sequence):
-		if self.Game.Renderer.Timer.currentFrame - 4 == self.startFrame:
+		if self.Game.Renderer.Timer.currentFrame - 3 == self.startFrame:
 			self.walk()
 			self.resetStartFrame()
 			if self.frameKey < len(sequence)-1:
@@ -131,7 +131,7 @@ class Player:
 			except IndexError:
 				currentFrame = sequence[0]
 		return currentFrame
-					
+
 	def getRenderPos(self):
 		return self.renderPos
 
