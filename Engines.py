@@ -36,7 +36,6 @@ class Renderer:
 		self.loadCursors()
 		self.loadGraphics()
 		self.setupTimer()
-		self.frame = 0
 		
 	def setupTimer(self):
 		self.Timer = Timer()
@@ -49,7 +48,7 @@ class Renderer:
 		else:
 			self.screen = pygame.display.set_mode((1025,768))
 		pygame.display.set_caption('Subterranean')
-		
+
 	def loadCursors(self):
 		pygame.mouse.set_visible(0)
 	   	self.cursors = {
@@ -60,7 +59,7 @@ class Renderer:
 	   	}
 		
 	def loadGraphics(self):
-		self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
+		#self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
 	   	self.debugPoint = pygame.Surface((2,2));
 	   	self.debugPoint.fill((255,0,0))
 
@@ -77,7 +76,7 @@ class Renderer:
 		
 	def draw(self):
 		#Draw game background
-		self.screen.blit(self.backgroundImage,(0,0))
+		#self.screen.blit(self.backgroundImage,(0,0))
 
 		if self.Game.currentScene.visible:
 			#Draw current background
