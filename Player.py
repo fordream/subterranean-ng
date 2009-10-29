@@ -131,7 +131,7 @@ class Player:
 			except IndexError:
 				currentFrame = sequence[0]
 		return currentFrame
-					
+
 	def getRenderPos(self):
 		return self.renderPos
 
