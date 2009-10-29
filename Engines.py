@@ -28,33 +28,48 @@ class Timer:
 class Renderer:
 	def __init__(self,game):
 		self.Game = game
-		pygame.display.get_surface()
-		self.loadIcon()
+		self.setupScreen()
 
-		pygame.font.init()
-		self.defaultFontColor = (255,255,255)
-		self.defaultOutlineFontColor = (0,0,0)
-		self.generalFont = pygame.font.Font(os.path.join('data','fonts','prviking.ttf'),20)
-		self.elementFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),12)
-		self.symbolFont = pygame.font.Font(os.path.join('data','fonts','prvikingsymbols.ttf'),18)
-		self.screen = pygame.display.set_mode((1025,768))
-		pygame.display.set_caption('Subterranean')
+		self.loadIcon()
+		self.loadFonts()
+		self.loadCursors()
+		self.loadGraphics()
+		self.setupTimer()
+		
+	def setupTimer(self):
 		self.Timer = Timer()
 		self.Timer.setFPS(32)
 		
-		#Yes, put these guys some other place.
-		self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
+	def setupScreen(self,fullscreen=False):
+		pygame.display.get_surface()
+		pygame.display.set_caption('Subterranean','Sub')
+		if fullscreen:
+			self.screen = pygame.display.set_mode((1025,768),pygame.FULLSCREEN)
+		else:
+			self.screen = pygame.display.set_mode((1025,768),pygame.NOFRAME)
+		
+	def loadCursors(self):
 		pygame.mouse.set_visible(0)
-	
 	   	self.cursors = {
 		   	'DEFAULT': pygame.image.load(os.path.join('data','cursors','cursor_default.png')),
 		   	'USE': pygame.image.load(os.path.join('data','cursors','cursor_use.png')),
 		   	'PICKUP': pygame.image.load(os.path.join('data','cursors','cursor_pickup.png')),
 		   	'TALK': pygame.image.load(os.path.join('data','cursors','cursor_talk.png'))
 	   	}
-	   	
+		
+	def loadGraphics(self):
+		self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
 	   	self.debugPoint = pygame.Surface((2,2));
 	   	self.debugPoint.fill((255,0,0))
+
+	def loadFonts(self):
+		pygame.font.init()
+		self.defaultFontColor = (255,255,255)
+		self.defaultOutlineFontColor = (0,0,0)
+		self.generalFont = pygame.font.Font(os.path.join('data','fonts','prviking.ttf'),20)
+		self.elementFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),12)
+		self.symbolFont = pygame.font.Font(os.path.join('data','fonts','prvikingsymbols.ttf'),18)
+
 	def loadIcon(self):
 		pygame.display.set_icon(pygame.image.load(os.path.join('data','icons','gameicon.png')))
 		
@@ -106,7 +121,6 @@ class Renderer:
 			self.screen.blit(self.debugPoint,pygame.mouse.get_pos())
 			pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
 
-		#Aaaand flip the burger
 		pygame.display.flip()
 		e = time()
 	    
