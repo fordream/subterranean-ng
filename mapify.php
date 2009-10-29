@@ -12,7 +12,7 @@
 			#background {
 				width: 1024px;
 				height: 768px;
-				background: transparent url('./data/backgrounds/foo.png') no-repeat top left;
+				background: transparent url('./data/backgrounds/foo.jpg') no-repeat top left;
 				overflow: hidden;
 			}
 			
