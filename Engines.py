@@ -3,10 +3,11 @@ from time import time
 import pygame.locals as pygl
 	
 class Timer:
-	def __init__(self0):
+	def __init__(self):
 		pass
 		
 	def setFPS(self,fps):
+		self.currentFrame = 0
 		if fps == 0: 
 			self.tick = self._blank
 			return
@@ -18,23 +19,24 @@ class Timer:
 		pass
 	
 	def tick(self):
-		self.ct = pygame.time.get_ticks()
-		if self.ct < self.nt:
-			pygame.time.wait(self.nt-self.ct)
+		self.currentTicks = pygame.time.get_ticks()
+		if self.currentTicks < self.nt:
+			pygame.time.wait(self.nt-self.currentTicks)
 			self.nt+=self.wait
 		else: 
 			self.nt = pygame.time.get_ticks()+self.wait
+		self.currentFrame += 1
 
 class Renderer:
 	def __init__(self,game):
 		self.Game = game
 		self.setupScreen()
-
 		self.loadIcon()
 		self.loadFonts()
 		self.loadCursors()
 		self.loadGraphics()
 		self.setupTimer()
+		self.frame = 0
 		
 	def setupTimer(self):
 		self.Timer = Timer()
@@ -42,11 +44,11 @@ class Renderer:
 		
 	def setupScreen(self,fullscreen=False):
 		pygame.display.get_surface()
-		pygame.display.set_caption('Subterranean','Sub')
 		if fullscreen:
 			self.screen = pygame.display.set_mode((1025,768),pygame.FULLSCREEN)
 		else:
-			self.screen = pygame.display.set_mode((1025,768),pygame.NOFRAME)
+			self.screen = pygame.display.set_mode((1025,768))
+		pygame.display.set_caption('Subterranean')
 		
 	def loadCursors(self):
 		pygame.mouse.set_visible(0)
@@ -86,11 +88,9 @@ class Renderer:
 				self.screen.blit(element.image,element.getPosition())
 				text = self.elementFont.render(element.title,1,self.defaultFontColor)
 				self.screen.blit(text,element.getBasePosition())
-
 		
 			#Draw main character
-			self.Game.Player.walk()
-			self.screen.blit(self.Game.Player.getFrame(),self.Game.Player.getRenderPos())
+			self.screen.blit(self.Game.Player.getCurrentFrame(),self.Game.Player.getRenderPos())
 		
 		#Draw conversations
 		if self.Game.Conversation.isActive:
