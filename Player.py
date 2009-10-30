@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os,pygame
 import AStar
 from time import time
@@ -7,25 +8,36 @@ class Player:
 		self.Game = game
 		self.rect = None
 		self.visible = False
-		self.currentKeyframe = 0
-		self.currentFrame = 0
+		self.frameKey = 0
+		self.startFrame = None
+		self.startMillis = 0
 		self.frameDuration = 3
 		self.callbackMethod = None
 		self.callbackArgument = None
 		self.rect = pygame.Rect(0,0,60,20)
 		self.direction = 's'
 		self.directions = {
-			'ns':self.loadFrame('north','stand'),
-			'es':self.loadFrame('east','stand'),
-			'ss':self.loadFrame('south','stand'),
-			'ws':self.loadFrame('west','stand'),
-			'nes':self.loadFrame('northeast','stand'),
-			'ses':self.loadFrame('southeast','stand'),
-			'sws':self.loadFrame('southwest','stand'),
-			'nws':self.loadFrame('northwest','stand'),
-			'ew':[self.loadFrame('east','walk','1'),self.loadFrame('east','walk','2'),self.loadFrame('east','walk','3'),self.loadFrame('east','walk','4')],
-			'ww':[self.loadFrame('west','walk','1'),self.loadFrame('west','walk','2'),self.loadFrame('west','walk','3'),self.loadFrame('west','walk','4')],
+			'ns':self.loadFrames('north','stand',1),
+			'es':self.loadFrames('east','stand',1),
+			'ss':self.loadFrames('south','stand',1),
+			'ws':self.loadFrames('west','stand',1),
+			'nes':self.loadFrames('northeast','stand',1),
+			'ses':self.loadFrames('southeast','stand',1),
+			'sws':self.loadFrames('southwest','stand',1),
+			'nws':self.loadFrames('northwest','stand',1),
+			'nw':self.loadFrames('north','walk',1),
+			'sw':self.loadFrames('south','walk',1),
+			'sww':self.loadFrames('southwest','walk',1),
+			'nww':self.loadFrames('northwest','walk',1),
+			'sew':self.loadFrames('southeast','walk',1),
+			'new':self.loadFrames('northeast','walk',1),
+			'ew':self.loadFrames('east','walk',8),
+			'ww':self.loadFrames('west','walk',8)
 		}
+		
+		#self.directions['ew'] = [self.loadFrame('east','stand','1'),self.loadFrame('east','stand','1')]
+		#self.directions['ww'] = [self.loadFrame('west','stand','1'),self.loadFrame('west','stand','1')]
+
 		self.pos = (0,0)
 		self.renderPos = (0,0)
 		self.walking = False
@@ -33,11 +45,13 @@ class Player:
 		
 		self.path = []
 		
-	def loadFrame(self,direction,status,frame=None):
-		if frame is not None:
-			return pygame.image.load(os.path.join('data','maincharacter',direction+'-'+status+'-'+frame+'.png'))
-		else:
-			return pygame.image.load(os.path.join('data','maincharacter',direction+'-'+status+'.png'))
+	def loadFrames(self,direction,status,frames=1):
+		frameSet = []
+		frameNum = 1
+		while frameNum <= frames:
+			frameSet.append(pygame.image.load(os.path.join('data','maincharacter','%s-%s-%d.png' % (direction,status,frameNum))))
+			frameNum += 1
+		return frameSet
 			
 	def findPath(self,x,y):
 		startX = self.getX()/16
@@ -64,8 +78,8 @@ class Player:
 			self.argument = argument
 		if not self.walking:
 			if self.findPath(x,y):
+				self.resetStartFrame()
 				self.walking = True
-				self.walk()
 			else:
 				print "No avalible tiles at",x,y
 		
@@ -85,31 +99,39 @@ class Player:
 		self.callbackMethod = None
 		self.callbackArgument = None
 		
-	def getFrame(self):
-		if self.walking:
-			sequence = self.directions.get(self.getDirection()+'w')
-			if sequence is not None:
-				if self.currentFrame <= self.frameDuration:
-					print "FRAMECOUNT"
-					self.currentFrame += 1
-				else:
-					self.currentFrame = 0
-					print "NEXT"
-					if self.currentKeyframe < len(sequence)-1:
-						self.currentKeyframe += 1
-					else:
-						self.currentKeyframe = 0
-				print self.currentKeyframe
-				print self.currentFrame
-				return sequence[self.currentKeyframe]
+	def resetStartFrame(self):
+		self.startFrame = self.Game.Renderer.Timer.currentFrame
+
+	def resetFrameKey(self):
+		self.frameKey = 0
+		
+	def getFrameKey(self,sequence):
+		if self.Game.Renderer.Timer.currentFrame - 4 == self.startFrame:
+			self.walk()
+			self.resetStartFrame()
+			if self.frameKey < len(sequence)-1:
+				self.frameKey += 1
 			else:
-				#Stand if fail
-				return self.directions.get(self.getDirection()+'s')
-		elif self.talking:
-			pass
+				self.resetFrameKey()
+		elif self.Game.Renderer.Timer.currentFrame == self.startFrame or self.frameKey is None:
+			self.resetFrameKey()
+		return self.frameKey
+		
+	def getCurrentFrame(self):
+		if self.walking:
+			state = 'w'
 		else:
-			return self.directions.get(self.getDirection()+'s')
+			state = 's'
 			
+		sequence = self.directions.get('%s%s' % (self.getDirection(),state))
+		if sequence is not None:
+			#FIXME: Buggar ur pga ej återställd 
+			try:
+				currentFrame = sequence[self.getFrameKey(sequence)]
+			except IndexError:
+				currentFrame = sequence[0]
+		return currentFrame
+					
 	def getRenderPos(self):
 		return self.renderPos
 
@@ -135,6 +157,7 @@ class Player:
 			self.direction = 'ne'
 		elif self.getPosition()[0] > newPos[0] and self.getPosition()[1] < newPos[1]:
 			self.direction = 'sw'
+		return self.direction
 		
 	def getDirection(self):
 		return self.direction
