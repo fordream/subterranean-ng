@@ -36,6 +36,7 @@ class Renderer:
 		self.loadCursors()
 		self.loadGraphics()
 		self.setupTimer()
+		self.frame = 0
 		
 	def setupTimer(self):
 		self.Timer = Timer()
