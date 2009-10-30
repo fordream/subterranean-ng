@@ -60,7 +60,7 @@ class Renderer:
 	   	}
 		
 	def loadGraphics(self):
-		self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
+		#self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
 	   	self.debugPoint = pygame.Surface((2,2));
 	   	self.debugPoint.fill((255,0,0))
 
@@ -77,7 +77,7 @@ class Renderer:
 		
 	def draw(self):
 		#Draw game background
-		self.screen.blit(self.backgroundImage,(0,0))
+		#self.screen.blit(self.backgroundImage,(0,0))
 
 		if self.Game.currentScene.visible:
 			#Draw current background

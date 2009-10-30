@@ -29,4 +29,3 @@ class Room(Scene):
 		self.show()
 		
 		#self.Game.Player.walkTo((500,670))
-	
