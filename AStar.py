@@ -100,7 +100,7 @@ class AStar:
         end = tolocation
         fnode = self.mh.getNode(fromlocation)
         if fnode is None:
-        	return None
+            return None
         self.on.append(fnode)
         self.o.append(fnode.lid)
         nextNode = fnode 
