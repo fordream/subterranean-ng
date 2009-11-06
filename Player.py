@@ -177,20 +177,27 @@ class Player:
 		closenessY = self.getPosition()[1] - element.getBasePosition()[1]
 		return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
 		
-	def pickUp(self,item):
-		if self.inRange(item):
-			self.Game.currentScene.visibleElements.remove(item)
-			self.Game.Inventory.addItem(item)
-			print "Picked up",item.getTitle()
+	def pickUp(self,element):
+		if self.inRange(element):
+			self.Game.currentScene.visibleElements.remove(element)
+			self.Game.Inventory.addItem(element)
+			if element.pickupMethod is not None:
+				element.pickupMethod()
 		
-	def use(self,widget):
-		if self.inRange(widget):
-			print "Used",widget.getTitle()
+	def use(self,element):
+		if self.inRange(element) and element.useMethod is not None:
+			element.useMethod()
 			
 	def look(self,element):
-		self.say(element.getLookResponse())
+		if element.lookMethod is not None:
+			element.lookMethod()
 
-	def talk(self,person):
-		if self.inRange(person):
-			print "Talking to",person.getTitle()
+	def talk(self,element):
+		if self.inRange(element):
 			self.Game.Conversation.activate()
+		if element.talkMethod is not None:
+			element.talkMethod()
+			
+	def say(self,text):
+		self.Game.Conversation.setText(text)
+		self.Game.Conversation.activate()

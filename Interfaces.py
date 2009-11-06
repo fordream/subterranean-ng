@@ -5,6 +5,9 @@ class Inventory:
 		self.Game = game
 		self.items = []
 		self.visible = False
+		self.surface = pygame.Surface((1024,70))
+		self.surface.fill((25,25,25))
+		self.pos = (0,0)
 		
 	def addItem(self,item):
 		self.items.append(item)
@@ -76,7 +79,10 @@ class Conversation:
 	def __init__(self,game):
 		self.Game = game
 		self.isActive = False
-		self.currentText="Y ello thar, how fare thee young padawan?"
+		self.currentText = None
+		
+	def setText(self,text):
+		self.currentText = text
 		
 	def activate(self):
 		self.isActive = True

@@ -9,6 +9,7 @@ class Room(Scene):
 		self.setBackground('foo.jpg')
 		self.setMap('Foo.map')
 		self.setInsertPoint((0,300))
+		self.talkedToWorm = False
 
 		wastebin = VisibleElement()
 		wastebin.setTitle("Wastebin of the frozen throne!")
@@ -17,15 +18,25 @@ class Room(Scene):
 		wastebin.setDebugText("USE THE BIN")	
 		wastebin.setUsable(True)	
 		self.addVisibleElement(wastebin)
-	
+			
 		worm = VisibleElement()
 		worm.setTitle("Worm")
 		worm.setImage('worm.png')	
-		worm.setPosition((550,610))	
-		worm.setDebugText("WORMZOR")	
-		worm.setRetrievable(True)	
-		self.addVisibleElement(worm)
-				
+		worm.setPosition((550,610))			
+
+		def wormLook():
+			self.Game.Player.say("Det aer en orm!")
+			
+		def wormTalk():
+			if self.talkedToWorm is False:
+				self.Game.Player.say("Hej din gamle mask")
+				self.talkedToWorm = True
+			else:
+				self.Game.Player.say("Hej igen")
+			
+		worm.setLookMethod(wormLook)
+		worm.setTalkMethod(wormTalk)
+		self.addVisibleElement(worm)		
 		self.show()
 		
 		#self.Game.Player.walkTo((500,670))

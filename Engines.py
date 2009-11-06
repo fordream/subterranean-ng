@@ -114,6 +114,10 @@ class Renderer:
 			self.screen.blit(textOutline,(posX,posY+2))
 			self.screen.blit(text,(posX,posY))
 			
+		#Draw inventory
+		if self.Game.Inventory.visible:
+			self.screen.blit(self.Game.Inventory.surface,self.Game.Inventory.pos)
+
 		#Draw mouse cursor
 		self.Game.Cursor.checkCollisions()
 		self.screen.blit(self.cursors.get(self.Game.Cursor.getCursor()),pygame.mouse.get_pos())
