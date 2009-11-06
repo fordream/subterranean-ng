@@ -30,7 +30,7 @@ class Timer:
 class Renderer:
 	def __init__(self,game):
 		self.Game = game
-		self.setupScreen()
+		self.setupScreen(False)
 		self.loadIcon()
 		self.loadFonts()
 		self.loadCursors()
@@ -51,7 +51,6 @@ class Renderer:
 		pygame.display.set_caption('Subterranean')
 
 	def loadCursors(self):
-		pygame.mouse.set_visible(0)
 	   	self.cursors = {
 		   	'DEFAULT': pygame.image.load(os.path.join('data','cursors','cursor_default.png')),
 		   	'USE': pygame.image.load(os.path.join('data','cursors','cursor_use.png')),
@@ -79,6 +78,7 @@ class Renderer:
 		pygame.display.set_icon(pygame.image.load(os.path.join('data','icons','gameicon.png')))
 		
 	def draw(self):
+		pygame.mouse.set_visible(0)
 		#Draw game background
 		#self.screen.blit(self.backgroundImage,(0,0))
 
@@ -99,14 +99,12 @@ class Renderer:
 			self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))
 
 		#Draw conversations
-		if self.Game.Conversation.isActive:
-			s = time()
-			#THIS IS ONLY FOR TESTING ATM. WILL BE DYNAMIC LATER OF COURSE
+		if self.Game.Conversation.isActive():
 			posX = 50
 			posY = 700
 			
-			text = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultFontColor)
-			textOutline = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultOutlineFontColor)
+			text = self.generalFont.render(self.Game.Conversation.getText(),1,self.defaultFontColor)
+			textOutline = self.generalFont.render(self.Game.Conversation.getText(),1,self.defaultOutlineFontColor)
 			
 			self.screen.blit(textOutline,(posX,posY-2))
 			self.screen.blit(textOutline,(posX+2,posY))
@@ -131,7 +129,6 @@ class Renderer:
 			pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
 
 		pygame.display.flip()
-		e = time()
 	    
 class AudioController:
 
@@ -227,7 +224,8 @@ class EventManager:
 							pygl.K_ESCAPE: self.Game.quit,
 							pygl.K_m: self.Game.AudioController.toggleMusicPause,
 							pygl.K_l: self.Game.AudioController.toggleMusicVolume,
-							pygl.K_d: self.Game.dump
+							pygl.K_d: self.Game.dump,
+							pygl.K_f: self.Game.toggleFullscreen
 							}
 							
 		self.mouseSignals = {1: self.Game.quit}

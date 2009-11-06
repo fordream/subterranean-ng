@@ -2,12 +2,13 @@ import os,pygame
 from Constants import *
 from Player import Player
 from Engines import Renderer,AudioController,EventManager,Timer
-from Interfaces import Conversation,Cursor,Inventory,ActionMenu,TitleManager
+from Interfaces import Conversation,Cursor,Inventory,TitleManager
 
 class Game:
 	def __init__(self,arguments):
 		self.debug = False;
 		self.running = True;
+		self.fullscreen = False
 		self.paused = False
 		self.currentScene = None;
 
@@ -57,6 +58,14 @@ class Game:
 
 	def run(self):
 		self.loop()
+		
+	def toggleFullscreen(self):
+		if self.fullscreen == False:
+			self.fullscreen = True
+			self.Renderer.setupScreen(True)
+		else:
+			self.fullscreen = False
+			self.Renderer.setupScreen(False)
 		
 	def dump(self):
 		if self.debug:

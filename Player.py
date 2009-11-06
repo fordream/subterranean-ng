@@ -193,11 +193,8 @@ class Player:
 			element.lookMethod()
 
 	def talk(self,element):
-		if self.inRange(element):
-			self.Game.Conversation.activate()
-		if element.talkMethod is not None:
+		if self.inRange(element) and element.talkMethod is not None:
 			element.talkMethod()
 			
 	def say(self,text):
 		self.Game.Conversation.setText(text)
-		self.Game.Conversation.activate()

@@ -29,8 +29,19 @@ class Inventory:
 class TitleManager:
 	def __init__(self,game):
 		self.Game = game
+		self.prefix = None
 		self.currentElement = None
 		
+	def setPrefix(self,prefix):
+		if prefix == 'USE':
+			self.prefix = 'Use'
+		elif prefix == 'PICKUP':
+			self.prefix = 'Pick up'
+		elif prefix == 'TALK':
+			self.prefix = 'Talk to'
+		elif prefix == 'LOOk':
+			self.prefix = 'Look at'
+					
 	def setElement(self,element):
 		self.currentElement = element
 
@@ -39,56 +50,36 @@ class TitleManager:
 		
 	def getTitle(self):
 		if self.currentElement is not None:
-			return self.currentElement.title
-		
-class ActionMenu:
-	#UNUSED
-	def __init__(self,game):
-		self.Game = game
-		self.visible = False
-		self.image = pygame.image.load(os.path.join('data','interface','actionmenu.png'))
-		
-	def getFrame(self):
-		if self.visible:
-			return self.image
-			
-	def getPosition(self):
-		return self.pos
-	
-	def setPosition(self,pos):
-		newpos = (pos[0]-self.image.get_width()/2,pos[1]-self.image.get_height()/2)
-		self.pos = newpos
-		
-	def show(self):
-		self.Game.pause()
-		self.visible = True
-		self.setPosition(pygame.mouse.get_pos())
-
-	def hide(self):
-		self.Game.unpause()
-		self.visible = False
-		self.setPosition((0,0))
-		
-	def toggle(self):
-		if self.visible:
-			self.hide()
-		else:
-			self.show()
+			return '%s %s' % (self.prefix,self.currentElement.title)
 							
 class Conversation:
 	def __init__(self,game):
 		self.Game = game
-		self.isActive = False
-		self.currentText = None
+		self.startFrame = None
+		self.currentLineLenght = 100
+		self.text = []
+		
+	def isActive(self):
+		return len(self.text) > 0
 		
 	def setText(self,text):
-		self.currentText = text
+		self.text = text
 		
-	def activate(self):
-		self.isActive = True
+	def resetStartFrame(self):
+		self.startFrame = self.Game.Renderer.Timer.currentFrame
+		
+	def getText(self):
+		if self.startFrame is None:
+			self.resetStartFrame()
+		if len(self.text):
+			if self.Game.Renderer.Timer.currentFrame - self.currentLineLenght == self.startFrame:
+				self.text.pop()
+				if len(self.text) < 1:
+					self.startFrame = None
+					return
+				self.resetStartFrame()
+			return self.text[0]
 
-	def deactivate(self):
-		self.isActive = False
 			
 class Cursor():
 	def __init__(self,game):
@@ -127,6 +118,7 @@ class Cursor():
 		for element in self.Game.currentScene.visibleElements:
 			if(element.rect.collidepoint(pygame.mouse.get_pos())):
 				self.Game.TitleManager.setElement(element)
+				self.Game.TitleManager.setPrefix(self.getCursor())
 				self.currentElement = element
 				if self.getCursor() == 'DEFAULT':
 					self.setCursor(1)
