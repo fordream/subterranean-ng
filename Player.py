@@ -34,10 +34,6 @@ class Player:
 			'ew':self.loadFrames('east','walk',8),
 			'ww':self.loadFrames('west','walk',8)
 		}
-		
-		#self.directions['ew'] = [self.loadFrame('east','stand','1'),self.loadFrame('east','stand','1')]
-		#self.directions['ww'] = [self.loadFrame('west','stand','1'),self.loadFrame('west','stand','1')]
-
 		self.pos = (0,0)
 		self.renderPos = (0,0)
 		self.walking = False
@@ -73,6 +69,7 @@ class Player:
 			return False
 
 	def walkTo(self,(x,y),callbackMethod=None,argument=None):
+		print callbackMethod
 		if callbackMethod is not None and argument is not None:
 			self.callbackMethod = callbackMethod
 			self.argument = argument
@@ -118,19 +115,22 @@ class Player:
 		return self.frameKey
 		
 	def getCurrentFrame(self):
-		if self.walking:
-			state = 'w'
-		else:
-			state = 's'
-			
-		sequence = self.directions.get('%s%s' % (self.getDirection(),state))
-		if sequence is not None:
-			#FIXME: Buggar ur pga ej återställd 
-			try:
-				currentFrame = sequence[self.getFrameKey(sequence)]
-			except IndexError:
-				currentFrame = sequence[0]
-		return currentFrame
+		if not self.Game.paused:
+			if self.walking:
+				state = 'w'
+			else:
+				state = 's'
+				
+			sequence = self.directions.get('%s%s' % (self.getDirection(),state))
+			if sequence is not None:
+				#FIXME: Bugging
+				try:
+					currentFrame = sequence[self.getFrameKey(sequence)]
+				except IndexError:
+					currentFrame = sequence[0]
+	
+			self.currentFrame = currentFrame
+		return self.currentFrame
 
 	def getRenderPos(self):
 		return self.renderPos
@@ -186,6 +186,9 @@ class Player:
 	def use(self,widget):
 		if self.inRange(widget):
 			print "Used",widget.getTitle()
+			
+	def look(self,element):
+		self.say(element.getLookResponse())
 
 	def talk(self,person):
 		if self.inRange(person):

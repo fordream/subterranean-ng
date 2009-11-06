@@ -56,6 +56,7 @@ class Renderer:
 		   	'DEFAULT': pygame.image.load(os.path.join('data','cursors','cursor_default.png')),
 		   	'USE': pygame.image.load(os.path.join('data','cursors','cursor_use.png')),
 		   	'PICKUP': pygame.image.load(os.path.join('data','cursors','cursor_pickup.png')),
+		   	'LOOK': pygame.image.load(os.path.join('data','cursors','cursor_look.png')),
 		   	'TALK': pygame.image.load(os.path.join('data','cursors','cursor_talk.png'))
 	   	}
 		
@@ -67,8 +68,10 @@ class Renderer:
 	def loadFonts(self):
 		pygame.font.init()
 		self.defaultFontColor = (255,255,255)
+		self.defaultTitleColor = (239,240,173)
 		self.defaultOutlineFontColor = (0,0,0)
 		self.generalFont = pygame.font.Font(os.path.join('data','fonts','prviking.ttf'),20)
+		self.elementTitleFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),22)
 		self.elementFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),12)
 		self.symbolFont = pygame.font.Font(os.path.join('data','fonts','prvikingsymbols.ttf'),18)
 
@@ -86,12 +89,15 @@ class Renderer:
 			#Draw room objects
 			for element in self.Game.currentScene.visibleElements:
 				self.screen.blit(element.image,element.getPosition())
-				text = self.elementFont.render(element.title,1,self.defaultFontColor)
-				self.screen.blit(text,element.getBasePosition())
 		
 			#Draw main character
 			self.screen.blit(self.Game.Player.getCurrentFrame(),self.Game.Player.getRenderPos())
-		
+
+		#Draw element titles
+		if self.Game.TitleManager.currentElement is not None:
+			elementTitle = self.elementTitleFont.render(self.Game.TitleManager.getTitle(),1,self.defaultTitleColor)
+			self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))
+
 		#Draw conversations
 		if self.Game.Conversation.isActive:
 			s = time()
@@ -102,16 +108,15 @@ class Renderer:
 			text = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultFontColor)
 			textOutline = self.generalFont.render(self.Game.Conversation.currentText,1,self.defaultOutlineFontColor)
 			
-			self.screen.blit(textOutline,(posX,posY-1))
-			self.screen.blit(textOutline,(posX+1,posY))
-			self.screen.blit(textOutline,(posX-1,posY))
-			self.screen.blit(textOutline,(posX,posY+1))
+			self.screen.blit(textOutline,(posX,posY-2))
+			self.screen.blit(textOutline,(posX+2,posY))
+			self.screen.blit(textOutline,(posX-2,posY))
+			self.screen.blit(textOutline,(posX,posY+2))
 			self.screen.blit(text,(posX,posY))
-
+			
 		#Draw mouse cursor
 		self.Game.Cursor.checkCollisions()
-		self.screen.blit(self.cursors.get(self.Game.Cursor.cursor),pygame.mouse.get_pos())
-    		
+		self.screen.blit(self.cursors.get(self.Game.Cursor.getCursor()),pygame.mouse.get_pos())
     		
 		if self.Game.debug:
 			if len(self.Game.Player.path) > 1:
@@ -236,15 +241,23 @@ class EventManager:
 			eventMethod()
 
 	def readMouseClick(self,event):
-		if self.Game.Cursor.currentElement is not None:
-			pos = self.Game.Cursor.currentElement.getBasePosition()
-			if self.Game.Cursor.currentElement.retrievable:
-				self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
-			elif self.Game.Cursor.currentElement.usable:
-				self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.currentElement)
-			elif self.Game.Cursor.currentElement.isCharacter:
-				self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
+		if event.button == 1:
+			if self.Game.Cursor.currentElement is not None:
+				pos = self.Game.Cursor.currentElement.getBasePosition()
+				if self.Game.Cursor.getCursor() == 'PICKUP':
+					self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
+				elif self.Game.Cursor.getCursor() == 'USE':
+					self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.currentElement)
+				elif self.Game.Cursor.getCursor() == 'TALK':
+					self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
+				elif self.Game.Cursor.getCursor() == 'LOOK':
+					self.Game.Player.look(self.Game.Cursor.currentElement)
+				else:
+					exit("Uknkown cursor")
 			else:
-				print self.Game.Cursor.currentElement.debugMessage
-		else:
-			self.Game.Player.walkTo(pygame.mouse.get_pos())
+				self.Game.Player.walkTo(pygame.mouse.get_pos())
+		elif event.button == 3:
+			self.Game.Inventory.toggle()
+		elif (event.button == 4 or event.button == 5) and self.Game.Cursor.currentElement is not None:
+			self.Game.Cursor.scrollCursor(event.button)
+			return

@@ -2,14 +2,16 @@ import os,pygame
 from Constants import *
 from Player import Player
 from Engines import Renderer,AudioController,EventManager,Timer
-from Interfaces import Conversation,Cursor,Inventory,Menu
+from Interfaces import Conversation,Cursor,Inventory,ActionMenu,TitleManager
 
 class Game:
 	def __init__(self,arguments):
 		self.debug = False;
 		self.running = True;
+		self.paused = False
 		self.currentScene = None;
 
+		self.TitleManager = TitleManager(self)
 		self.Cursor = Cursor(self)
 		self.Renderer = Renderer(self)
 		self.Inventory = Inventory(self)
@@ -32,6 +34,13 @@ class Game:
 			if argument in arguments:
 				argumentMethod = avalibleArguments.get(argument)
 				argumentMethod()
+
+	def pause(self):
+		#TODO: Fix later
+		self.paused = False
+
+	def unpause(self):
+		self.paused = False
 	
 	def loop(self):
 		while self.running:

@@ -11,7 +11,7 @@ class Room(Scene):
 		self.setInsertPoint((0,300))
 
 		wastebin = VisibleElement()
-		wastebin.setTitle("Wastebin")
+		wastebin.setTitle("Wastebin of the frozen throne!")
 		wastebin.setImage('wastebin.png')	
 		wastebin.setPosition((650,550))	
 		wastebin.setDebugText("USE THE BIN")	

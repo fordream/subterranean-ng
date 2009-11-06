@@ -11,7 +11,8 @@ class Scene:
 		self.hiddenElements = []
 		self.mapData = []
 		self.insertPoint = ()
-
+		self.backgroundImage = None
+		
 	def getName(self,sceneName):
 		self.name = sceneName
 		

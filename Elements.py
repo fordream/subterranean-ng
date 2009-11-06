@@ -24,6 +24,9 @@ class VisibleElement(Element):
 		self.retrievable = False
 		self.usable = False
 		self.isCharacter = False
+		self.lookResponse = None
+		self.useResponse = None
+		self.useResponse = None
 
 	def setImage(self,fileName):
 		self.image = pygame.image.load(os.path.join('data','elements',fileName))
@@ -53,6 +56,12 @@ class VisibleElement(Element):
 
 	def setCharacter(self,status):
 		self.isCharacter = status
+		
+	def setLookResponse(self,response):
+		self.lookResponse = response
+
+	def getLookResponse(self):
+		return self.lookResponse
 		
 class AnimatedElement(VisibleElement):
 	def __init__(self):
