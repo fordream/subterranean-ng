@@ -29,7 +29,7 @@ class Room(Scene):
         potion.setTitle('A love potion')
         potion.setImage('potion.png')
         potion.setPosition((500,610))
-        self.addVisibleElement(potion)        
+        self.Game.Inventory.addItem(potion)                
 
         chili = VisibleElement()
         chili.setName("chili")

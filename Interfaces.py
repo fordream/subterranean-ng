@@ -22,7 +22,7 @@ class Inventory:
     def arrangeItems(self):
         number = 0
         for item in self.items:
-            item.pos = number*60+10,10
+            item.setX(number*60+10)
             number += 1
                                 
     def show(self):
@@ -57,8 +57,7 @@ class Item:
         self.name = element.name
         self.image = self.loadImage(self.name)
         self.title = element.title
-        self.pos = (0,0)
-        self.rect = self.image.get_rect()
+        self.rect = pygame.Rect(10,10,48,48)
         
     def loadImage(self,name):
         return pygame.image.load(os.path.join('data','items','%s.png' % (name)))
@@ -66,9 +65,15 @@ class Item:
     def getTitle(self,item):
         return 'Foo'
         
+    def setPos(self,pos):
+        self.rect.move(pos)
+        
+    def setX(self,x):
+        self.rect.left = x
+        
     def setY(self,y):
-        self.pos = self.pos[0],y
-            
+        self.rect.top = y
+
 class TitleManager:
     def __init__(self,game):
         self.Game = game

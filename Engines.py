@@ -116,7 +116,7 @@ class Renderer:
         self.Game.Inventory.animateHeight()
         self.screen.blit(self.Game.Inventory.surface,(0,self.Game.Inventory.y))
         for item in self.Game.Inventory.items:
-            self.screen.blit(item.image,item.pos)
+            self.screen.blit(item.image,item.rect)
 
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
@@ -284,7 +284,7 @@ class EventManager:
         self.Game.Inventory.toggle()
         
     def handleScrollClick(self,event):
-        print "CLICKIN MAH SCROLLAH"
+        print "I'M FIRIN MAH SCROLLWHEELZ!"
     
     def handleScrollUp(self,event):
         if self.Game.Cursor.currentElement is not None:
