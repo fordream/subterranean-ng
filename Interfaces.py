@@ -3,6 +3,7 @@ import os,pygame
 class Inventory:
     def __init__(self,game):
         self.Game = game
+        self.currentItem = None
         self.items = []
         self.visible = False
         self.surface = pygame.Surface((1024,68))
@@ -22,8 +23,9 @@ class Inventory:
     def arrangeItems(self):
         number = 0
         for item in self.items:
-            item.setX(number*60+10)
-            number += 1
+            if item.current is False:
+                item.setX(number*60+10)
+                number += 1
                                 
     def show(self):
         self.visible = True
@@ -33,6 +35,20 @@ class Inventory:
         self.visible = False
         self.animating = True
         
+    def setCurrentItem(self,item):
+        if self.currentItem is None:
+            self.currentItem = item
+            self.currentItem.current = True
+            self.arrangeItems()
+
+    def getCurrentItem(self):
+        return self.currentItem
+        
+    def clearCurrentItem(self):
+        self.currentItem.current = False
+        self.currentItem = None
+        self.arrangeItems()
+                    
     def animateHeight(self):
         if self.animating:
             if self.visible and self.y < 0:
@@ -55,6 +71,7 @@ class Inventory:
 class Item:
     def __init__(self,element):
         self.name = element.name
+        self.current = False
         self.image = self.loadImage(self.name)
         self.title = element.title
         self.rect = pygame.Rect(10,10,48,48)
@@ -78,19 +95,33 @@ class TitleManager:
     def __init__(self,game):
         self.Game = game
         self.prefix = ''
+        self.suffix = ''
         self.currentElement = None
+        self.prefixes = {
+            'USE':'Use',    
+            'PICKUP':'Pick up',
+            'TALK':'Talk to',
+            'LOOK':'Look at',
+            'GIVE':'Give',
+            'COMBINE':'Combine'
+        }
+
+        self.suffixes = {
+            'WITH':'with',    
+            'TO':'to'
+        }
         
     def setPrefix(self,prefix=None):
-        if prefix == 'USE':
-            self.prefix = 'Use'
-        elif prefix == 'PICKUP':
-            self.prefix = 'Pick up'
-        elif prefix == 'TALK':
-            self.prefix = 'Talk to'
-        elif prefix == 'LOOk':
-            self.prefix = 'Look at'
+        if prefix in self.prefixes:
+            self.prefix = self.prefixes.get(prefix)
         else:
             self.prefix = ''
+
+    def setSuffix(self,suffix=None):
+        if suffix in self.suffixes:
+            self.suffix = self.suffixes.get(suffix)
+        else:
+            self.suffix = ''
                     
     def setElement(self,element):
         self.currentElement = element
@@ -101,7 +132,10 @@ class TitleManager:
         
     def getTitle(self):
         if self.currentElement is not None:
-            return '%s %s' % (self.prefix,self.currentElement.title)
+            if self.prefix == 'Combine' or self.prefix == 'Give':
+                return '%s %s %s %s' % (self.prefix,self.Game.Inventory.currentItem.title,self.suffix,self.currentElement.title)
+            else:
+                return '%s %s' % (self.prefix,self.currentElement.title)
                             
 class Conversation:
     def __init__(self,game):
@@ -136,29 +170,51 @@ class Cursor():
     def __init__(self,game):
         self.Game = game
         self.currentElement = None;
-        self.cursors = ['DEFAULT','USE','PICKUP','TALK','LOOK']
-        self.cursorIndex = None
-        self.setCursor(0)
+        self.currentItem = None
+        self.cursorName = None
+        self.currentCursor = None
+
+        self.cursors = {
+            'DEFAULT': pygame.image.load(os.path.join('data','cursors','cursor_default.png')),
+            'USE': pygame.image.load(os.path.join('data','cursors','cursor_use.png')),
+            'PICKUP': pygame.image.load(os.path.join('data','cursors','cursor_pickup.png')),
+            'LOOK': pygame.image.load(os.path.join('data','cursors','cursor_look.png')),
+            'TALK': pygame.image.load(os.path.join('data','cursors','cursor_talk.png'))
+        }
+        self.setCursor('DEFAULT')
      
-    def setCursor(self,cursorIndex):
-        if self.cursors[cursorIndex] is not None:
-            self.cursorIndex = cursorIndex
+    def setCursor(self,cursorName):
+        if cursorName in self.cursors:
+            self.cursorName = cursorName
+            self.currentCursor = self.cursors[cursorName]
             
     def getCursor(self):
-        return self.cursors[self.cursorIndex]
+        if self.Game.Inventory.currentItem is not None:
+            return self.Game.Inventory.currentItem.image
+        else:
+            return self.currentCursor
+            
+    def getCursorName(self):
+        return self.cursorName
         
     def nextCursor(self):
-        if self.cursorIndex < len(self.cursors)-1:
-            return self.cursorIndex + 1
+        keys = self.cursors.keys()
+        cursorIndex = keys.index(self.cursorName)
+        print cursorIndex
+        if cursorIndex < len(self.cursors)-1:
+            self.setCursor(keys[cursorIndex + 1])
         else:
-            return 0
+            self.setCursor("USE")
 
     def previousCursor(self):
-        if self.cursorIndex > 1:
-            return self.cursorIndex-1
+        keys = self.cursors.keys()
+        cursorIndex = keys.index(self.cursorName)
+        print cursorIndex
+        if cursorIndex >  1:
+            self.setCursor(keys[cursorIndex - 1])
         else:
-            return len(self.cursors)-1
-                    
+            self.setCursor(keys[-1])
+                                
     def scrollCursor(self,direction):
         if direction == 4:
             self.setCursor(self.nextCursor())
@@ -170,19 +226,30 @@ class Cursor():
             for element in self.Game.currentScene.visibleElements:
                 if(element.rect.collidepoint(pygame.mouse.get_pos())):
                     self.Game.TitleManager.setElement(element)
-                    self.Game.TitleManager.setPrefix(self.getCursor())
+                    self.Game.TitleManager.setPrefix(self.getCursorName())
                     self.currentElement = element
-                    if self.getCursor() == 'DEFAULT':
-                        self.setCursor(1)
+                    if self.getCursorName() == 'DEFAULT':
+                        self.setCursor('USE')
                     return self.currentElement
         else:
             for item in self.Game.Inventory.items:
+                print item.rect
                 if(item.rect.collidepoint(pygame.mouse.get_pos())):
-                    self.Game.TitleManager.setElement(item)
-                    self.Game.TitleManager.setPrefix('USE')
-                    self.setCursor(1)
-                    return item
+                    if self.Game.Inventory.currentItem is not None and item.current is False:
+                        print item.name
+                        self.Game.TitleManager.setElement(item)
+                        self.Game.TitleManager.setPrefix('COMBINE')
+                        self.Game.TitleManager.setSuffix('WITH')
+                        self.currentItem = item
+                        return item
+                
+                    elif(item.rect.collidepoint(pygame.mouse.get_pos())):
+                        self.Game.TitleManager.setElement(item)
+                        self.Game.TitleManager.setPrefix('USE')
+                        self.setCursor('USE')
+                        self.currentItem = item
+                        return item
 
         self.Game.TitleManager.clearElement()
-        self.setCursor(0)
+        self.setCursor('DEFAULT')
         self.currentElement = None;

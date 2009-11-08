@@ -33,7 +33,6 @@ class Renderer:
         self.setupScreen(False)
         self.loadIcon()
         self.loadFonts()
-        self.loadCursors()
         self.loadGraphics()
         self.setupTimer()
         self.frame = 0
@@ -49,15 +48,6 @@ class Renderer:
         else:
             self.screen = pygame.display.set_mode((1025,768))
         pygame.display.set_caption('Subterranean')
-
-    def loadCursors(self):
-        self.cursors = {
-            'DEFAULT': pygame.image.load(os.path.join('data','cursors','cursor_default.png')),
-            'USE': pygame.image.load(os.path.join('data','cursors','cursor_use.png')),
-            'PICKUP': pygame.image.load(os.path.join('data','cursors','cursor_pickup.png')),
-            'LOOK': pygame.image.load(os.path.join('data','cursors','cursor_look.png')),
-            'TALK': pygame.image.load(os.path.join('data','cursors','cursor_talk.png'))
-        }
         
     def loadGraphics(self):
         #self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
@@ -116,11 +106,12 @@ class Renderer:
         self.Game.Inventory.animateHeight()
         self.screen.blit(self.Game.Inventory.surface,(0,self.Game.Inventory.y))
         for item in self.Game.Inventory.items:
-            self.screen.blit(item.image,item.rect)
+            if item.current is False:
+                self.screen.blit(item.image,item.rect)
 
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
-        self.screen.blit(self.cursors.get(self.Game.Cursor.getCursor()),pygame.mouse.get_pos())
+        self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
             
         if self.Game.debug:
             if len(self.Game.Player.path) > 1:
@@ -265,23 +256,31 @@ class EventManager:
         if pygame.mouse.get_pos()[1] > 70:
             if self.Game.Cursor.currentElement is not None:
                 pos = self.Game.Cursor.currentElement.getBasePosition()
-                if self.Game.Cursor.getCursor() == 'PICKUP':
+                if self.Game.Cursor.getCursorName() == 'PICKUP':
                     self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
-                elif self.Game.Cursor.getCursor() == 'USE':
+                elif self.Game.Cursor.getCursorName() == 'USE':
                     self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.currentElement)
-                elif self.Game.Cursor.getCursor() == 'TALK':
+                elif self.Game.Cursor.getCursorName() == 'TALK':
                     self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
-                elif self.Game.Cursor.getCursor() == 'LOOK':
+                elif self.Game.Cursor.getCursorName() == 'LOOK':
                     self.Game.Player.look(self.Game.Cursor.currentElement)
-                else:
-                    exit("Uknkown cursor")
+                elif self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
+                    print "GIEF!"
             else:
                 self.Game.Player.walkTo(pygame.mouse.get_pos())
         else:
-            print "INVANTARA"
+            if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
+                self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
+            elif self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is not None and self.Game.Cursor.currentItem.current is False:
+                print self.Game.Cursor.currentItem.name
+                print "COMBINE!"
+            else:
+                self.Game.Inventory.clearCurrentItem()
     
     def handleRightClick(self,event):
-        self.Game.Inventory.toggle()
+#        self.Game.Inventory.toggle()
+        if self.Game.Inventory.getCurrentItem() is not None:
+            self.Game.Inventory.clearCurrentItem()
         
     def handleScrollClick(self,event):
         print "I'M FIRIN MAH SCROLLWHEELZ!"

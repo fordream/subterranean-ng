@@ -26,14 +26,14 @@ class Room(Scene):
 
         potion = VisibleElement()
         potion.setName("potion")
-        potion.setTitle('A love potion')
+        potion.setTitle('Love potion')
         potion.setImage('potion.png')
         potion.setPosition((500,610))
         self.Game.Inventory.addItem(potion)                
 
         chili = VisibleElement()
         chili.setName("chili")
-        chili.setTitle('A hot chili')
+        chili.setTitle('Hot chili')
         chili.setImage('chili.png')   
         chili.setPosition((470,610))
         self.Game.Inventory.addItem(chili)                
