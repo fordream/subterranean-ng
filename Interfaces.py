@@ -5,20 +5,46 @@ class Inventory:
         self.Game = game
         self.items = []
         self.visible = False
-        self.surface = pygame.Surface((1024,70))
-        self.surface.fill((25,25,25))
-        self.pos = (0,0)
-        
-    def addItem(self,item):
-        self.items.append(item)
+        self.surface = pygame.Surface((1024,68))
+        self.rect = self.surface.get_rect()
+        self.surface.fill((25,25,25),self.rect)
+        self.surface.set_alpha(145)
+        self.animating = False
+        self.y = -70
+        self.spacing = 10
 
+    def addItem(self,element):
+        self.items.append(Item(element))
+        self.arrangeItems()
+        self.y = 0
+        self.hide()
+        
+    def arrangeItems(self):
+        number = 0
+        for item in self.items:
+            item.pos = number*60+10,10
+            number += 1
+                                
     def show(self):
-        self.Game.pause()
         self.visible = True
+        self.animating = True
 
     def hide(self):
-        self.Game.unpause()
         self.visible = False
+        self.animating = True
+        
+    def animateHeight(self):
+        if self.animating:
+            if self.visible and self.y < 0:
+                self.y+=10
+                for item in self.items:
+                    item.setY(self.y+10)
+            elif not self.visible and self.y > -70:
+                self.y-=10
+                for item in self.items:
+                    item.setY(self.y+10)
+            else:
+                self.animating = False
         
     def toggle(self):
         if self.visible:
@@ -26,13 +52,30 @@ class Inventory:
         else:
             self.show()
             
+class Item:
+    def __init__(self,element):
+        self.name = element.name
+        self.image = self.loadImage(self.name)
+        self.title = element.title
+        self.pos = (0,0)
+        self.rect = self.image.get_rect()
+        
+    def loadImage(self,name):
+        return pygame.image.load(os.path.join('data','items','%s.png' % (name)))
+        
+    def getTitle(self,item):
+        return 'Foo'
+        
+    def setY(self,y):
+        self.pos = self.pos[0],y
+            
 class TitleManager:
     def __init__(self,game):
         self.Game = game
-        self.prefix = None
+        self.prefix = ''
         self.currentElement = None
         
-    def setPrefix(self,prefix):
+    def setPrefix(self,prefix=None):
         if prefix == 'USE':
             self.prefix = 'Use'
         elif prefix == 'PICKUP':
@@ -41,12 +84,15 @@ class TitleManager:
             self.prefix = 'Talk to'
         elif prefix == 'LOOk':
             self.prefix = 'Look at'
+        else:
+            self.prefix = ''
                     
     def setElement(self,element):
         self.currentElement = element
 
     def clearElement(self):
         self.currentElement = None
+        self.prefix = ''
         
     def getTitle(self):
         if self.currentElement is not None:
@@ -115,14 +161,22 @@ class Cursor():
             self.setCursor(self.previousCursor())
             
     def checkCollisions(self):
-        for element in self.Game.currentScene.visibleElements:
-            if(element.rect.collidepoint(pygame.mouse.get_pos())):
-                self.Game.TitleManager.setElement(element)
-                self.Game.TitleManager.setPrefix(self.getCursor())
-                self.currentElement = element
-                if self.getCursor() == 'DEFAULT':
+        if pygame.mouse.get_pos()[1] > 70:        
+            for element in self.Game.currentScene.visibleElements:
+                if(element.rect.collidepoint(pygame.mouse.get_pos())):
+                    self.Game.TitleManager.setElement(element)
+                    self.Game.TitleManager.setPrefix(self.getCursor())
+                    self.currentElement = element
+                    if self.getCursor() == 'DEFAULT':
+                        self.setCursor(1)
+                    return self.currentElement
+        else:
+            for item in self.Game.Inventory.items:
+                if(item.rect.collidepoint(pygame.mouse.get_pos())):
+                    self.Game.TitleManager.setElement(item)
+                    self.Game.TitleManager.setPrefix('USE')
                     self.setCursor(1)
-                return
+                    return item
 
         self.Game.TitleManager.clearElement()
         self.setCursor(0)

@@ -69,7 +69,6 @@ class Player:
             return False
 
     def walkTo(self,(x,y),callbackMethod=None,argument=None):
-        print callbackMethod
         if callbackMethod is not None and argument is not None:
             self.callbackMethod = callbackMethod
             self.argument = argument

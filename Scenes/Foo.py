@@ -12,17 +12,31 @@ class Room(Scene):
         self.talkedToWorm = False
 
         wastebin = VisibleElement()
+        wastebin.setName("wastebin")
         wastebin.setTitle('Wastebin of the frozen throne!')
         wastebin.setImage('wastebin.png')   
         wastebin.setPosition((650,550)) 
-        wastebin.setDebugText('USE THE BIN')    
-        wastebin.setUsable(True)    
         self.addVisibleElement(wastebin)
             
         worm = VisibleElement()
+        worm.setName("worm")
         worm.setTitle('Worm')
         worm.setImage('worm.png')   
         worm.setPosition((550,610))         
+
+        potion = VisibleElement()
+        potion.setName("potion")
+        potion.setTitle('A love potion')
+        potion.setImage('potion.png')
+        potion.setPosition((500,610))
+        self.addVisibleElement(potion)        
+
+        chili = VisibleElement()
+        chili.setName("chili")
+        chili.setTitle('A hot chili')
+        chili.setImage('chili.png')   
+        chili.setPosition((470,610))
+        self.Game.Inventory.addItem(chili)                
 
         def wormLook():
             self.Game.Player.say('Det aer en orm!')
@@ -36,6 +50,7 @@ class Room(Scene):
             
         worm.setLookMethod(wormLook)
         worm.setTalkMethod(wormTalk)
+        
         self.addVisibleElement(worm)        
         self.show()
         

@@ -3,8 +3,15 @@ import os,pygame
 class Element:
     def __init__(self):
         self.debugMessage = self.__class__.__name__
+        self.name = None
         self.title = None
         
+    def setName(self,name):
+        self.name = name
+
+    def getName(self):
+        return self.name 
+                
     def setTitle(self,title):
         self.title = title
 

@@ -113,8 +113,10 @@ class Renderer:
             self.screen.blit(text,(posX,posY))
             
         #Draw inventory
-        if self.Game.Inventory.visible:
-            self.screen.blit(self.Game.Inventory.surface,self.Game.Inventory.pos)
+        self.Game.Inventory.animateHeight()
+        self.screen.blit(self.Game.Inventory.surface,(0,self.Game.Inventory.y))
+        for item in self.Game.Inventory.items:
+            self.screen.blit(item.image,item.pos)
 
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
@@ -218,19 +220,25 @@ class EventManager:
         self.Game = game
         self.eventSignals = {pygl.QUIT: self.Game.quit,
                             pygl.KEYDOWN: self.readKey,
-                            pygl.MOUSEBUTTONDOWN: self.readMouseClick}
+                            pygl.MOUSEBUTTONDOWN: self.readMouseClick,
+                            pygl.MOUSEMOTION: self.readMousePos}
                             
         self.keySignals = {pygl.K_q: self.Game.quit,
                             pygl.K_ESCAPE: self.Game.quit,
                             pygl.K_m: self.Game.AudioController.toggleMusicPause,
                             pygl.K_l: self.Game.AudioController.toggleMusicVolume,
                             pygl.K_d: self.Game.dump,
-                            pygl.K_f: self.Game.toggleFullscreen
+                            pygl.K_f: self.Game.toggleFullscreen,
+                            pygl.K_i: self.Game.Inventory.toggle
                             }
                             
-        self.mouseSignals = {1: self.Game.quit}
-        
-        
+        self.mouseSignals = {1: self.handleLeftClick,
+                            2: self.handleScrollClick,
+                            3: self.handleRightClick,
+                            4: self.handleScrollDown,
+                            5: self.handleScrollUp
+                            }
+                            
     def checkEvents(self):
         for event in pygame.event.get():
             eventMethod = self.eventSignals.get(event.type)
@@ -241,9 +249,20 @@ class EventManager:
         eventMethod = self.keySignals.get(event.key)
         if eventMethod is not None:
             eventMethod()
-
+            
+    def readMousePos(self,event):
+        if event.pos[1] < 50 and self.Game.Inventory.visible is False:
+            self.Game.Inventory.show()
+        elif event.pos[1] > 50 and self.Game.Inventory.visible:
+            self.Game.Inventory.hide()
+        
     def readMouseClick(self,event):
-        if event.button == 1:
+        eventMethod = self.mouseSignals.get(event.button)
+        if eventMethod is not None:
+            eventMethod(event)
+            
+    def handleLeftClick(self,event):
+        if pygame.mouse.get_pos()[1] > 70:
             if self.Game.Cursor.currentElement is not None:
                 pos = self.Game.Cursor.currentElement.getBasePosition()
                 if self.Game.Cursor.getCursor() == 'PICKUP':
@@ -258,8 +277,19 @@ class EventManager:
                     exit("Uknkown cursor")
             else:
                 self.Game.Player.walkTo(pygame.mouse.get_pos())
-        elif event.button == 3:
-            self.Game.Inventory.toggle()
-        elif (event.button == 4 or event.button == 5) and self.Game.Cursor.currentElement is not None:
+        else:
+            print "INVANTARA"
+    
+    def handleRightClick(self,event):
+        self.Game.Inventory.toggle()
+        
+    def handleScrollClick(self,event):
+        print "CLICKIN MAH SCROLLAH"
+    
+    def handleScrollUp(self,event):
+        if self.Game.Cursor.currentElement is not None:
             self.Game.Cursor.scrollCursor(event.button)
-            return
+    
+    def handleScrollDown(self,event):
+        if self.Game.Cursor.currentElement is not None:
+            self.Game.Cursor.scrollCursor(event.button)
