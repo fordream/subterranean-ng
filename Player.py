@@ -38,6 +38,14 @@ class Player:
         self.renderPos = (0,0)
         self.walking = False
         self.talking = False
+        self.standardResponses = {
+            'PICKUP':"I can't pick that up",
+            'PICKUP':"I can't pick that up",
+            'PICKUP':"I can't pick that up",
+            'PICKUP':"I can't pick that up",        
+        }
+        
+        self.textColor = (255,96,168)
         
         self.path = []
         
@@ -69,15 +77,16 @@ class Player:
             return False
 
     def walkTo(self,(x,y),callbackMethod=None,argument=None):
-        if callbackMethod is not None and argument is not None:
-            self.callbackMethod = callbackMethod
-            self.argument = argument
-        if not self.walking:
-            if self.findPath(x,y):
-                self.resetStartFrame()
-                self.walking = True
-            else:
-                print "No avalible tiles at",x,y
+        if not self.Game.paused:
+            if callbackMethod is not None and argument is not None:
+                self.callbackMethod = callbackMethod
+                self.argument = argument
+            if not self.walking:
+                if self.findPath(x,y):
+                    self.resetStartFrame()
+                    self.walking = True
+                else:
+                    print "No avalible tiles at",x,y
         
     def walk(self):
         if len(self.path):
@@ -177,11 +186,13 @@ class Player:
         return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
         
     def pickUp(self,element):
-        if self.inRange(element):
+        if not self.Game.paused and self.inRange(element):
             self.Game.currentScene.visibleElements.remove(element)
             self.Game.Inventory.addItem(element)
             if element.pickupMethod is not None:
                 element.pickupMethod()
+        else:
+            say(self.standardResponses['PICKUP'])
         
     def use(self,element):
         if self.inRange(element) and element.useMethod is not None:
@@ -195,5 +206,14 @@ class Player:
         if self.inRange(element) and element.talkMethod is not None:
             element.talkMethod()
             
+    def randomTalk(self):
+        self.say("Here I am, talking to myself again.")
+        
+    def getTextPos(self):
+        return (self.renderPos[0]-20,self.renderPos[1]-30)
+
+    def getTextColor(self):
+        return self.textColor
+        
     def say(self,text):
-        self.Game.Conversation.setText(text)
+        self.Game.ConversationManager.addPart(self,text)

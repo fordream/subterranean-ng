@@ -8,21 +8,40 @@ class Room(Scene):
         Scene.__init__(self,self.Game)
         self.setBackground('foo.jpg')
         self.setMap('Foo.map')
-        self.setInsertPoint((0,300))
+        self.setInsertPoint((334,416))
         self.talkedToWorm = False
 
         wastebin = VisibleElement()
         wastebin.setName("wastebin")
         wastebin.setTitle('Wastebin of the frozen throne!')
         wastebin.setImage('wastebin.png')   
-        wastebin.setPosition((650,550)) 
+        wastebin.setPosition((652,365)) 
         self.addVisibleElement(wastebin)
+        
+        fire = VisibleElement()
+        fire.setName("fire")
+        fire.setTitle('Fire')
+        fire.setImage('fire.png')
+        fire.setPosition((537,275))   
+
+        
+        def fireLook():
+            self.Game.Player.say("A cozy fire...")
+
+        def fireUse():
+            self.Game.Player.say("Ouch!")
+
+            
+        fire.setLookMethod(fireLook)
+        fire.setUseMethod(fireUse)
+
+        self.addVisibleElement(fire)
             
         worm = VisibleElement()
         worm.setName("worm")
         worm.setTitle('Worm')
-        worm.setImage('worm.png')   
-        worm.setPosition((550,610))         
+        worm.setImage('worm.png')
+        worm.setPosition((434,446))         
 
         potion = VisibleElement()
         potion.setName("potion")
@@ -39,14 +58,14 @@ class Room(Scene):
         self.Game.Inventory.addItem(chili)                
 
         def wormLook():
-            self.Game.Player.say('Det aer en orm!')
+            self.Game.Player.say(["It's a worm. "])
             
         def wormTalk():
             if self.talkedToWorm is False:
-                self.Game.Player.say(['Hej din gamle mask','ROFLPWmN','LAR TEH GAR'])
+                self.Game.Player.say('Hej din gamle mask')
                 self.talkedToWorm = True
             else:
-                self.Game.Player.say(['Hej igen'])
+                self.Game.Player.say('Hej igen')
             
         worm.setLookMethod(wormLook)
         worm.setTalkMethod(wormTalk)

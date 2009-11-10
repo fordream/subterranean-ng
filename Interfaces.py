@@ -136,35 +136,63 @@ class TitleManager:
                 return '%s %s %s %s' % (self.prefix,self.Game.Inventory.currentItem.title,self.suffix,self.currentElement.title)
             else:
                 return '%s %s' % (self.prefix,self.currentElement.title)
-                            
-class Conversation:
+
+class ConversationPart:
+    def __init__(self,actor,text):
+        self.actor = actor
+        self.text = text
+                           
+class ConversationManager:
     def __init__(self,game):
         self.Game = game
         self.startFrame = None
+        self.currentSpeaker = None
         self.currentLineLenght = 100
-        self.text = []
+        self.textPos = (0,0)
+        self.script = []
+        self.currentColor = (255,255,255)
+        
+    def setColor(self,color):
+        self.currentColor = color
         
     def isActive(self):
-        return len(self.text) > 0
-        
-    def setText(self,text):
-        self.text = text
+        return len(self.script) > 0
+
+    def setSpeaker(self,speaker):
+        self.speaker = speaker
+
+    def getSpeaker(self):
+        return self.speaker
+                
+    def setTextPos(self,pos):
+        self.textPos = pos
+
+    def getTextPos(self):
+        return self.textPos
+
+    def addPart(self,actor,text):
+        self.script.append(ConversationPart(actor,text))
         
     def resetStartFrame(self):
         self.startFrame = self.Game.Renderer.Timer.currentFrame
-        
+                
     def getText(self):
+#        self.Game.paused = True
         if self.startFrame is None:
             self.resetStartFrame()
-        if len(self.text):
+        if len(self.script):
             if self.Game.Renderer.Timer.currentFrame - self.currentLineLenght == self.startFrame:
-                self.text.pop()
-                if len(self.text) < 1:
+                self.script.pop()
+                if len(self.script) < 1:
                     self.startFrame = None
-                    return
+#                   self.Game.unpause()
                 self.resetStartFrame()
-            return self.text[0]
-
+            else:
+                self.setColor(self.script[0].actor.getTextColor())
+                self.setTextPos(self.script[0].actor.getTextPos())
+                return self.script[0].text
+        else:
+            self.Game.unpause()
             
 class Cursor():
     def __init__(self,game):
@@ -200,7 +228,6 @@ class Cursor():
     def nextCursor(self):
         keys = self.cursors.keys()
         cursorIndex = keys.index(self.cursorName)
-        print cursorIndex
         if cursorIndex < len(self.cursors)-1:
             self.setCursor(keys[cursorIndex + 1])
         else:
@@ -209,7 +236,6 @@ class Cursor():
     def previousCursor(self):
         keys = self.cursors.keys()
         cursorIndex = keys.index(self.cursorName)
-        print cursorIndex
         if cursorIndex >  1:
             self.setCursor(keys[cursorIndex - 1])
         else:
@@ -233,10 +259,8 @@ class Cursor():
                     return self.currentElement
         else:
             for item in self.Game.Inventory.items:
-                print item.rect
                 if(item.rect.collidepoint(pygame.mouse.get_pos())):
                     if self.Game.Inventory.currentItem is not None and item.current is False:
-                        print item.name
                         self.Game.TitleManager.setElement(item)
                         self.Game.TitleManager.setPrefix('COMBINE')
                         self.Game.TitleManager.setSuffix('WITH')

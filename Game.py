@@ -2,7 +2,7 @@ import os,pygame
 from Constants import *
 from Player import Player
 from Engines import Renderer,AudioController,EventManager,Timer
-from Interfaces import Conversation,Cursor,Inventory,TitleManager
+from Interfaces import ConversationManager,Cursor,Inventory,TitleManager
 
 class Game:
     def __init__(self,arguments):
@@ -17,9 +17,9 @@ class Game:
         self.Renderer = Renderer(self)
         self.Inventory = Inventory(self)
         self.AudioController = AudioController(self)
-        self.Conversation = Conversation(self)
-        self.EventManager = EventManager(self)
+        self.ConversationManager = ConversationManager(self)
         self.Player = Player(self)
+        self.EventManager = EventManager(self)
 
         self.loadScene("someScene")
         self.parseArguments(arguments)

@@ -59,10 +59,10 @@ class Renderer:
         self.defaultFontColor = (255,255,255)
         self.defaultTitleColor = (239,240,173)
         self.defaultOutlineFontColor = (0,0,0)
-        self.generalFont = pygame.font.Font(os.path.join('data','fonts','prviking.ttf'),20)
+        self.generalFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),22)
         self.elementTitleFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),22)
         self.elementFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),12)
-        self.symbolFont = pygame.font.Font(os.path.join('data','fonts','prvikingsymbols.ttf'),18)
+        self.symbolFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),18)
 
     def loadIcon(self):
         pygame.display.set_icon(pygame.image.load(os.path.join('data','icons','gameicon.png')))
@@ -89,18 +89,20 @@ class Renderer:
             self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))
 
         #Draw conversations
-        if self.Game.Conversation.isActive():
-            posX = 50
-            posY = 700
+        if self.Game.ConversationManager.isActive():
+            posX = self.Game.ConversationManager.getTextPos()[0];
+            posY = self.Game.ConversationManager.getTextPos()[1];
+
             
-            text = self.generalFont.render(self.Game.Conversation.getText(),1,self.defaultFontColor)
-            textOutline = self.generalFont.render(self.Game.Conversation.getText(),1,self.defaultOutlineFontColor)
-            
-            self.screen.blit(textOutline,(posX,posY-2))
-            self.screen.blit(textOutline,(posX+2,posY))
-            self.screen.blit(textOutline,(posX-2,posY))
-            self.screen.blit(textOutline,(posX,posY+2))
-            self.screen.blit(text,(posX,posY))
+            text = self.generalFont.render(self.Game.ConversationManager.getText(),1,self.Game.ConversationManager.currentColor)
+            textOutline = self.generalFont.render(self.Game.ConversationManager.getText(),1,self.defaultOutlineFontColor)
+
+
+            self.screen.blit(textOutline,(posX-text.get_width()/3,posY-2))
+            self.screen.blit(textOutline,(posX-text.get_width()/3+2,posY))
+            self.screen.blit(textOutline,(posX-text.get_width()/3-2,posY))
+            self.screen.blit(textOutline,(posX-text.get_width()/3,posY+2))
+            self.screen.blit(text,(posX-text.get_width()/3,posY))            
             
         #Draw inventory
         self.Game.Inventory.animateHeight()
@@ -136,12 +138,14 @@ class AudioController:
         self.currentAmbienceTrack = None        
         self.speechChannel = pygame.mixer.Channel(3)
         self.musicTracks = {
-            'FOO':os.path.join('data','music','default.ogg')
+            'FOO':os.path.join('data','music','default.ogg'),
+            'THEME':os.path.join('data','music','theme.ogg'),
+            'NOTEXPECTED':os.path.join('data','music','notexpected.ogg')
         }
         self.ambienceTracks = {
             
         }
-        self.playMusic('FOO')
+        self.playMusic('NOTEXPECTED')
 
     def playMusic(self,trackName):
         if self.musicEnabled and trackName in self.musicTracks:
@@ -161,7 +165,7 @@ class AudioController:
         if self.musicVolume == 'normal':
             self.decreaseMusicVolume()
         else:
-            self.restoreMusicVolume()
+            self.restoreMusicVolume()    
         
     def decreaseMusicVolume(self):
         pygame.mixer.music.set_volume(0.2)
@@ -220,7 +224,7 @@ class EventManager:
                             pygl.K_l: self.Game.AudioController.toggleMusicVolume,
                             pygl.K_d: self.Game.dump,
                             pygl.K_f: self.Game.toggleFullscreen,
-                            pygl.K_i: self.Game.Inventory.toggle
+                            pygl.K_t: self.Game.Player.randomTalk
                             }
                             
         self.mouseSignals = {1: self.handleLeftClick,

@@ -35,6 +35,13 @@ class VisibleElement(Element):
         self.lookMethod = None
         self.pickupMethod = None
         self.talkMethod = None
+        self.textColor = (255,255,255)
+
+    def setTextColor(self,color):
+        self.textColor = color
+                
+    def getTextPos(self):
+        return (self.pos[0]-20,self.pos[1]-30)
 
     def setImage(self,fileName):
         self.image = pygame.image.load(os.path.join('data','elements',fileName))
