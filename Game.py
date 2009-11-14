@@ -1,4 +1,4 @@
-import os,pygame
+import os,sys,pygame
 from Constants import *
 from Player import Player
 from Engines import Renderer,AudioController,EventManager,Timer
@@ -53,8 +53,9 @@ class Game:
         from Scenes.Foo import Room
         self.currentScene = Room(self)
         
-    def quit(self):
+    def quit(self,event):
         self.running = False
+        sys.exit()
 
     def run(self):
         self.loop()
