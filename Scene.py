@@ -7,8 +7,8 @@ class Scene:
         self.visible = False
         self.name = None
         self.mapFileName = None
-        self.visibleElements = []
-        self.hiddenElements = []
+        self.visibleElements = pygame.sprite.Group()
+        self.hiddenElements = pygame.sprite.Group()
         self.mapData = []
         self.insertPoint = ()
         self.backgroundImage = None
@@ -26,7 +26,7 @@ class Scene:
         self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds',backgroundImage)).convert()
         
     def addVisibleElement(self,element):
-        self.visibleElements.append(element)
+        self.visibleElements.add(element)
         
     def setInsertPoint(self,pos):
         #TODO: Check that it is a valid placement on the map

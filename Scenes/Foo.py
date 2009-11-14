@@ -1,3 +1,4 @@
+#-coding:utf-8-
 from Scene import Scene
 from Elements import Element,VisibleElement,AnimatedElement,Area,Puzzle,Character,Widget
 
@@ -16,7 +17,7 @@ class Room(Scene):
         wastebin.setTitle('Wastebin of the frozen throne!')
         wastebin.setImage('wastebin.png')   
         wastebin.setPosition((652,365)) 
-        self.addVisibleElement(wastebin)
+        #self.addVisibleElement(wastebin)
         
         fire = VisibleElement()
         fire.setName("fire")
@@ -24,24 +25,16 @@ class Room(Scene):
         fire.setImage('fire.png')
         fire.setPosition((537,275))   
 
-        
         def fireLook():
-            self.Game.Player.say("A cozy fire...")
+            self.Game.Player.scriptSay("Mmm... varmt")
 
         def fireUse():
-            self.Game.Player.say("Ouch!")
-
+            self.Game.Player.scriptSay("Aj!")
             
         fire.setLookMethod(fireLook)
         fire.setUseMethod(fireUse)
 
         self.addVisibleElement(fire)
-            
-        worm = VisibleElement()
-        worm.setName("worm")
-        worm.setTitle('Worm')
-        worm.setImage('worm.png')
-        worm.setPosition((434,446))         
 
         potion = VisibleElement()
         potion.setName("potion")
@@ -56,19 +49,47 @@ class Room(Scene):
         chili.setImage('chili.png')   
         chili.setPosition((470,610))
         self.Game.Inventory.addItem(chili)                
+        
+        worm = Character(self.Game)
+        worm.setName("worm")
+        worm.setTitle('Worm')
+        worm.setImage('worm.png')
+        worm.setPosition((434,446))
+        worm.setTextColor((255,128,0))
 
         def wormLook():
-            self.Game.Player.say(["It's a worm. "])
+            self.Game.Player.scriptSay("Det är en mask.")
+
+        def wormUse():
+            worm.scriptSay("STOP POKING ME!")
+
+        def wormPickup():
+            worm.scriptSay("Du kan ju inte bara plocka upp mig sådär!")
             
         def wormTalk():
+            self.Game.TopicMenu.display()
+            self.Game.TopicMenu.addTopic('I can has lazor?')
+            self.Game.TopicMenu.addTopic('Arn us the go')
+            self.Game.TopicMenu.addTopic('Vem är du?')
+            self.Game.TopicMenu.addTopic('What is love?')
+            self.Game.TopicMenu.addTopic('Slarn the garn!')
+            self.Game.TopicMenu.addTopic('Bye for now')
+            
             if self.talkedToWorm is False:
-                self.Game.Player.say('Hej din gamle mask')
+                self.Game.Player.scriptSay('Hej din gamle mask')
+                worm.scriptSay('Hej där, random huvudperson')
+                self.Game.Player.scriptSay('Jag har så mycket att prata med dig om!')
+                worm.scriptSay('Samma här, men ämnesmenyn är inte klar än.')
+                self.Game.Player.scriptSay('Okej. Åtminstone kan vi se den')
                 self.talkedToWorm = True
             else:
-                self.Game.Player.say('Hej igen')
-            
+                self.Game.Player.scriptSay('Hej igen')
+                worm.scriptSay('Sluta stör mig och gör klart ämnesmenyn istället!')
+
+        worm.setUseMethod(wormUse)
         worm.setLookMethod(wormLook)
         worm.setTalkMethod(wormTalk)
+        worm.setPickupMethod(wormPickup)
         
         self.addVisibleElement(worm)        
         self.show()

@@ -2,7 +2,7 @@ import os,pygame
 from Constants import *
 from Player import Player
 from Engines import Renderer,AudioController,EventManager,Timer
-from Interfaces import ConversationManager,Cursor,Inventory,TitleManager
+from Interfaces import ScriptManager,Cursor,Inventory,TitleManager,TopicMenu,Topic
 
 class Game:
     def __init__(self,arguments):
@@ -16,8 +16,9 @@ class Game:
         self.Cursor = Cursor(self)
         self.Renderer = Renderer(self)
         self.Inventory = Inventory(self)
+        self.TopicMenu = TopicMenu(self)
         self.AudioController = AudioController(self)
-        self.ConversationManager = ConversationManager(self)
+        self.ScriptManager = ScriptManager(self)
         self.Player = Player(self)
         self.EventManager = EventManager(self)
 
@@ -37,8 +38,7 @@ class Game:
                 argumentMethod()
 
     def pause(self):
-        #TODO: Fix later
-        self.paused = False
+        self.paused = True
 
     def unpause(self):
         self.paused = False

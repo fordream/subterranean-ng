@@ -59,10 +59,8 @@ class Renderer:
         self.defaultFontColor = (255,255,255)
         self.defaultTitleColor = (239,240,173)
         self.defaultOutlineFontColor = (0,0,0)
-        self.generalFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),22)
-        self.elementTitleFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),22)
-        self.elementFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),12)
-        self.symbolFont = pygame.font.Font(os.path.join('data','fonts','freesansbold.ttf'),18)
+        self.generalFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),26)
+        self.elementTitleFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),26)
 
     def loadIcon(self):
         pygame.display.set_icon(pygame.image.load(os.path.join('data','icons','gameicon.png')))
@@ -77,8 +75,8 @@ class Renderer:
             self.screen.blit(self.Game.currentScene.getBackground(),(0,0))
             
             #Draw room objects
-            for element in self.Game.currentScene.visibleElements:
-                self.screen.blit(element.image,element.getPosition())
+            self.Game.currentScene.visibleElements.update()
+            self.Game.currentScene.visibleElements.draw(self.screen)
         
             #Draw main character
             self.screen.blit(self.Game.Player.getCurrentFrame(),self.Game.Player.getRenderPos())
@@ -87,22 +85,29 @@ class Renderer:
         if self.Game.TitleManager.currentElement is not None:
             elementTitle = self.elementTitleFont.render(self.Game.TitleManager.getTitle(),1,self.defaultTitleColor)
             self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))
-
+        '''
         #Draw conversations
-        if self.Game.ConversationManager.isActive():
-            posX = self.Game.ConversationManager.getTextPos()[0];
-            posY = self.Game.ConversationManager.getTextPos()[1];
-
-            
-            text = self.generalFont.render(self.Game.ConversationManager.getText(),1,self.Game.ConversationManager.currentColor)
-            textOutline = self.generalFont.render(self.Game.ConversationManager.getText(),1,self.defaultOutlineFontColor)
-
-
-            self.screen.blit(textOutline,(posX-text.get_width()/3,posY-2))
-            self.screen.blit(textOutline,(posX-text.get_width()/3+2,posY))
-            self.screen.blit(textOutline,(posX-text.get_width()/3-2,posY))
-            self.screen.blit(textOutline,(posX-text.get_width()/3,posY+2))
-            self.screen.blit(text,(posX-text.get_width()/3,posY))            
+        for element in self.Game.currentScene.visibleElements:
+            if element.isCharacter and element.text is not None:
+                print "TALKER"
+        '''                
+        if self.Game.ScriptManager.isActive():
+            #Load all the script values from the current part
+            if not self.Game.ScriptManager.valuesLoaded:
+                self.Game.ScriptManager.loadScriptValues(self.Game.ScriptManager.script[0])
+            if self.Game.ScriptManager.getCurrentPartType() == 'ScriptConversationPart':
+                posX = self.Game.ScriptManager.getTextPos()[0];
+                posY = self.Game.ScriptManager.getTextPos()[1];
+                text = self.generalFont.render(self.Game.ScriptManager.getText(),1,self.Game.ScriptManager.currentColor)
+                textOutline = self.generalFont.render(self.Game.ScriptManager.getText(),1,self.defaultOutlineFontColor)
+                self.screen.blit(textOutline,(posX-text.get_width()/2,posY-2))
+                self.screen.blit(textOutline,(posX-text.get_width()/2+2,posY))
+                self.screen.blit(textOutline,(posX-text.get_width()/2-2,posY))
+                self.screen.blit(textOutline,(posX-text.get_width()/2,posY+2))
+                self.screen.blit(text,(posX-text.get_width()/2,posY))
+            elif self.Game.ScriptManager.getCurrentPartType() == 'ScriptWalkPart':
+                self.Game.ScriptManager.runScriptetWalk()
+            self.Game.ScriptManager.loop()
             
         #Draw inventory
         self.Game.Inventory.animateHeight()
@@ -110,6 +115,12 @@ class Renderer:
         for item in self.Game.Inventory.items:
             if item.current is False:
                 self.screen.blit(item.image,item.rect)
+
+        #Topicmenu
+        if self.Game.TopicMenu.visible:
+            self.screen.blit(self.Game.TopicMenu.surface,self.Game.TopicMenu.rect)
+            for topic in self.Game.TopicMenu.topics:
+                self.screen.blit(topic.render,topic.pos)
 
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
@@ -224,7 +235,8 @@ class EventManager:
                             pygl.K_l: self.Game.AudioController.toggleMusicVolume,
                             pygl.K_d: self.Game.dump,
                             pygl.K_f: self.Game.toggleFullscreen,
-                            pygl.K_t: self.Game.Player.randomTalk
+                            pygl.K_t: self.Game.Player.randomTalk,
+                            pygl.K_h: self.Game.TopicMenu.hide
                             }
                             
         self.mouseSignals = {1: self.handleLeftClick,
@@ -246,9 +258,13 @@ class EventManager:
             eventMethod()
             
     def readMousePos(self,event):
-        if event.pos[1] < 50 and self.Game.Inventory.visible is False:
-            self.Game.Inventory.show()
-        elif event.pos[1] > 50 and self.Game.Inventory.visible:
+        if not self.Game.paused:
+            if event.pos[1] < 50 and self.Game.Inventory.visible is False:
+                self.Game.Inventory.show()
+            elif event.pos[1] > 50 and self.Game.Inventory.visible:
+                self.Game.Inventory.hide()
+        else:
+            #Hide the inventory if the game is paused.
             self.Game.Inventory.hide()
         
     def readMouseClick(self,event):
@@ -257,34 +273,33 @@ class EventManager:
             eventMethod(event)
             
     def handleLeftClick(self,event):
-        if pygame.mouse.get_pos()[1] > 70:
-            if self.Game.Cursor.currentElement is not None:
-                pos = self.Game.Cursor.currentElement.getBasePosition()
-                if self.Game.Cursor.getCursorName() == 'PICKUP':
-                    self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
-                elif self.Game.Cursor.getCursorName() == 'USE':
-                    self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.currentElement)
-                elif self.Game.Cursor.getCursorName() == 'TALK':
-                    self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
-                elif self.Game.Cursor.getCursorName() == 'LOOK':
-                    self.Game.Player.look(self.Game.Cursor.currentElement)
-                elif self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
-                    print "GIEF!"
+        if not self.Game.paused:
+            if pygame.mouse.get_pos()[1] > 70:
+                if self.Game.Cursor.currentElement is not None:
+                    pos = self.Game.Cursor.currentElement.getBasePosition()
+                    if self.Game.Cursor.getCursorName() == 'PICKUP':
+                        self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
+                    elif self.Game.Cursor.getCursorName() == 'USE':
+                        self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.currentElement)
+                    elif self.Game.Cursor.getCursorName() == 'TALK':
+                        self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
+                    elif self.Game.Cursor.getCursorName() == 'LOOK':
+                        self.Game.Player.look(self.Game.Cursor.currentElement)
+                    elif self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
+                        print "GIEF!"
+                else:
+                    self.Game.Player.walkTo(pygame.mouse.get_pos())
             else:
-                self.Game.Player.walkTo(pygame.mouse.get_pos())
-        else:
-            if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
-                self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
-            elif self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is not None and self.Game.Cursor.currentItem.current is False:
-                print self.Game.Cursor.currentItem.name
-                print "COMBINE!"
-            else:
-                self.Game.Inventory.clearCurrentItem()
+                if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
+                    self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
+                elif self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is not None and self.Game.Cursor.currentItem.current is False:
+                    print "COMBINE!"
+                else:
+                    self.Game.Inventory.clearCurrentItem()
     
     def handleRightClick(self,event):
-#        self.Game.Inventory.toggle()
-        if self.Game.Inventory.getCurrentItem() is not None:
-            self.Game.Inventory.clearCurrentItem()
+        if not self.Game.paused and self.Game.Inventory.getCurrentItem() is not None:
+                self.Game.Inventory.clearCurrentItem()
         
     def handleScrollClick(self,event):
         print "I'M FIRIN MAH SCROLLWHEELZ!"

@@ -2,9 +2,16 @@
 import os,pygame
 import AStar
 from time import time
+from Elements import Character
 
-class Player:
+class Player(Character):
     def __init__(self,game):
+        Character.__init__(self,game)
+        
+        
+        self.tempVar = False
+                
+                
         self.Game = game
         self.rect = None
         self.visible = False
@@ -32,7 +39,10 @@ class Player:
             'sew':self.loadFrames('southeast','walk',1),
             'new':self.loadFrames('northeast','walk',1),
             'ew':self.loadFrames('east','walk',8),
-            'ww':self.loadFrames('west','walk',8)
+            'ww':self.loadFrames('west','walk',8),
+            'nw':self.loadFrames('north','walk',2),
+            'sw':self.loadFrames('south','walk',2)
+
         }
         self.pos = (0,0)
         self.renderPos = (0,0)
@@ -40,14 +50,20 @@ class Player:
         self.talking = False
         self.standardResponses = {
             'PICKUP':"I can't pick that up",
-            'PICKUP':"I can't pick that up",
-            'PICKUP':"I can't pick that up",
-            'PICKUP':"I can't pick that up",        
+            'USE':"Um... no.",
+            'TALK':"I might as well be talking to myself.",
+            'LOOK':"There is nothing noteworthy about it.",
         }
         
         self.textColor = (255,96,168)
-        
+        self.name = 'Player'
         self.path = []
+        
+    def face(self,element):
+        self.facePos(element.pos)
+        
+    def facePos(self,pos):
+        self.setDirection(pos)
         
     def loadFrames(self,direction,status,frames=1):
         frameSet = []
@@ -77,16 +93,15 @@ class Player:
             return False
 
     def walkTo(self,(x,y),callbackMethod=None,argument=None):
-        if not self.Game.paused:
-            if callbackMethod is not None and argument is not None:
-                self.callbackMethod = callbackMethod
-                self.argument = argument
-            if not self.walking:
-                if self.findPath(x,y):
-                    self.resetStartFrame()
-                    self.walking = True
-                else:
-                    print "No avalible tiles at",x,y
+        if callbackMethod is not None and argument is not None:
+            self.callbackMethod = callbackMethod
+            self.argument = argument
+        if not self.walking:
+            if self.findPath(x,y):
+                self.resetStartFrame()
+                self.walking = True
+            else:
+                print "No avalible tiles at",x,y
         
     def walk(self):
         if len(self.path):
@@ -123,28 +138,28 @@ class Player:
         return self.frameKey
         
     def getCurrentFrame(self):
-        if not self.Game.paused:
-            if self.walking:
-                state = 'w'
-            else:
-                state = 's'
-                
-            sequence = self.directions.get('%s%s' % (self.getDirection(),state))
-            if sequence is not None:
-                #FIXME: Bugging
-                try:
-                    currentFrame = sequence[self.getFrameKey(sequence)]
-                except IndexError:
-                    currentFrame = sequence[0]
-    
-            self.currentFrame = currentFrame
+        if self.walking:
+            state = 'w'
+        else:
+            state = 's'
+            
+        sequence = self.directions.get('%s%s' % (self.getDirection(),state))
+        if sequence is not None:
+            #FIXME: Bugging
+            try:
+                currentFrame = sequence[self.getFrameKey(sequence)]
+            except IndexError:
+                currentFrame = sequence[0]
+
+        self.currentFrame = currentFrame
         return self.currentFrame
 
     def getRenderPos(self):
         return self.renderPos
 
     def setPosition(self,pos):
-        self.rect.move_ip(pos[0],pos[1])
+        self.rect.left = pos[0]
+        self.rect.top = pos[1]
         self.pos = pos
         self.renderPos = (self.pos[0],self.pos[1]-180)
         
@@ -186,34 +201,45 @@ class Player:
         return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
         
     def pickUp(self,element):
-        if not self.Game.paused and self.inRange(element):
+        self.face(element)
+        if not self.Game.paused and self.inRange(element) and element.getRetrievable():
             self.Game.currentScene.visibleElements.remove(element)
             self.Game.Inventory.addItem(element)
             if element.pickupMethod is not None:
                 element.pickupMethod()
         else:
-            say(self.standardResponses['PICKUP'])
+            self.scriptSay(self.standardResponses['PICKUP'])
         
     def use(self,element):
+        self.face(element)
         if self.inRange(element) and element.useMethod is not None:
             element.useMethod()
+        else:
+            self.scriptSay(self.standardResponses['USE'])
             
     def look(self,element):
+        self.face(element)
         if element.lookMethod is not None:
             element.lookMethod()
+        else:
+            self.scriptSay(self.standardResponses['LOOK'])
 
     def talk(self,element):
+        self.face(element)
         if self.inRange(element) and element.talkMethod is not None:
             element.talkMethod()
+        else:
+            self.scriptSay(self.standardResponses['TALK'])
             
     def randomTalk(self):
-        self.say("Here I am, talking to myself again.")
-        
+        if not self.tempVar:
+            self.scriptSay("Hej!")
+            self.scriptWalk((600,460))
+            self.scriptSay("Här kan man vara.")
+            self.tempVar = True
+        else:
+            self.scriptWalk((334,416))
+            self.scriptSay("Hej då!")
+                        
     def getTextPos(self):
-        return (self.renderPos[0]-20,self.renderPos[1]-30)
-
-    def getTextColor(self):
-        return self.textColor
-        
-    def say(self,text):
-        self.Game.ConversationManager.addPart(self,text)
+        return (self.rect.centerx,self.renderPos[1]-30)

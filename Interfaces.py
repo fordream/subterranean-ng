@@ -131,30 +131,100 @@ class TitleManager:
         self.prefix = ''
         
     def getTitle(self):
-        if self.currentElement is not None:
+        if not self.Game.paused and self.currentElement is not None:
             if self.prefix == 'Combine' or self.prefix == 'Give':
                 return '%s %s %s %s' % (self.prefix,self.Game.Inventory.currentItem.title,self.suffix,self.currentElement.title)
             else:
                 return '%s %s' % (self.prefix,self.currentElement.title)
 
-class ConversationPart:
+class Topic: 
+    def __init__(self,game,text,pos):
+        self.Game = game
+        self.text = text
+        self.hover = False
+        self.dialouge = []
+        self.pos = pos
+        self.render = self.Game.Renderer.generalFont.render(self.text,1,(255,255,255))
+        
+    def setDialogue(self):
+        self.dialouge
+        
+    def setPos(self,pos):   
+        self.pos = pos
+        
+    def update(self):
+        return 
+                        
+class TopicMenu:
+    def __init__(self,game):
+        self.Game = game
+        self.visible = False
+        self.surface = pygame.Surface((1024,168))
+        self.rect = self.surface.get_rect()
+        self.surface.fill((25,25,25),self.rect)
+        self.surface.set_alpha(145)
+        self.topics = []
+        self.rect.y = 700
+        self.rect.x = 0
+        
+    def addTopic(self,text):
+        totalLen = 0
+        index = 0
+        if len(self.topics):
+            for topic in self.topics:
+                totalLen += topic.render.get_width()
+        index = len(self.topics)
+        pos = (totalLen+index*25+25,710)
+
+        self.topics.append(Topic(self.Game,text,pos))
+                
+    def display(self):
+        self.visible = True
+        
+    def hide(self):
+        self.visible = False
+
+class ScriptConversationPart:
     def __init__(self,actor,text):
         self.actor = actor
         self.text = text
+
+class ScriptWalkPart:
+    def __init__(self,actor,walkPos):
+        self.actor = actor
+        self.walkPos = walkPos
+
+class ScriptSequencePart:
+    def __init__(self,actor,sequenceName):
+        self.actor = actor
+        self.sequenceName = sequenceName
+
+class ScriptMethodPart:
+    def __init__(self,method,args):
+        self.method = method
+        self.args = args
                            
-class ConversationManager:
+class ScriptManager:
     def __init__(self,game):
         self.Game = game
         self.startFrame = None
-        self.currentSpeaker = None
-        self.currentLineLenght = 100
-        self.textPos = (0,0)
+        #Frames for each part
+        self.durationFrames = 100
         self.script = []
-        self.currentColor = (255,255,255)
+        #The values that are populated by each part        
+        self.currentColor = None
+        self.textPos = None
+        self.walkPos = None
+        self.method = None
+        self.currentPartType = None
+        self.valuesLoaded = False
         
     def setColor(self,color):
         self.currentColor = color
         
+    def setDurationFrames(self,textLength):
+        self.durationFrames = textLength * 5
+                
     def isActive(self):
         return len(self.script) > 0
 
@@ -170,30 +240,79 @@ class ConversationManager:
     def getTextPos(self):
         return self.textPos
 
-    def addPart(self,actor,text):
-        self.script.append(ConversationPart(actor,text))
+    #Only getters because they are created in the Script*Part class        
+    def getText(self):
+        if self.startFrame is None:
+            self.loadScriptValues(self.script[0])
+        return self.script[0].text
+
+    def getActor(self):
+        return self.script[0].actor
+
+    def getWalkPos(self):
+        return self.script[0].walkPos
+
+    def addConversationPart(self,actor,text):
+        self.script.append(ScriptConversationPart(actor,text))
+
+    def addWalkPart(self,actor,endPos):
+        self.script.append(ScriptWalkPart(actor,endPos))
+
+    def addSequencePart(self,actor,sequenceName):
+        self.script.append(ScriptSequencePart(actor,sequenceName))
+
+    def addMethodPart(self,method,args):
+        self.script.append(ScriptMethodPart(method,args))
         
     def resetStartFrame(self):
         self.startFrame = self.Game.Renderer.Timer.currentFrame
-                
-    def getText(self):
-#        self.Game.paused = True
+        
+    def getCurrentPartType(self):
+        return self.script[0].__class__.__name__            
+    
+    #The loop is called after the current part has been executed.    
+    def loop(self):
         if self.startFrame is None:
+            #We just started a script
             self.resetStartFrame()
-        if len(self.script):
-            if self.Game.Renderer.Timer.currentFrame - self.currentLineLenght == self.startFrame:
-                self.script.pop()
-                if len(self.script) < 1:
-                    self.startFrame = None
-#                   self.Game.unpause()
-                self.resetStartFrame()
+            self.Game.pause()
+        elif self.Game.Renderer.Timer.currentFrame - self.durationFrames == self.startFrame:
+            #If the wait is done, go to the next part
+            self.script.pop(0)
+            self.resetStartFrame()
+            if not len(self.script):
+                #No more parts. End script
+                self.resetScriptValues()
+                self.Game.unpause()
             else:
-                self.setColor(self.script[0].actor.getTextColor())
-                self.setTextPos(self.script[0].actor.getTextPos())
-                return self.script[0].text
+                #Load the part values
+                self.loadScriptValues(self.script[0])
+        
+    def loadScriptValues(self,scriptPart):
+        self.currentPartType = self.getCurrentPartType()
+        #Determine what kind of part it is:
+        if self.currentPartType == 'ScriptConversationPart':
+            self.setDurationFrames(len(scriptPart.text))
+            self.setColor(scriptPart.actor.getTextColor())
+            self.setTextPos(scriptPart.actor.getTextPos())
+        elif self.currentPartType == 'ScriptWalkPart':
+            #FIXME. Decide how many frames to wait automatically
+            self.setDurationFrames(30)
         else:
-            self.Game.unpause()
-            
+            print "UNKNOWN PART TYPE WTF"
+        self.valuesLoaded = True
+        
+    def runScriptetWalk(self):
+        if not self.getActor().walking:
+            self.getActor().walkTo(self.getWalkPos())
+        
+    def resetScriptValues(self):
+        self.setDurationFrames(50)
+        self.setColor((255,255,255))
+        self.setTextPos((0,0))
+        self.valuesLoaded = False
+        self.startFrame = None
+                    
 class Cursor():
     def __init__(self,game):
         self.Game = game
@@ -209,6 +328,10 @@ class Cursor():
             'LOOK': pygame.image.load(os.path.join('data','cursors','cursor_look.png')),
             'TALK': pygame.image.load(os.path.join('data','cursors','cursor_talk.png'))
         }
+        
+        #Kept in its own variable so we don't loop over it while scrolling.
+        self.pausedCursor = pygame.image.load(os.path.join('data','cursors','cursor_paused.png'))
+        
         self.setCursor('DEFAULT')
      
     def setCursor(self,cursorName):
@@ -217,7 +340,9 @@ class Cursor():
             self.currentCursor = self.cursors[cursorName]
             
     def getCursor(self):
-        if self.Game.Inventory.currentItem is not None:
+        if self.Game.paused:
+            return self.pausedCursor
+        elif self.Game.Inventory.currentItem is not None:
             return self.Game.Inventory.currentItem.image
         else:
             return self.currentCursor
