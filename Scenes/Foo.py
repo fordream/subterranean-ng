@@ -82,8 +82,8 @@ class Room(Scene):
             if self.talkedToWorm is False:
                 self.Game.Player.scriptSay('Hej din gamle mask')
                 worm.scriptSay('Hej där, random huvudperson')
-                self.Game.Player.scriptSay('Du ser lite törstig ut')
-                worm.scriptSay('Jag vet, ge mig något som är hett men ändå flytande.')
+                self.Game.Player.scriptSay('Du ser lite nerkyld ut')
+                worm.scriptSay('Jag vet, ge mig något som är hett att dricka!')
                 self.Game.Player.scriptSay('Jag ska se vad jag kan göra.')
                 self.talkedToWorm = True
             elif self.happyWorm:

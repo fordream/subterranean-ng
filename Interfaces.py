@@ -188,7 +188,8 @@ class TopicMenu:
         self.topics.append(Topic(self.Game,text,pos))
                 
     def display(self):
-        self.visible = True
+        pass
+        #self.visible = True
         
     def hide(self):
         self.visible = False
@@ -232,7 +233,7 @@ class ScriptManager:
         self.currentColor = color
         
     def setDurationFrames(self,textLength):
-        self.durationFrames = textLength * 1
+        self.durationFrames = textLength * 4
                 
     def isActive(self):
         return len(self.script) > 0
