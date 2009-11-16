@@ -1,4 +1,4 @@
-import os,sys,pygame
+import os,sys,time,pygame
 from Constants import *
 from Player import Player
 from Engines import Renderer,AudioController,EventManager,Timer
@@ -21,9 +21,8 @@ class Game:
         self.ScriptManager = ScriptManager(self)
         self.Player = Player(self)
         self.EventManager = EventManager(self)
-
-        self.loadScene("someScene")
         self.parseArguments(arguments)
+        self.loadScene("someScene")
         self.run()
         
     def parseArguments(self,arguments):
@@ -53,7 +52,7 @@ class Game:
         from Scenes.Foo import Room
         self.currentScene = Room(self)
         
-    def quit(self,event):
+    def quit(self,event=None):
         self.running = False
         sys.exit()
 

@@ -1,5 +1,56 @@
 import os,pygame
 
+class Item:
+    def __init__(self,name='unknown',title='Unknown item',acceptElement=None,resultElement=None):
+        self.name = name
+        self.title = title
+        self.current = False
+        self.acceptItem = None
+        self.resultItem = None
+        if acceptElement is not None and resultElement is not None:
+            self.addCombimnation(acceptElement,resultElement)
+
+        self.rect = pygame.Rect(10,10,48,48)
+        self.loadImage(self.name)
+        
+    def setName(self,name):
+        #Auto-reloads image on name change
+        self.name = name
+        self.loadImage(self.name)
+        
+    def getName(self):
+        return self.name
+        
+    def setTitle(self,title):
+        self.title = title
+
+    def getTitle(self):
+        return self.title
+        
+    def loadImage(self,name):
+        try:
+            self.image = pygame.image.load(os.path.join('data','items','%s.png' % (name)))
+        except:
+            self.image = pygame.image.load(os.path.join('data','items','unknown.png'))
+                
+    def setPos(self,pos):
+        self.rect.move(pos)
+        
+    def setX(self,x):
+        self.rect.left = x
+        
+    def setY(self,y):
+        self.rect.top = y
+
+    def addCombination(self,acceptItem,resultItem):
+        self.acceptItem = acceptItem
+        self.resultItem = resultItem
+#        print self.name,"can recieve",acceptItem,"and will give you",resultItem
+        
+    def combine(self,comboItem):
+        if self.acceptItem is not None and self.resultItem is not None and self.acceptItem == comboItem.name:
+            self.Game.Inventory.combineItems(self,comboItem,self.resultItem)
+    
 class Element(pygame.sprite.DirtySprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -32,6 +83,7 @@ class VisibleElement(Element):
         Element.__init__(self)
         self.pos = (0,0)
         self.basePos = (0,0)
+        self.actionPos = None
         self.image = None
         self.rect = None
         self.retrievable = False
@@ -41,7 +93,10 @@ class VisibleElement(Element):
         self.lookMethod = None
         self.pickupMethod = None
         self.talkMethod = None
+        self.giveMethods = {}
         self.textColor = (255,255,255)
+        self.acceptElement = None
+        self.resultElement = None
 
     def setTextColor(self,color):
         self.textColor = color
@@ -68,6 +123,12 @@ class VisibleElement(Element):
 
     def getBasePosition(self):
         return self.basePos
+
+    def setActionPosition(self,pos):
+        self.actionPos = pos
+
+    def getActionPosition(self):
+        return self.actionPos
         
     def setRetrievable(self,status):
         self.retrievable = status
@@ -116,8 +177,18 @@ class VisibleElement(Element):
 
     def runPickupMethod(self):
         self.pickupMethod()
-
         
+    def addGiveMethod(self,method,itemName):
+        self.giveMethods[itemName] = method
+
+    def runGiveMethod(self,item):
+        method = self.giveMethods[item]
+        method()
+    
+    def toItem(self):
+        #Gets properties and returns an Item
+        return Item(self.name,self.title,self.acceptElement,self.resultElement)
+                
 class AnimatedElement(VisibleElement):
     def __init__(self):
         VisibleElement.__init__(self)

@@ -28,6 +28,11 @@ class Scene:
     def addVisibleElement(self,element):
         self.visibleElements.add(element)
         
+    def getElement(self,elementName):
+        for element in self.visibleElements:
+            if element.name == elementName:
+                return element
+        
     def setInsertPoint(self,pos):
         #TODO: Check that it is a valid placement on the map
         posX = pos[0]/16

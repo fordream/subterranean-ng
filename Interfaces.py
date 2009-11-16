@@ -1,4 +1,5 @@
 import os,pygame
+from Elements import Item
 
 class Inventory:
     def __init__(self,game):
@@ -14,19 +15,48 @@ class Inventory:
         self.y = -70
         self.spacing = 10
 
-    def addItem(self,element):
-        self.items.append(Item(element))
-        self.arrangeItems()
-        self.y = 0
-        self.hide()
+    def addItem(self,item,runEffect=True):
+        #Need game reference to talk to Inventory later
+        item.Game = self.Game
+        self.items.append(item)
+        if runEffect:
+            self.arrangeItems()
+            self.y = 0
+            self.hide()
         
+    def removeItem(self,item):
+        self.items.remove(item)
+
+    def removeItemFromName(self,itemName):
+        self.items.remove(self.getItemFromName(itemName))
+
+    def getItemFromName(self,name):
+        for item in self.items:
+            if item.name == name:
+                return item
+        return False
+
+    def itemExists(self,name):
+        for item in self.items:
+            if item.name == name:
+                return True
+        return False
+
+    def combineItems(self,firstElement,secondElement,resultElement):
+        self.clearCurrentItem()
+        self.removeItem(firstElement)
+        self.removeItem(secondElement)
+        self.addItem(resultElement,False)
+                
     def arrangeItems(self):
         number = 0
         for item in self.items:
             if item.current is False:
                 item.setX(number*60+10)
                 number += 1
-                                
+            else:
+                item.setX(-100)
+                                                
     def show(self):
         self.visible = True
         self.animating = True
@@ -40,11 +70,13 @@ class Inventory:
             self.currentItem = item
             self.currentItem.current = True
             self.arrangeItems()
-
+            
     def getCurrentItem(self):
         return self.currentItem
         
     def clearCurrentItem(self):
+        self.Game.TitleManager.clearElement()
+        self.Game.Cursor.currentItem = None
         self.currentItem.current = False
         self.currentItem = None
         self.arrangeItems()
@@ -68,29 +100,6 @@ class Inventory:
         else:
             self.show()
             
-class Item:
-    def __init__(self,element):
-        self.name = element.name
-        self.current = False
-        self.image = self.loadImage(self.name)
-        self.title = element.title
-        self.rect = pygame.Rect(10,10,48,48)
-        
-    def loadImage(self,name):
-        return pygame.image.load(os.path.join('data','items','%s.png' % (name)))
-        
-    def getTitle(self,item):
-        return 'Foo'
-        
-    def setPos(self,pos):
-        self.rect.move(pos)
-        
-    def setX(self,x):
-        self.rect.left = x
-        
-    def setY(self,y):
-        self.rect.top = y
-
 class TitleManager:
     def __init__(self,game):
         self.Game = game
@@ -223,7 +232,7 @@ class ScriptManager:
         self.currentColor = color
         
     def setDurationFrames(self,textLength):
-        self.durationFrames = textLength * 5
+        self.durationFrames = textLength * 1
                 
     def isActive(self):
         return len(self.script) > 0
@@ -298,8 +307,6 @@ class ScriptManager:
         elif self.currentPartType == 'ScriptWalkPart':
             #FIXME. Decide how many frames to wait automatically
             self.setDurationFrames(30)
-        else:
-            print "UNKNOWN PART TYPE WTF"
         self.valuesLoaded = True
         
     def runScriptetWalk(self):
@@ -375,10 +382,22 @@ class Cursor():
     def checkCollisions(self):
         if pygame.mouse.get_pos()[1] > 70:        
             for element in self.Game.currentScene.visibleElements:
-                if(element.rect.collidepoint(pygame.mouse.get_pos())):
+                #Calculate center for item cursor to avoid pixel hunting.
+                #Also set the prefix correctly.
+                #TODO: Make this loop smarter. Really.
+                if self.Game.Cursor.currentItem is not None:
+                    mouse = pygame.mouse.get_pos()
+                    pos = (mouse[0]+24,mouse[1]+24)
+                else:
+                    pos = pygame.mouse.get_pos  ()
+                if(element.rect.collidepoint(pos)):
                     self.Game.TitleManager.setElement(element)
-                    self.Game.TitleManager.setPrefix(self.getCursorName())
                     self.currentElement = element
+                    if self.Game.Inventory.currentItem is not None:
+                        self.Game.TitleManager.setPrefix('GIVE')
+                        self.Game.TitleManager.setSuffix('TO')
+                    else:
+                        self.Game.TitleManager.setPrefix(self.getCursorName())
                     if self.getCursorName() == 'DEFAULT':
                         self.setCursor('USE')
                     return self.currentElement
@@ -391,10 +410,8 @@ class Cursor():
                         self.Game.TitleManager.setSuffix('WITH')
                         self.currentItem = item
                         return item
-                
                     elif(item.rect.collidepoint(pygame.mouse.get_pos())):
                         self.Game.TitleManager.setElement(item)
-                        self.Game.TitleManager.setPrefix('USE')
                         self.setCursor('USE')
                         self.currentItem = item
                         return item

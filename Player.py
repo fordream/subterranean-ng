@@ -53,6 +53,7 @@ class Player(Character):
             'USE':"Um... no.",
             'TALK':"I might as well be talking to myself.",
             'LOOK':"There is nothing noteworthy about it.",
+            'GIVE':"I'm not giving that away."
         }
         
         self.textColor = (255,96,168)
@@ -203,8 +204,8 @@ class Player(Character):
     def pickUp(self,element):
         self.face(element)
         if not self.Game.paused and self.inRange(element) and element.getRetrievable():
+            self.Game.Inventory.addItem(element.toItem())
             self.Game.currentScene.visibleElements.remove(element)
-            self.Game.Inventory.addItem(element)
             if element.pickupMethod is not None:
                 element.pickupMethod()
         else:
@@ -230,7 +231,15 @@ class Player(Character):
             element.talkMethod()
         else:
             self.scriptSay(self.standardResponses['TALK'])
-            
+
+    def give(self,element):
+        self.face(element)
+        if self.inRange(element) and self.Game.Inventory.currentItem.name in element.giveMethods:
+            element.runGiveMethod(self.Game.Inventory.currentItem.name)
+            self.Game.Inventory.clearCurrentItem()
+        else:
+            self.scriptSay(self.standardResponses['GIVE'])
+
     def randomTalk(self):
         if not self.tempVar:
             self.scriptSay("Hej!")

@@ -84,13 +84,7 @@ class Renderer:
         #Draw element titles
         if self.Game.TitleManager.currentElement is not None:
             elementTitle = self.elementTitleFont.render(self.Game.TitleManager.getTitle(),1,self.defaultTitleColor)
-            self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))
-        '''
-        #Draw conversations
-        for element in self.Game.currentScene.visibleElements:
-            if element.isCharacter and element.text is not None:
-                print "TALKER"
-        '''                
+            self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))           
         if self.Game.ScriptManager.isActive():
             #Load all the script values from the current part
             if not self.Game.ScriptManager.valuesLoaded:
@@ -276,8 +270,12 @@ class EventManager:
         if not self.Game.paused:
             if pygame.mouse.get_pos()[1] > 70:
                 if self.Game.Cursor.currentElement is not None:
-                    pos = self.Game.Cursor.currentElement.getBasePosition()
-                    if self.Game.Cursor.getCursorName() == 'PICKUP':
+                    pos = self.Game.Cursor.currentElement.getActionPosition()
+                    if pos is None:
+                        pos = self.Game.Cursor.currentElement.getBasePosition()
+                    if self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
+                        self.Game.Player.walkTo(pos,self.Game.Player.give,self.Game.Cursor.currentElement)
+                    elif self.Game.Cursor.getCursorName() == 'PICKUP':
                         self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
                     elif self.Game.Cursor.getCursorName() == 'USE':
                         self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.currentElement)
@@ -285,15 +283,14 @@ class EventManager:
                         self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
                     elif self.Game.Cursor.getCursorName() == 'LOOK':
                         self.Game.Player.look(self.Game.Cursor.currentElement)
-                    elif self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
-                        print "GIEF!"
                 else:
+                    print "WALK"
                     self.Game.Player.walkTo(pygame.mouse.get_pos())
             else:
                 if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
                     self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
                 elif self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is not None and self.Game.Cursor.currentItem.current is False:
-                    print "COMBINE!"
+                    self.Game.Cursor.currentItem.combine(self.Game.Inventory.currentItem)
                 else:
                     self.Game.Inventory.clearCurrentItem()
     
@@ -302,7 +299,7 @@ class EventManager:
                 self.Game.Inventory.clearCurrentItem()
         
     def handleScrollClick(self,event):
-        print "I'M FIRIN MAH SCROLLWHEELZ!"
+        pass
     
     def handleScrollUp(self,event):
         if self.Game.Cursor.currentElement is not None:
