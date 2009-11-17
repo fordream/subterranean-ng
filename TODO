@@ -1,6 +1,7 @@
+GUI:
 x Lösa framelängder i animationer.
-- Skapa frames för alla walk cycles
-- Kombination av items
+x Kombination av items
+x Använd Items->Objekt på skärmen
+- Fixa stöd för flera rum
 - Hantera skriptdelslängd automatiskt
-- Använd Items->Objekt på skärmen
 - Fixa ämnesmenyn

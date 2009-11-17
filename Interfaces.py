@@ -147,20 +147,31 @@ class TitleManager:
                 return '%s %s' % (self.prefix,self.currentElement.title)
 
 class Topic: 
-    def __init__(self,game,text,pos):
+    def __init__(self,game,text,pos,method):
         self.Game = game
         self.text = text
         self.hover = False
+        self.callbackMethod = method
         self.dialouge = []
         self.pos = pos
-        self.render = self.Game.Renderer.generalFont.render(self.text,1,(255,255,255))
-        
+        self.inactive = self.Game.Renderer.generalFont.render(self.text,1,(255,255,255))
+        self.active = self.Game.Renderer.generalFont.render(self.text,1,(91,177,255))
+        self.render = self.inactive
+        self.rect = self.render.get_rect()
+        self.rect.left,self.rect.top = pos
+                
     def setDialogue(self):
         self.dialouge
         
-    def setPos(self,pos):   
+    def setPos(self,pos):
         self.pos = pos
         
+    def setActive(self):
+        self.render = self.active
+
+    def clearActive(self):
+        self.render = self.inactive
+            
     def update(self):
         return 
                         
@@ -175,8 +186,9 @@ class TopicMenu:
         self.topics = []
         self.rect.y = 700
         self.rect.x = 0
+        self.currentTopic = None
         
-    def addTopic(self,text):
+    def addTopic(self,text,method):
         totalLen = 0
         index = 0
         if len(self.topics):
@@ -185,11 +197,22 @@ class TopicMenu:
         index = len(self.topics)
         pos = (totalLen+index*25+25,710)
 
-        self.topics.append(Topic(self.Game,text,pos))
+        self.topics.append(Topic(self.Game,text,pos,method))
+        
+    def setCurrentTopic(self,topic):
+        self.currentTopic = topic
+        topic.setActive()
+        
+    def clearCurrentTopic(self):
+        self.currentTopic = None
+        for topic in self.topics:
+            topic.clearActive()
+            
+    def getCurrentTopic(self):
+        return self.currentTopic
                 
-    def display(self):
-        pass
-        #self.visible = True
+    def show(self):
+        self.visible = True
         
     def hide(self):
         self.visible = False
@@ -233,7 +256,7 @@ class ScriptManager:
         self.currentColor = color
         
     def setDurationFrames(self,textLength):
-        self.durationFrames = textLength * 4
+        self.durationFrames = textLength * 5
                 
     def isActive(self):
         return len(self.script) > 0
@@ -381,7 +404,26 @@ class Cursor():
             self.setCursor(self.previousCursor())
             
     def checkCollisions(self):
-        if pygame.mouse.get_pos()[1] > 70:        
+        if pygame.mouse.get_pos()[1] < 70:
+                for item in self.Game.Inventory.items:
+                    if(item.rect.collidepoint(pygame.mouse.get_pos())):
+                        if self.Game.Inventory.currentItem is not None and item.current is False:
+                            self.Game.TitleManager.setElement(item)
+                            self.Game.TitleManager.setPrefix('COMBINE')
+                            self.Game.TitleManager.setSuffix('WITH')
+                            self.currentItem = item
+                            return item
+                        elif(item.rect.collidepoint(pygame.mouse.get_pos())):
+                            self.Game.TitleManager.setElement(item)
+                            self.setCursor('USE')
+                            self.currentItem = item
+                            return item
+        elif pygame.mouse.get_pos()[1] > 700 and self.Game.TopicMenu.visible:
+            self.Game.TopicMenu.clearCurrentTopic()
+            for topic in self.Game.TopicMenu.topics:
+                if(topic.rect.collidepoint(pygame.mouse.get_pos())):
+                    self.Game.TopicMenu.setCurrentTopic(topic)
+        else:
             for element in self.Game.currentScene.visibleElements:
                 #Calculate center for item cursor to avoid pixel hunting.
                 #Also set the prefix correctly.
@@ -390,7 +432,7 @@ class Cursor():
                     mouse = pygame.mouse.get_pos()
                     pos = (mouse[0]+24,mouse[1]+24)
                 else:
-                    pos = pygame.mouse.get_pos  ()
+                    pos = pygame.mouse.get_pos()
                 if(element.rect.collidepoint(pos)):
                     self.Game.TitleManager.setElement(element)
                     self.currentElement = element
@@ -402,20 +444,8 @@ class Cursor():
                     if self.getCursorName() == 'DEFAULT':
                         self.setCursor('USE')
                     return self.currentElement
-        else:
-            for item in self.Game.Inventory.items:
-                if(item.rect.collidepoint(pygame.mouse.get_pos())):
-                    if self.Game.Inventory.currentItem is not None and item.current is False:
-                        self.Game.TitleManager.setElement(item)
-                        self.Game.TitleManager.setPrefix('COMBINE')
-                        self.Game.TitleManager.setSuffix('WITH')
-                        self.currentItem = item
-                        return item
-                    elif(item.rect.collidepoint(pygame.mouse.get_pos())):
-                        self.Game.TitleManager.setElement(item)
-                        self.setCursor('USE')
-                        self.currentItem = item
-                        return item
+            
+        
 
         self.Game.TitleManager.clearElement()
         self.setCursor('DEFAULT')

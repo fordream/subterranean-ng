@@ -268,7 +268,17 @@ class EventManager:
             
     def handleLeftClick(self,event):
         if not self.Game.paused:
-            if pygame.mouse.get_pos()[1] > 70:
+            if pygame.mouse.get_pos()[1] < 70:
+                if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
+                    self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
+                elif self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is not None and self.Game.Cursor.currentItem.current is False:
+                    self.Game.Cursor.currentItem.combine(self.Game.Inventory.currentItem)
+                else:
+                    self.Game.Inventory.clearCurrentItem()
+            elif pygame.mouse.get_pos()[1] > 700:
+                if self.Game.TopicMenu.currentTopic:
+                    self.Game.TopicMenu.currentTopic.callbackMethod()            
+            else:
                 if self.Game.Cursor.currentElement is not None:
                     pos = self.Game.Cursor.currentElement.getActionPosition()
                     if pos is None:
@@ -286,13 +296,7 @@ class EventManager:
                 else:
                     print "WALK"
                     self.Game.Player.walkTo(pygame.mouse.get_pos())
-            else:
-                if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
-                    self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
-                elif self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is not None and self.Game.Cursor.currentItem.current is False:
-                    self.Game.Cursor.currentItem.combine(self.Game.Inventory.currentItem)
-                else:
-                    self.Game.Inventory.clearCurrentItem()
+
     
     def handleRightClick(self,event):
         if not self.Game.paused and self.Game.Inventory.getCurrentItem() is not None:

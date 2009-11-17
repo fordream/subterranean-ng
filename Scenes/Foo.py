@@ -72,19 +72,21 @@ class Room(Scene):
             worm.scriptSay("Du kan ju inte bara plocka upp mig sådär!")
             
         def wormTalk():
-            self.Game.TopicMenu.display()
-            self.Game.TopicMenu.addTopic('I can has lazor?')
-            self.Game.TopicMenu.addTopic('Vem är du?')
-            self.Game.TopicMenu.addTopic('What is love?')
-            self.Game.TopicMenu.addTopic('Slarn the garn!')
-            self.Game.TopicMenu.addTopic('Hej så länge')
+            def talkWhatsup():
+                self.Game.Player.scriptSay('Hur är läget?')
+                worm.scriptSay("Jag är törstig!")
+                self.Game.TopicMenu.addTopic('Vad vill du ha att dricka?',talkDrink)
+
+            def talkDrink():
+                worm.scriptSay("Jag vill ha något hett!")
+                
+            self.Game.TopicMenu.show()
+            self.Game.TopicMenu.addTopic('Hejdå',self.Game.TopicMenu.hide)
+            self.Game.TopicMenu.addTopic('Hur är läget?',talkWhatsup)
             
             if self.talkedToWorm is False:
-                self.Game.Player.scriptSay('Hej din gamle mask')
-                worm.scriptSay('Hej där, random huvudperson')
-                self.Game.Player.scriptSay('Du ser lite nerkyld ut')
-                worm.scriptSay('Jag vet, ge mig något som är hett att dricka!')
-                self.Game.Player.scriptSay('Jag ska se vad jag kan göra.')
+                self.Game.Player.scriptSay('Hej din gamle mask!')
+                worm.scriptSay('Hej hej...')
                 self.talkedToWorm = True
             elif self.happyWorm:
                 worm.scriptSay('Du är min vän, random huvudperson!')
