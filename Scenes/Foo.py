@@ -39,7 +39,7 @@ class Room(Scene):
         chili = Item('chili','Het chili')
         chili.addCombination('potion',firepotion)
         self.Game.Inventory.addItem(chili) 
-
+        
         worm = Character(self.Game)
         worm.setName("worm")
         worm.setTitle('Mask')
@@ -47,12 +47,36 @@ class Room(Scene):
         worm.setPosition((434,446))
         worm.setTextColor((255,128,0))
         
+        def talkDrink():
+                self.Game.Player.scriptSay('Jaså? Vad vill du ha att dricka då?')
+                worm.scriptSay("Något hett!")
+
+        def talkWhatsUp():
+                self.Game.Player.scriptSay('Hur är läget?')
+                worm.scriptSay("Jag är törstig!")
+                worm.addTopic('drink','Vad vill du ha att dricka?',talkDrink)
+                worm.removeTopic('whatsup')
+
+        def talkSky():
+                self.Game.Player.scriptSay('Vilken himmel vi har!')
+                worm.scriptSay("Shoop the whoop!")
+                
+        worm.addTopic('whatsup','Hur är läget?',talkWhatsUp)
+        worm.addTopic('whatsup','Tror ni på hjulen?',talkSky)
+        worm.addTopic('whatsup','Var är paketet?',talkSky)
+        worm.addTopic('whatsup','Hur får man upp den röda dörren?',talkSky)
+        worm.addTopic('whatsup','Vad är kärlek?',talkSky)
+        worm.addTopic('whatsup','Är du en vampyr?',talkSky)
+
+
+        worm.addTopic('sky','Vilken himmel vi har!',talkSky)
+        
         def giveChiliToWorm():
             worm.scriptSay("Hett, men jag vill ha något flytande")
-
+        
         def givePotionToWorm():
             worm.scriptSay("Visst, i flytande form men inte hett nog.")
-
+        
         def giveFirepotionToWorm():
             self.Game.Inventory.removeItemFromName('firepotion')
             worm.scriptSay("Tack! Du är min vän")
@@ -61,26 +85,22 @@ class Room(Scene):
         worm.addGiveMethod(giveChiliToWorm,'chili')
         worm.addGiveMethod(givePotionToWorm,'potion')
         worm.addGiveMethod(giveFirepotionToWorm,'firepotion')
-
+        
         def wormLook():
             self.Game.Player.scriptSay("Det är en mask.")
-
+        
         def wormUse():
             worm.scriptSay("STOP POKING ME!")
-
+        
         def wormPickup():
             worm.scriptSay("Du kan ju inte bara plocka upp mig sådär!")
             
         def wormTalk():
-            def talkWhatsup():
-                self.Game.Player.scriptSay('Hur är läget?')
-                worm.scriptSay("Jag är törstig!")
-                self.Game.TopicMenu.addTopic('Vad vill du ha att dricka?',talkDrink)
-
+            worm.scriptSay("'sup?")                
+        '''
             def talkDrink():
                 worm.scriptSay("Jag vill ha något hett!")
                 
-            self.Game.TopicMenu.show()
             self.Game.TopicMenu.addTopic('Hejdå',self.Game.TopicMenu.hide)
             self.Game.TopicMenu.addTopic('Hur är läget?',talkWhatsup)
             
@@ -93,12 +113,13 @@ class Room(Scene):
             else:
                 self.Game.Player.scriptSay('Hej igen')
                 worm.scriptSay('Sluta stör mig och fixa mig en het dryck istället!')
-
+        '''
         worm.setUseMethod(wormUse)
         worm.setLookMethod(wormLook)
         worm.setTalkMethod(wormTalk)
         worm.setPickupMethod(wormPickup)
         
+
         self.addVisibleElement(worm)        
         self.show()
         

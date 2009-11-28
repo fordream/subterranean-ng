@@ -11,7 +11,6 @@ class Player(Character):
         
         self.tempVar = False
                 
-                
         self.Game = game
         self.rect = None
         self.visible = False
@@ -42,7 +41,6 @@ class Player(Character):
             'ww':self.loadFrames('west','walk',8),
             'nw':self.loadFrames('north','walk',2),
             'sw':self.loadFrames('south','walk',2)
-
         }
         self.pos = (0,0)
         self.renderPos = (0,0)
@@ -56,7 +54,7 @@ class Player(Character):
             'GIVE':"I'm not giving that away."
         }
         
-        self.textColor = (255,96,168)
+        self.textColor = (145,191,232)
         self.name = 'Player'
         self.path = []
         
@@ -93,16 +91,7 @@ class Player(Character):
         else:
             return False
 
-    def walkTo(self,(x,y),callbackMethod=None,argument=None):
-        if callbackMethod is not None and argument is not None:
-            self.callbackMethod = callbackMethod
-            self.argument = argument
-        if not self.walking:
-            if self.findPath(x,y):
-                self.resetStartFrame()
-                self.walking = True
-            else:
-                print "No avalible tiles at",x,y
+
         
     def walk(self):
         if len(self.path):
@@ -201,6 +190,19 @@ class Player(Character):
         closenessY = self.getPosition()[1] - element.getBasePosition()[1]
         return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
         
+    def walkTo(self,(x,y),callbackMethod=None,argument=None):
+        if self.Game.TopicMenu.visible:
+            self.Game.TopicMenu.hide()
+        if callbackMethod is not None and argument is not None:
+            self.callbackMethod = callbackMethod
+            self.argument = argument
+        if not self.walking:
+            if self.findPath(x,y):
+                self.resetStartFrame()
+                self.walking = True
+            else:
+                print "No avalible tiles at",x,y
+        
     def pickUp(self,element):
         self.face(element)
         if not self.Game.paused and self.inRange(element) and element.getRetrievable():
@@ -225,10 +227,12 @@ class Player(Character):
         else:
             self.scriptSay(self.standardResponses['LOOK'])
 
-    def talk(self,element):
-        self.face(element)
-        if self.inRange(element) and element.talkMethod is not None:
-            element.talkMethod()
+    def talk(self,character):
+        self.face(character)
+        self.Game.TopicMenu.loadCharacterTopics(character)
+        self.Game.TopicMenu.show()
+        if character.talkMethod is not None:
+            character.talkMethod()
         else:
             self.scriptSay(self.standardResponses['TALK'])
 
@@ -242,7 +246,7 @@ class Player(Character):
 
     def randomTalk(self):
         if not self.tempVar:
-            self.scriptSay("Hej!")
+            self.scriptSay("This is a really long text that needs to be chopped up for great justince!")
             self.scriptWalk((600,460))
             self.scriptSay("Här kan man vara.")
             self.tempVar = True

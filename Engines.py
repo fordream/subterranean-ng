@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os,pygame
 from time import time
 import pygame.locals as pygl
@@ -51,6 +52,9 @@ class Renderer:
         
     def loadGraphics(self):
         #self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
+        self.borderImage = pygame.image.load(os.path.join('data','ui','border.png'))
+        self.inventoryImage = pygame.image.load(os.path.join('data','ui','inventory.png'))
+        self.topicMenuImage = pygame.image.load(os.path.join('data','ui','topicmenu.png'))
         self.debugPoint = pygame.Surface((2,2));
         self.debugPoint.fill((255,0,0))
 
@@ -60,6 +64,7 @@ class Renderer:
         self.defaultTitleColor = (239,240,173)
         self.defaultOutlineFontColor = (0,0,0)
         self.generalFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),26)
+        self.topicMenuFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),24)
         self.elementTitleFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),26)
 
     def loadIcon(self):
@@ -85,36 +90,60 @@ class Renderer:
         if self.Game.TitleManager.currentElement is not None:
             elementTitle = self.elementTitleFont.render(self.Game.TitleManager.getTitle(),1,self.defaultTitleColor)
             self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))           
+            
+        #Draw dialouge
         if self.Game.ScriptManager.isActive():
             #Load all the script values from the current part
             if not self.Game.ScriptManager.valuesLoaded:
                 self.Game.ScriptManager.loadScriptValues(self.Game.ScriptManager.script[0])
             if self.Game.ScriptManager.getCurrentPartType() == 'ScriptConversationPart':
+            
                 posX = self.Game.ScriptManager.getTextPos()[0];
                 posY = self.Game.ScriptManager.getTextPos()[1];
-                text = self.generalFont.render(self.Game.ScriptManager.getText(),1,self.Game.ScriptManager.currentColor)
-                textOutline = self.generalFont.render(self.Game.ScriptManager.getText(),1,self.defaultOutlineFontColor)
-                self.screen.blit(textOutline,(posX-text.get_width()/2,posY-2))
-                self.screen.blit(textOutline,(posX-text.get_width()/2+2,posY))
-                self.screen.blit(textOutline,(posX-text.get_width()/2-2,posY))
-                self.screen.blit(textOutline,(posX-text.get_width()/2,posY+2))
-                self.screen.blit(text,(posX-text.get_width()/2,posY))
+                words = self.Game.ScriptManager.getText().split(' ')
+                lines = []
+                    
+                while len(words):
+                    currentLine = ""
+                    for word in words[0:7]:
+                        currentLine += " "+word
+                    lines.append(currentLine)
+                    del words[0:7]
+                
+                lines.reverse()
+                for line in lines:
+                    lineRender = self.generalFont.render(line,1,self.Game.ScriptManager.currentColor)
+                    lineShadow = self.generalFont.render(line,1,self.defaultOutlineFontColor)
+                    lineX = posX-lineRender.get_width()/2
+                    #Handling for text that goes outside the screen
+                    if lineX+lineRender.get_width() > 1000:
+                        lineX -= (lineX+lineRender.get_width())-1000
+                    self.screen.blit(lineShadow,(lineX,posY-2))
+                    self.screen.blit(lineShadow,(lineX+2,posY))
+                    self.screen.blit(lineShadow,(lineX-2,posY))
+                    self.screen.blit(lineShadow,(lineX,posY+2))
+                    self.screen.blit(lineRender,(lineX,posY))
+                    posY -= 30                
+                
             elif self.Game.ScriptManager.getCurrentPartType() == 'ScriptWalkPart':
                 self.Game.ScriptManager.runScriptetWalk()
             self.Game.ScriptManager.loop()
             
         #Draw inventory
         self.Game.Inventory.animateHeight()
-        self.screen.blit(self.Game.Inventory.surface,(0,self.Game.Inventory.y))
+        self.screen.blit(self.inventoryImage,(0,self.Game.Inventory.y))
         for item in self.Game.Inventory.items:
             if item.current is False:
                 self.screen.blit(item.image,item.rect)
 
         #Topicmenu
         if self.Game.TopicMenu.visible:
-            self.screen.blit(self.Game.TopicMenu.surface,self.Game.TopicMenu.rect)
+            self.screen.blit(self.topicMenuImage,self.Game.TopicMenu.rect)
             for topic in self.Game.TopicMenu.topics:
                 self.screen.blit(topic.render,topic.pos)
+                
+        #Draw border
+        self.screen.blit(self.borderImage,(0,0))
 
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
@@ -133,7 +162,12 @@ class Renderer:
 class AudioController:
 
     def __init__(self,game):
-        pygame.mixer.init()
+        try:
+            pygame.mixer.init()
+        except:
+            self.soundEnabled = False
+            self.musicEnabled = False
+            return
         self.soundEnabled = True
         self.musicEnabled = True
         self.musicState = None
@@ -142,11 +176,14 @@ class AudioController:
         self.ambienceChannel = pygame.mixer.Channel(2)
         self.currentAmbienceTrack = None        
         self.speechChannel = pygame.mixer.Channel(3)
-        self.musicTracks = {
-            'FOO':os.path.join('data','music','default.ogg'),
-            'THEME':os.path.join('data','music','theme.ogg'),
-            'NOTEXPECTED':os.path.join('data','music','notexpected.ogg')
-        }
+        try:
+            self.musicTracks = {
+                'FOO':os.path.join('data','music','default.ogg'),
+                'THEME':os.path.join('data','music','theme.ogg'),
+                'NOTEXPECTED':os.path.join('data','music','notexpected.ogg')
+            }
+        except:
+            self.musicTracks = {}
         self.ambienceTracks = {
             
         }
@@ -229,8 +266,7 @@ class EventManager:
                             pygl.K_l: self.Game.AudioController.toggleMusicVolume,
                             pygl.K_d: self.Game.dump,
                             pygl.K_f: self.Game.toggleFullscreen,
-                            pygl.K_t: self.Game.Player.randomTalk,
-                            pygl.K_h: self.Game.TopicMenu.hide
+                            pygl.K_t: self.Game.Player.randomTalk
                             }
                             
         self.mouseSignals = {1: self.handleLeftClick,
@@ -275,7 +311,7 @@ class EventManager:
                     self.Game.Cursor.currentItem.combine(self.Game.Inventory.currentItem)
                 else:
                     self.Game.Inventory.clearCurrentItem()
-            elif pygame.mouse.get_pos()[1] > 700:
+            elif pygame.mouse.get_pos()[1] > 660:
                 if self.Game.TopicMenu.currentTopic:
                     self.Game.TopicMenu.currentTopic.callbackMethod()            
             else:
@@ -294,8 +330,10 @@ class EventManager:
                     elif self.Game.Cursor.getCursorName() == 'LOOK':
                         self.Game.Player.look(self.Game.Cursor.currentElement)
                 else:
-                    print "WALK"
                     self.Game.Player.walkTo(pygame.mouse.get_pos())
+        else:
+            if self.Game.ScriptManager.durationFrames > 0 and self.Game.ScriptManager.currentPartType == 'ScriptConversationPart':
+                self.Game.ScriptManager.skip()
 
     
     def handleRightClick(self,event):

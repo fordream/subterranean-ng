@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 import os,sys,time,pygame
 from Constants import *
 from Player import Player
 from Engines import Renderer,AudioController,EventManager,Timer
-from Interfaces import ScriptManager,Cursor,Inventory,TitleManager,TopicMenu,Topic
+from Interfaces import ScriptManager,Cursor,Inventory,TitleManager,TopicMenu
 
 class Game:
     def __init__(self,arguments):
@@ -11,6 +12,7 @@ class Game:
         self.fullscreen = False
         self.paused = False
         self.currentScene = None;
+        self.currentElement = None
 
         self.TitleManager = TitleManager(self)
         self.Cursor = Cursor(self)

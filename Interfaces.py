@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os,pygame
 from Elements import Item
 
@@ -12,8 +13,8 @@ class Inventory:
         self.surface.fill((25,25,25),self.rect)
         self.surface.set_alpha(145)
         self.animating = False
-        self.y = -70
-        self.spacing = 10
+        self.y = -80
+        self.spacing = 20
 
     def addItem(self,item,runEffect=True):
         #Need game reference to talk to Inventory later
@@ -52,7 +53,7 @@ class Inventory:
         number = 0
         for item in self.items:
             if item.current is False:
-                item.setX(number*60+10)
+                item.setX(number*60+self.spacing)
                 number += 1
             else:
                 item.setX(-100)
@@ -87,7 +88,7 @@ class Inventory:
                 self.y+=10
                 for item in self.items:
                     item.setY(self.y+10)
-            elif not self.visible and self.y > -70:
+            elif not self.visible and self.y > -80:
                 self.y-=10
                 for item in self.items:
                     item.setY(self.y+10)
@@ -145,64 +146,37 @@ class TitleManager:
                 return '%s %s %s %s' % (self.prefix,self.Game.Inventory.currentItem.title,self.suffix,self.currentElement.title)
             else:
                 return '%s %s' % (self.prefix,self.currentElement.title)
-
-class Topic: 
-    def __init__(self,game,text,pos,method):
-        self.Game = game
-        self.text = text
-        self.hover = False
-        self.callbackMethod = method
-        self.dialouge = []
-        self.pos = pos
-        self.inactive = self.Game.Renderer.generalFont.render(self.text,1,(255,255,255))
-        self.active = self.Game.Renderer.generalFont.render(self.text,1,(91,177,255))
-        self.render = self.inactive
-        self.rect = self.render.get_rect()
-        self.rect.left,self.rect.top = pos
-                
-    def setDialogue(self):
-        self.dialouge
-        
-    def setPos(self,pos):
-        self.pos = pos
-        
-    def setActive(self):
-        self.render = self.active
-
-    def clearActive(self):
-        self.render = self.inactive
-            
-    def update(self):
-        return 
                         
 class TopicMenu:
     def __init__(self,game):
         self.Game = game
         self.visible = False
-        self.surface = pygame.Surface((1024,168))
-        self.rect = self.surface.get_rect()
-        self.surface.fill((25,25,25),self.rect)
-        self.surface.set_alpha(145)
+        self.rect = pygame.Rect(0,668,1024,100)
         self.topics = []
-        self.rect.y = 700
-        self.rect.x = 0
         self.currentTopic = None
         
-    def addTopic(self,text,method):
-        totalLen = 0
-        index = 0
-        if len(self.topics):
-            for topic in self.topics:
-                totalLen += topic.render.get_width()
-        index = len(self.topics)
-        pos = (totalLen+index*25+25,710)
-
-        self.topics.append(Topic(self.Game,text,pos,method))
+    def loadCharacterTopics(self,character):
+        self.clearTopics()
+        self.topics = character.topics
+        self.arrangeTopics()
         
+    def arrangeTopics(self):
+        currentY = 720
+        currentX = 25
+        for topic in self.topics:
+            if currentX + topic.render.get_width() < 1024:
+                topic.setPos((currentX,currentY))
+                currentX += topic.render.get_width()+25
+            else:
+                currentY -= 35
+                currentX = 25
+                topic.setPos((currentX,currentY))
+                currentX += topic.render.get_width()+25
+
     def setCurrentTopic(self,topic):
         self.currentTopic = topic
         topic.setActive()
-        
+    
     def clearCurrentTopic(self):
         self.currentTopic = None
         for topic in self.topics:
@@ -210,12 +184,16 @@ class TopicMenu:
             
     def getCurrentTopic(self):
         return self.currentTopic
-                
+        
+    def clearTopics(self):
+        self.topics = []
+                        
     def show(self):
         self.visible = True
         
     def hide(self):
         self.visible = False
+        self.clearTopics()
 
 class ScriptConversationPart:
     def __init__(self,actor,text):
@@ -251,6 +229,10 @@ class ScriptManager:
         self.method = None
         self.currentPartType = None
         self.valuesLoaded = False
+        self.skipped = False
+        
+    def skip(self):
+        self.skipped = True
         
     def setColor(self,color):
         self.currentColor = color
@@ -306,10 +288,11 @@ class ScriptManager:
     #The loop is called after the current part has been executed.    
     def loop(self):
         if self.startFrame is None:
-            #We just started a script
+            #We just started a script.
             self.resetStartFrame()
             self.Game.pause()
-        elif self.Game.Renderer.Timer.currentFrame - self.durationFrames == self.startFrame:
+        elif self.Game.Renderer.Timer.currentFrame - self.durationFrames == self.startFrame or self.skipped:
+            self.skipped = False
             #If the wait is done, go to the next part
             self.script.pop(0)
             self.resetStartFrame()
@@ -418,11 +401,13 @@ class Cursor():
                             self.setCursor('USE')
                             self.currentItem = item
                             return item
-        elif pygame.mouse.get_pos()[1] > 700 and self.Game.TopicMenu.visible:
+        elif pygame.mouse.get_pos()[1] > 660 and self.Game.TopicMenu.visible:
             self.Game.TopicMenu.clearCurrentTopic()
             for topic in self.Game.TopicMenu.topics:
                 if(topic.rect.collidepoint(pygame.mouse.get_pos())):
                     self.Game.TopicMenu.setCurrentTopic(topic)
+        elif pygame.mouse.get_pos()[1] < 660 and self.Game.TopicMenu.visible:
+            self.Game.TopicMenu.clearCurrentTopic()
         else:
             for element in self.Game.currentScene.visibleElements:
                 #Calculate center for item cursor to avoid pixel hunting.

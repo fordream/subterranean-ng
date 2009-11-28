@@ -1,4 +1,42 @@
+# -*- coding: utf-8 -*-
 import os,pygame
+
+class Topic: 
+    def __init__(self,game,name,text,method):
+        self.Game = game
+        self.name = name
+        self.text = text
+        self.hover = False
+        self.callbackMethod = method
+        self.dialouge = []
+        self.pos = (0,0)
+        self.inactive = self.Game.Renderer.topicMenuFont.render(self.text,1,(216,203,163))
+        self.active = self.Game.Renderer.topicMenuFont.render(self.text,1,(255,255,255))
+        self.render = self.inactive
+        self.rect = self.render.get_rect()
+        self.rect.left,self.rect.top = self.pos
+                
+    def setDialogue(self):
+        self.dialouge
+        
+    def setPos(self,pos):
+        self.pos = pos
+        self.rect.left,self.rect.top = self.pos
+        
+    def setActive(self):
+        self.render = self.active
+
+    def clearActive(self):
+        self.render = self.inactive
+        
+    def setCallbackMethod(self,method):
+        self.callbackMethod = method
+        
+    def runCallbackMethod(self):
+        self.callbackMethod()
+            
+    def update(self):
+        return 
 
 class Item:
     def __init__(self,name='unknown',title='Unknown item',acceptElement=None,resultElement=None):
@@ -15,7 +53,7 @@ class Item:
         
     def setName(self,name):
         #Auto-reloads image on name change
-        self.name = name
+        self.name = namec
         self.loadImage(self.name)
         
     def getName(self):
@@ -232,7 +270,7 @@ class Character(AnimatedElement):
         self.Game = game
         self.isCharacter = True
         self.name = None
-        self.topics = ()
+        self.topics = []
         self.textColor = (255,255,255)
         self.text = None
         self.textTimer = 0
@@ -240,8 +278,22 @@ class Character(AnimatedElement):
     def loop(self):
         print self.name,"looped"
         
-    def addTopic(topic):
-        self.topics.append(topic)
+    def addTopic(self,topicName,topicTitle,callbackMethod):
+        self.topics.append(Topic(self.Game,topicName,topicTitle,callbackMethod))
+        #TODO Call this method in some nicer way and not on every topic add
+        self.Game.TopicMenu.arrangeTopics()
+
+    def removeTopic(self,topicName):
+        for topic in self.topics:
+            if topic.name == topicName:
+                self.topics.remove(topic)
+                self.Game.TopicMenu.arrangeTopics()
+                
+    def hasTopic(self,topicName):
+        for topic in self.topics:
+            if topic.name == topicName:
+                return True
+        return False
                     
     def getTextPos(self):
         return (self.rect.centerx,self.pos[1]-30)
@@ -262,12 +314,3 @@ class Character(AnimatedElement):
 class Widget(AnimatedElement):
     def __init__(self):
         print self.__class__.__name__
-
-class Topic:
-    def __init__(self,topicName):
-        self.topicName
-        self.dialouge
-        
-    def addDialouge(dialouge):
-        pass
-        #TODO

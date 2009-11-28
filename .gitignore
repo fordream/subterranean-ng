@@ -3,6 +3,6 @@
 *.py~
 *.ini~
 *.txt~
-/data/
+/data/music
 /extras/
 data.zip
