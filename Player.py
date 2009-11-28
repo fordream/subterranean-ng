@@ -246,9 +246,9 @@ class Player(Character):
 
     def randomTalk(self):
         if not self.tempVar:
-            self.scriptSay("This is a really long text that needs to be chopped up for great justince!")
+            self.scriptSay("Hur kom jag hit egentligen? Det vet jag inte, men det är ju väldigt coolt i alla fall.","PLAYER001")
             self.scriptWalk((600,460))
-            self.scriptSay("Här kan man vara.")
+            self.scriptSay("Här kan man vara.","PLAYER002")
             self.tempVar = True
         else:
             self.scriptWalk((334,416))

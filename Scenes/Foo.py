@@ -21,7 +21,7 @@ class Room(Scene):
         fire.setActionPosition((434,446))
 
         def fireLook():
-            self.Game.Player.scriptSay("Mmm... varmt")
+            self.Game.Player.scriptSay("Mmm... varmt","PLAYER003")
 
         def fireUse():
             self.Game.Player.scriptSay("Aj!")
@@ -121,6 +121,8 @@ class Room(Scene):
         
 
         self.addVisibleElement(worm)        
+        
+        self.Game.AudioController.playAmbienceSound('AMBI001')
         self.show()
         
         #self.Game.Player.walkTo((500,670))

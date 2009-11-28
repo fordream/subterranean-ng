@@ -20,10 +20,9 @@ class Inventory:
         #Need game reference to talk to Inventory later
         item.Game = self.Game
         self.items.append(item)
-        if runEffect:
-            self.arrangeItems()
-            self.y = 0
-            self.hide()
+        if not self.visible:
+            self.hideItems()
+        self.arrangeItems()
         
     def removeItem(self,item):
         self.items.remove(item)
@@ -59,13 +58,21 @@ class Inventory:
                 item.setX(-100)
                                                 
     def show(self):
-        self.visible = True
-        self.animating = True
+        if not self.visible:
+            self.visible = True
+            self.animating = True
+            self.Game.AudioController.playUISound('SLIDEIN')
 
     def hide(self):
-        self.visible = False
-        self.animating = True
-        
+        if self.visible:
+            self.visible = False
+            self.animating = True
+            self.Game.AudioController.playUISound('SLIDEOUT')
+
+    def hideItems(self):
+        for item in self.items:
+            item.setY(-80)
+            
     def setCurrentItem(self,item):
         if self.currentItem is None:
             self.currentItem = item
@@ -84,7 +91,7 @@ class Inventory:
                     
     def animateHeight(self):
         if self.animating:
-            if self.visible and self.y < 0:
+            if self.visible and self.y < 10:
                 self.y+=10
                 for item in self.items:
                     item.setY(self.y+10)
@@ -194,26 +201,39 @@ class TopicMenu:
     def hide(self):
         self.visible = False
         self.clearTopics()
-
+    
 class ScriptConversationPart:
-    def __init__(self,actor,text):
+    def __init__(self,actor,text,speech=None):
         self.actor = actor
         self.text = text
+        self.speech = speech
+        
+    def getType(self):
+        return self.__class__.__name__
 
 class ScriptWalkPart:
     def __init__(self,actor,walkPos):
         self.actor = actor
         self.walkPos = walkPos
 
+    def getType(self):
+        return self.__class__.__name__
+
 class ScriptSequencePart:
     def __init__(self,actor,sequenceName):
         self.actor = actor
         self.sequenceName = sequenceName
 
+    def getType(self):
+        return self.__class__.__name__
+
 class ScriptMethodPart:
     def __init__(self,method,args):
         self.method = method
         self.args = args
+
+    def getType(self):
+        return self.__class__.__name__
                            
 class ScriptManager:
     def __init__(self,game):
@@ -237,8 +257,24 @@ class ScriptManager:
     def setColor(self,color):
         self.currentColor = color
         
-    def setDurationFrames(self,textLength):
-        self.durationFrames = textLength * 5
+    def setDurationFrames(self,part):
+        if part.getType() == 'ScriptConversationPart':
+            if part.speech is not None:
+                #If there is a sound, calculate the frames from it
+                tmpSound = pygame.mixer.Sound(self.Game.AudioController.speechSounds.get(part.speech))
+                self.durationFrames = int(tmpSound.get_length()*32)
+                print self.durationFrames,tmpSound.get_length()
+            else:
+                #If not, calculate from the text.
+                #TODO: Calibrate
+                self.durationFrames = int(round(len(part.text) * 1.9))
+        elif part.getType == 'ScriptWalkPart':
+            #Calculate frames from path length
+            #TODO: Calculate this
+            self.durationFrames = 100
+        else:
+            #Default
+            self.durationFrames = 100
                 
     def isActive(self):
         return len(self.script) > 0
@@ -267,8 +303,8 @@ class ScriptManager:
     def getWalkPos(self):
         return self.script[0].walkPos
 
-    def addConversationPart(self,actor,text):
-        self.script.append(ScriptConversationPart(actor,text))
+    def addConversationPart(self,actor,text,speech):
+        self.script.append(ScriptConversationPart(actor,text,speech))
 
     def addWalkPart(self,actor,endPos):
         self.script.append(ScriptWalkPart(actor,endPos))
@@ -288,32 +324,38 @@ class ScriptManager:
     #The loop is called after the current part has been executed.    
     def loop(self):
         if self.startFrame is None:
-            #We just started a script.
+            #Start
             self.resetStartFrame()
             self.Game.pause()
         elif self.Game.Renderer.Timer.currentFrame - self.durationFrames == self.startFrame or self.skipped:
+            #After each part is done or skipped
+            self.Game.AudioController.stopSpeech()
             self.skipped = False
-            #If the wait is done, go to the next part
             self.script.pop(0)
             self.resetStartFrame()
             if not len(self.script):
-                #No more parts. End script
+                #End
+                self.Game.AudioController.restoreMusicVolume()
                 self.resetScriptValues()
                 self.Game.unpause()
             else:
                 #Load the part values
                 self.loadScriptValues(self.script[0])
-        
+
+        if self.Game.Renderer.Timer.currentFrame == self.startFrame:
+            #Every part
+            if self.script[0].__class__.__name__ == 'ScriptConversationPart' and self.script[0].speech is not None:
+                self.Game.AudioController.decreaseMusicVolume()
+                self.Game.AudioController.playSpeechSound(self.script[0].speech)
+
+                        
     def loadScriptValues(self,scriptPart):
         self.currentPartType = self.getCurrentPartType()
         #Determine what kind of part it is:
         if self.currentPartType == 'ScriptConversationPart':
-            self.setDurationFrames(len(scriptPart.text))
             self.setColor(scriptPart.actor.getTextColor())
             self.setTextPos(scriptPart.actor.getTextPos())
-        elif self.currentPartType == 'ScriptWalkPart':
-            #FIXME. Decide how many frames to wait automatically
-            self.setDurationFrames(30)
+        self.setDurationFrames(scriptPart)
         self.valuesLoaded = True
         
     def runScriptetWalk(self):
@@ -321,7 +363,7 @@ class ScriptManager:
             self.getActor().walkTo(self.getWalkPos())
         
     def resetScriptValues(self):
-        self.setDurationFrames(50)
+        self.durationFrames = 50
         self.setColor((255,255,255))
         self.setTextPos((0,0))
         self.valuesLoaded = False
@@ -387,7 +429,7 @@ class Cursor():
             self.setCursor(self.previousCursor())
             
     def checkCollisions(self):
-        if pygame.mouse.get_pos()[1] < 70:
+        if pygame.mouse.get_pos()[1] < 80:
                 for item in self.Game.Inventory.items:
                     if(item.rect.collidepoint(pygame.mouse.get_pos())):
                         if self.Game.Inventory.currentItem is not None and item.current is False:

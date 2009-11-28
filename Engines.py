@@ -129,6 +129,10 @@ class Renderer:
                 self.Game.ScriptManager.runScriptetWalk()
             self.Game.ScriptManager.loop()
             
+        #Draw border
+        self.screen.blit(self.borderImage,(0,0))
+
+            
         #Draw inventory
         self.Game.Inventory.animateHeight()
         self.screen.blit(self.inventoryImage,(0,self.Game.Inventory.y))
@@ -142,8 +146,6 @@ class Renderer:
             for topic in self.Game.TopicMenu.topics:
                 self.screen.blit(topic.render,topic.pos)
                 
-        #Draw border
-        self.screen.blit(self.borderImage,(0,0))
 
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
@@ -173,21 +175,34 @@ class AudioController:
         self.musicState = None
         self.musicVolume= None
         self.currentMusicTrack = None
-        self.ambienceChannel = pygame.mixer.Channel(2)
-        self.currentAmbienceTrack = None        
-        self.speechChannel = pygame.mixer.Channel(3)
+        self.currentSound = None
+        self.ambienceChannel = pygame.mixer.Channel(1)
+        self.speechChannel = pygame.mixer.Channel(2)
+        self.UIChannel = pygame.mixer.Channel(3)
         try:
             self.musicTracks = {
-                'FOO':os.path.join('data','music','default.ogg'),
+                'DEFAULT':os.path.join('data','music','default.ogg'),
                 'THEME':os.path.join('data','music','theme.ogg'),
                 'NOTEXPECTED':os.path.join('data','music','notexpected.ogg')
             }
         except:
             self.musicTracks = {}
-        self.ambienceTracks = {
-            
+
+        self.ambienceSounds = {
+            'AMBI001':os.path.join('data','sound','ambience','ambience001.ogg')
         }
-        self.playMusic('NOTEXPECTED')
+        
+        self.UISounds = {
+            'SLIDEIN':os.path.join('data','sound','ui','slidein.ogg'),
+            'SLIDEOUT':os.path.join('data','sound','ui','slideout.ogg')
+        }        
+        
+        self.speechSounds = {
+            'PLAYER001':os.path.join('data','sound','speech','player001.ogg'),
+            'PLAYER002':os.path.join('data','sound','speech','player002.ogg'),
+            'PLAYER003':os.path.join('data','sound','speech','player003.ogg')
+        }
+        self.playMusic('THEME')
 
     def playMusic(self,trackName):
         if self.musicEnabled and trackName in self.musicTracks:
@@ -231,11 +246,32 @@ class AudioController:
         pygame.mixer.music.unpause()
         self.musicState = 'unpaused'
     
-    def playAmbience(self):
-        pass
+    def playAmbienceSound(self,soundName):
+        self.playSound(self.ambienceChannel,self.ambienceSounds,soundName,-1)
+        print "Started ambience sound"
+
+    def playSpeechSound(self,soundName):
+        self.decreaseMusicVolume()
+        self.playSound(self.speechChannel,self.speechSounds,soundName)
+
+    def playUISound(self,soundName):
+        self.playSound(self.UIChannel,self.UISounds,soundName)
+                
+    def playSound(self,channel,soundList,soundName,loops=0):
+        if self.soundEnabled and soundName in soundList:
+            channel.play(pygame.mixer.Sound(soundList.get(soundName)),loops)
+        else:
+            print "Cound not find sound!"
+
+    def stopSpeech(self):
+        self.stopSound(self.speechChannel)
+
+    def stopAmbience(self):
+        self.stopSound(self.ambienceChannel)
         
-    def stopSound(self):
-        pass
+    def stopSound(self,channel):
+        if channel.get_busy():
+            channel.stop()
         
     def enableMusic(self):
         self.musicEnabled = True

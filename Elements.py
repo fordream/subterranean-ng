@@ -304,8 +304,8 @@ class Character(AnimatedElement):
     def getTextColor(self):
         return self.textColor
         
-    def scriptSay(self,text):
-        self.Game.ScriptManager.addConversationPart(self,text)
+    def scriptSay(self,text,speech=None):
+        self.Game.ScriptManager.addConversationPart(self,text,speech)
 
     def scriptWalk(self,pos):
         self.Game.ScriptManager.addWalkPart(self,pos)
