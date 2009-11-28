@@ -165,7 +165,7 @@ class AudioController:
 
     def __init__(self,game):
         try:
-            pygame.mixer.init()
+            pygame.mixer.init(44100)
         except:
             self.soundEnabled = False
             self.musicEnabled = False
@@ -225,7 +225,7 @@ class AudioController:
             self.restoreMusicVolume()    
         
     def decreaseMusicVolume(self):
-        pygame.mixer.music.set_volume(0.2)
+        pygame.mixer.music.set_volume(0.5)
         self.musicVolume = 'decreased'
         
     def restoreMusicVolume(self):
