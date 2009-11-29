@@ -55,7 +55,7 @@ class Renderer:
         self.borderImage = pygame.image.load(os.path.join('data','ui','border.png'))
         self.inventoryImage = pygame.image.load(os.path.join('data','ui','inventory.png'))
         self.topicMenuImage = pygame.image.load(os.path.join('data','ui','topicmenu.png'))
-        self.debugPoint = pygame.Surface((2,2));
+        self.debugPoint = pygame.Surface((2,2))
         self.debugPoint.fill((255,0,0))
 
     def loadFonts(self):
@@ -85,12 +85,35 @@ class Renderer:
         
             #Draw main character
             self.screen.blit(self.Game.Player.getCurrentFrame(),self.Game.Player.getRenderPos())
+            
+        #Draw border
+        self.screen.blit(self.borderImage,(0,0))
 
+            
+        #Draw inventory
+        self.Game.Inventory.animateHeight()
+        self.screen.blit(self.inventoryImage,(0,self.Game.Inventory.y))
+        for item in self.Game.Inventory.items:
+            if item.current is False:
+                self.screen.blit(item.image,item.rect)
+
+        #Topicmenu
+        if self.Game.TopicMenu.visible:
+            self.screen.blit(self.topicMenuImage,self.Game.TopicMenu.rect)
+            for topic in self.Game.TopicMenu.topics:
+                self.screen.blit(topic.render,topic.pos)
+                
+        #HUD
+        if self.Game.currentWindow is not None:
+            self.screen.blit(self.Game.currentWindow.background,self.Game.currentWindow.rect)
+            for widget in self.Game.currentWindow.widgets:
+                self.screen.blit(widget.image,widget.rect)
+                
         #Draw element titles
-        if self.Game.TitleManager.currentElement is not None:
+        if self.Game.TitleManager.currentElement is not None and not self.Game.TopicMenu.visible:
             elementTitle = self.elementTitleFont.render(self.Game.TitleManager.getTitle(),1,self.defaultTitleColor)
             self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))           
-            
+                        
         #Draw dialouge
         if self.Game.ScriptManager.isActive():
             #Load all the script values from the current part
@@ -98,8 +121,14 @@ class Renderer:
                 self.Game.ScriptManager.loadScriptValues(self.Game.ScriptManager.script[0])
             if self.Game.ScriptManager.getCurrentPartType() == 'ScriptConversationPart':
             
-                posX = self.Game.ScriptManager.getTextPos()[0];
-                posY = self.Game.ScriptManager.getTextPos()[1];
+                if self.Game.currentWindow is not None:
+                    #If we have HUD open, put all dialouge on top of screen
+                    posX = 512
+                    posY = 50
+                else:
+                    posX = self.Game.ScriptManager.getTextPos()[0]
+                    posY = self.Game.ScriptManager.getTextPos()[1]
+
                 words = self.Game.ScriptManager.getText().split(' ')
                 lines = []
                     
@@ -127,35 +156,20 @@ class Renderer:
                 
             elif self.Game.ScriptManager.getCurrentPartType() == 'ScriptWalkPart':
                 self.Game.ScriptManager.runScriptetWalk()
-            self.Game.ScriptManager.loop()
-            
-        #Draw border
-        self.screen.blit(self.borderImage,(0,0))
-
-            
-        #Draw inventory
-        self.Game.Inventory.animateHeight()
-        self.screen.blit(self.inventoryImage,(0,self.Game.Inventory.y))
-        for item in self.Game.Inventory.items:
-            if item.current is False:
-                self.screen.blit(item.image,item.rect)
-
-        #Topicmenu
-        if self.Game.TopicMenu.visible:
-            self.screen.blit(self.topicMenuImage,self.Game.TopicMenu.rect)
-            for topic in self.Game.TopicMenu.topics:
-                self.screen.blit(topic.render,topic.pos)
-                
+            self.Game.ScriptManager.loop()            
 
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
         self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
             
+        #Debug points
         if self.Game.debug:
             if len(self.Game.Player.path) > 1:
                 pygame.draw.lines(self.screen, (255,255,255,255), 0, self.Game.Player.path)
             for element in self.Game.currentScene.visibleElements:
                 pygame.draw.lines(self.screen,(255,0,255),1,[element.rect.topleft,element.rect.topright,element.rect.bottomright,element.rect.bottomleft])
+                if element.actionPos is not None:
+                    self.screen.blit(self.debugPoint,element.actionPos)
             self.screen.blit(self.debugPoint,pygame.mouse.get_pos())
             pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
 
@@ -202,10 +216,9 @@ class AudioController:
             'PLAYER002':os.path.join('data','sound','speech','player002.ogg'),
             'PLAYER003':os.path.join('data','sound','speech','player003.ogg')
         }
-        self.playMusic('THEME')
 
     def playMusic(self,trackName):
-        if self.musicEnabled and trackName in self.musicTracks:
+        if self.soundEnabled and self.musicEnabled and trackName in self.musicTracks:
             if self.currentMusicTrack is not None and self.currentMusicTrack != trackName:
                 pygame.mixer.music.fadeout(1500)
                 pygame.mixer.music.stop()
@@ -247,21 +260,23 @@ class AudioController:
         self.musicState = 'unpaused'
     
     def playAmbienceSound(self,soundName):
-        self.playSound(self.ambienceChannel,self.ambienceSounds,soundName,-1)
-        print "Started ambience sound"
+        if self.soundEnabled:
+            self.playSound(self.ambienceChannel,self.ambienceSounds,soundName,-1)
 
     def playSpeechSound(self,soundName):
-        self.decreaseMusicVolume()
-        self.playSound(self.speechChannel,self.speechSounds,soundName)
+        if self.soundEnabled:
+            self.decreaseMusicVolume()
+            self.playSound(self.speechChannel,self.speechSounds,soundName)
 
     def playUISound(self,soundName):
-        self.playSound(self.UIChannel,self.UISounds,soundName)
+        if self.soundEnabled:
+            self.playSound(self.UIChannel,self.UISounds,soundName)
                 
     def playSound(self,channel,soundList,soundName,loops=0):
         if self.soundEnabled and soundName in soundList:
             channel.play(pygame.mixer.Sound(soundList.get(soundName)),loops)
         else:
-            print "Cound not find sound!"
+            print "Cound not find sound!:",soundName
 
     def stopSpeech(self):
         self.stopSound(self.speechChannel)
@@ -284,9 +299,10 @@ class AudioController:
         self.soundEnabled = True
 
     def disableSound(self):
-        self.stopMusic()
-        self.stopSound()
+        pygame.mixer.stop()
+        pygame.mixer.music.stop()
         self.soundEnabled = False
+        self.musicEnabled = False
         
 class EventManager:
     def __init__(self,game):
@@ -355,7 +371,9 @@ class EventManager:
                     pos = self.Game.Cursor.currentElement.getActionPosition()
                     if pos is None:
                         pos = self.Game.Cursor.currentElement.getBasePosition()
-                    if self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
+                    if self.Game.currentWindow is not None and self.Game.Cursor.currentElement.clickMethod is not None: 
+                        self.Game.Cursor.currentElement.clickMethod()
+                    elif self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
                         self.Game.Player.walkTo(pos,self.Game.Player.give,self.Game.Cursor.currentElement)
                     elif self.Game.Cursor.getCursorName() == 'PICKUP':
                         self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
@@ -373,8 +391,13 @@ class EventManager:
 
     
     def handleRightClick(self,event):
+        #Right click cancels.
         if not self.Game.paused and self.Game.Inventory.getCurrentItem() is not None:
                 self.Game.Inventory.clearCurrentItem()
+        elif self.Game.currentWindow is not None:
+            self.Game.currentWindow.hide()
+        elif self.Game.currentWindow is not None:
+            self.Game.currentWindow.hide()
         
     def handleScrollClick(self,event):
         pass

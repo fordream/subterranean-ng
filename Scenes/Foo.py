@@ -1,6 +1,7 @@
 #-coding:utf-8-
 from Scene import Scene
-from Elements import Element,VisibleElement,AnimatedElement,Area,Puzzle,Character,Widget,Item
+from Elements import Element,VisibleElement,AnimatedElement,Area,Puzzle,Character,Item,Widget
+from Interfaces import ElementWindow
 
 class Room(Scene):
 
@@ -17,7 +18,7 @@ class Room(Scene):
         fire.setName("fire")
         fire.setTitle('Fire')
         fire.setImage('fire.png')
-        fire.setPosition((534,306))
+        fire.setPosition((540,276))
         fire.setActionPosition((434,446))
 
         def fireLook():
@@ -97,23 +98,7 @@ class Room(Scene):
             
         def wormTalk():
             worm.scriptSay("'sup?")                
-        '''
-            def talkDrink():
-                worm.scriptSay("Jag vill ha något hett!")
-                
-            self.Game.TopicMenu.addTopic('Hejdå',self.Game.TopicMenu.hide)
-            self.Game.TopicMenu.addTopic('Hur är läget?',talkWhatsup)
-            
-            if self.talkedToWorm is False:
-                self.Game.Player.scriptSay('Hej din gamle mask!')
-                worm.scriptSay('Hej hej...')
-                self.talkedToWorm = True
-            elif self.happyWorm:
-                worm.scriptSay('Du är min vän, random huvudperson!')
-            else:
-                self.Game.Player.scriptSay('Hej igen')
-                worm.scriptSay('Sluta stör mig och fixa mig en het dryck istället!')
-        '''
+
         worm.setUseMethod(wormUse)
         worm.setLookMethod(wormLook)
         worm.setTalkMethod(wormTalk)
@@ -123,6 +108,94 @@ class Room(Scene):
         self.addVisibleElement(worm)        
         
         self.Game.AudioController.playAmbienceSound('AMBI001')
+        
+        dungeonMapWindow = ElementWindow(self.Game)
+        dungeonMapWindow.setBackground('dungeonmap.png')
+        
+        def openMapWindow():
+            self.Game.Player.scriptSay('En karta. Så användarvänligt!')
+            self.Game.Player.scriptSay('Hm, det verkar vara ett enda virrvarr av gångar.')
+            
+        def closeMapWindow():
+            self.Game.Player.scriptSay('Jag kommer inte att komma ihåg något ändå med mitt lokalsinne.')
+            
+        dungeonMapWindow.setOpenMethod(openMapWindow)
+        dungeonMapWindow.setCloseMethod(closeMapWindow)
+        
+        cross = Widget()
+        cross.setName('cross')
+        cross.setTitle('Du är här')
+        cross.setImage('cross.png')
+        cross.setPosition((338,208))
+        dungeonMapWindow.addWidget(cross)
+
+        room1 = Widget()
+        room1.setName('cross')
+        room1.setTitle('Solgruvan')
+        room1.setImage('room1.png')
+        room1.setPosition((80,127))
+        dungeonMapWindow.addWidget(room1)
+
+        room2 = Widget()
+        room2.setName('cross')
+        room2.setTitle('Portarna')
+        room2.setImage('room2.png')
+        room2.setPosition((360,64))
+        dungeonMapWindow.addWidget(room2)
+        
+        room3 = Widget()
+        room3.setName('cross')
+        room3.setTitle('Undergård')
+        room3.setImage('room3.png')
+        room3.setPosition((520,84))
+        dungeonMapWindow.addWidget(room3)
+        
+        def room3Click():
+            self.Game.Player.scriptSay("Undergård, det låter coolt. Jag borde gå dit.")
+        room3.setClickMethod(room3Click)
+        
+        room4 = Widget()
+        room4.setName('cross')
+        room4.setTitle('Underjordsfloden')
+        room4.setImage('room4.png')
+        room4.setPosition((530,365))
+        dungeonMapWindow.addWidget(room4)
+        
+        room5 = Widget()
+        room5.setName('cross')
+        room5.setTitle('Smedjan')
+        room5.setImage('room5.png')
+        room5.setPosition((244,378))
+        dungeonMapWindow.addWidget(room5)
+
+        room6 = Widget()
+        room6.setName('cross')
+        room6.setTitle('Brytrummet')
+        room6.setImage('room6.png')
+        room6.setPosition((125,305))
+        dungeonMapWindow.addWidget(room6)
+                        
+        dungeonMap = VisibleElement()
+        dungeonMap.setName("dungeonmap")
+        dungeonMap.setTitle('Dungeon map')
+        dungeonMap.setImage('dungeonmap.png')
+        dungeonMap.setPosition((624,276))
+        dungeonMap.setActionPosition((624,476))
+
+
+        def mapUse():
+            dungeonMapWindow.show()
+
+        def mapLook():
+            mapUse()
+            
+        dungeonMap.setLookMethod(mapLook)
+        dungeonMap.setUseMethod(mapUse)
+        
+        self.addVisibleElement(dungeonMap)
+
+
+        self.Game.AudioController.playMusic('THEME')
         self.show()
         
         #self.Game.Player.walkTo((500,670))

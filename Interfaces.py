@@ -263,7 +263,6 @@ class ScriptManager:
                 #If there is a sound, calculate the frames from it
                 tmpSound = pygame.mixer.Sound(self.Game.AudioController.speechSounds.get(part.speech))
                 self.durationFrames = int(tmpSound.get_length()*32)
-                print self.durationFrames,tmpSound.get_length()
             else:
                 #If not, calculate from the text.
                 #TODO: Calibrate
@@ -451,29 +450,81 @@ class Cursor():
         elif pygame.mouse.get_pos()[1] < 660 and self.Game.TopicMenu.visible:
             self.Game.TopicMenu.clearCurrentTopic()
         else:
-            for element in self.Game.currentScene.visibleElements:
-                #Calculate center for item cursor to avoid pixel hunting.
-                #Also set the prefix correctly.
-                #TODO: Make this loop smarter. Really.
-                if self.Game.Cursor.currentItem is not None:
-                    mouse = pygame.mouse.get_pos()
-                    pos = (mouse[0]+24,mouse[1]+24)
-                else:
-                    pos = pygame.mouse.get_pos()
-                if(element.rect.collidepoint(pos)):
-                    self.Game.TitleManager.setElement(element)
-                    self.currentElement = element
-                    if self.Game.Inventory.currentItem is not None:
-                        self.Game.TitleManager.setPrefix('GIVE')
-                        self.Game.TitleManager.setSuffix('TO')
-                    else:
-                        self.Game.TitleManager.setPrefix(self.getCursorName())
-                    if self.getCursorName() == 'DEFAULT':
+            if self.Game.currentWindow is not None:
+                for widget in self.Game.currentWindow.widgets:
+                    if(widget.rect.collidepoint(pygame.mouse.get_pos())):
+                        self.Game.TitleManager.setElement(widget)
+                        self.currentElement = widget
                         self.setCursor('USE')
-                    return self.currentElement
+                        return self.currentElement
+            else:
+                for element in self.Game.currentScene.visibleElements:
+                    #Calculate center for item cursor to avoid pixel hunting.
+                    #Also set the prefix correctly.
+                    #TODO: Make this loop smarter. Really.
+                    if self.Game.Cursor.currentItem is not None:
+                        mouse = pygame.mouse.get_pos()
+                        pos = (mouse[0]+24,mouse[1]+24)
+                    else:
+                        pos = pygame.mouse.get_pos()
+                    if(element.rect.collidepoint(pos)):
+                        self.Game.TitleManager.setElement(element)
+                        self.currentElement = element
+                        if self.Game.Inventory.currentItem is not None:
+                            self.Game.TitleManager.setPrefix('GIVE')
+                            self.Game.TitleManager.setSuffix('TO')
+                        else:
+                            self.Game.TitleManager.setPrefix(self.getCursorName())
+                        if self.getCursorName() == 'DEFAULT':
+                            self.setCursor('USE')
+                        return self.currentElement
             
         
 
         self.Game.TitleManager.clearElement()
         self.setCursor('DEFAULT')
         self.currentElement = None;
+        
+class ElementWindow:
+    def __init__(self,game):
+        self.Game = game
+        self.background = None
+        self.rect = None
+        self.widgets = []
+        self.openMethod = None
+        self.closeMethod = None
+        
+    def setBackground(self,background):
+        self.background = pygame.image.load(os.path.join('data','windows',background))
+        self.rect = self.background.get_rect()
+        self.align()
+        
+    def align(self):
+        self.rect.left = (1024-self.rect.w)/2
+        self.rect.top = (768-self.rect.h)/2
+        
+    def show(self):
+        self.Game.currentWindow = self
+        self.runOpenMethod()
+        
+    def hide(self):
+        self.Game.currentWindow = None
+        self.runCloseMethod()
+
+    def addWidget(self,widget):
+        widget.setParent(self)
+        self.widgets.append(widget)
+        
+    def setOpenMethod(self,method):
+        self.openMethod = method
+
+    def setCloseMethod(self,method):
+        self.closeMethod = method
+
+    def runOpenMethod(self):
+        if self.openMethod is not None:
+            self.openMethod()
+            
+    def runCloseMethod(self):
+        if self.closeMethod is not None:
+            self.closeMethod()

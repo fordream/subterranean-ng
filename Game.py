@@ -11,8 +11,10 @@ class Game:
         self.running = True;
         self.fullscreen = False
         self.paused = False
-        self.currentScene = None;
+        self.currentScene = None
         self.currentElement = None
+        self.currentWindow = None
+        self.currentWidget = None
 
         self.TitleManager = TitleManager(self)
         self.Cursor = Cursor(self)
@@ -29,6 +31,7 @@ class Game:
         
     def parseArguments(self,arguments):
         avalibleArguments = {
+            '--fullscreen':self.toggleFullscreen,
             '--nomusic':self.AudioController.disableMusic,
             '--nosound':self.AudioController.disableSound,
         }

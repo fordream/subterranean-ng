@@ -309,8 +309,35 @@ class Character(AnimatedElement):
 
     def scriptWalk(self,pos):
         self.Game.ScriptManager.addWalkPart(self,pos)
-
-            
+        
 class Widget(AnimatedElement):
     def __init__(self):
-        print self.__class__.__name__
+        AnimatedElement.__init__(self)
+        self.rect = None
+        self.image = None
+        self.parent = None
+        self.rect = None
+        self.clickMethod = None
+        
+    def setParent(self,parent):
+        self.parent = parent
+        self.alignToParent()
+        
+    def setPosition(self,pos):
+        self.rect.left = pos[0]
+        self.rect.top = pos[1]
+
+    def alignToParent(self):
+        #Moves the object to coordinates relative to parent
+        self.rect.left += self.parent.rect.left
+        self.rect.top += self.parent.rect.top
+        
+    def setImage(self,image):
+        self.image = pygame.image.load(os.path.join('data','widgets',image))
+        self.rect = self.image.get_rect()
+        
+    def setClickMethod(self,method):
+        self.clickMethod = method
+        
+    def runClickMethod(self):
+        self.clickMethod()

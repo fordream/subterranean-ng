@@ -238,7 +238,7 @@ class Player(Character):
 
     def give(self,element):
         self.face(element)
-        if self.inRange(element) and self.Game.Inventory.currentItem.name in element.giveMethods:
+        if self.Game.Inventory.currentItem is not None and self.inRange(element) and self.Game.Inventory.currentItem.name in element.giveMethods:
             element.runGiveMethod(self.Game.Inventory.currentItem.name)
             self.Game.Inventory.clearCurrentItem()
         else:
