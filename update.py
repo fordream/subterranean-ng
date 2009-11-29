@@ -15,4 +15,5 @@ os.chdir(folder)
 files = os.listdir('.')
 for file in files:
 	os.renames(file,'../'+file)
+raw_input("Updated. Press any key to exit")
 sys.exit()

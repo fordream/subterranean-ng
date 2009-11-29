@@ -211,7 +211,7 @@ class AudioController:
                 pygame.mixer.music.stop()
             self.currentMusicTrack = trackName
             pygame.mixer.music.load(self.musicTracks.get(trackName))
-            pygame.mixer.music.play()
+            pygame.mixer.music.play(-1)
             self.musicState = 'unpaused'
             self.musicVolume= 'normal'
 
