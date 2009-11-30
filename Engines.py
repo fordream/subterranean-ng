@@ -208,7 +208,8 @@ class AudioController:
         
         self.UISounds = {
             'SLIDEIN':os.path.join('data','sound','ui','slidein.ogg'),
-            'SLIDEOUT':os.path.join('data','sound','ui','slideout.ogg')
+            'SLIDEOUT':os.path.join('data','sound','ui','slideout.ogg'),
+            'MAP':os.path.join('data','sound','ui','map.ogg'),
         }        
         
         self.speechSounds = {

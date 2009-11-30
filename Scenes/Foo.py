@@ -113,10 +113,12 @@ class Room(Scene):
         dungeonMapWindow.setBackground('dungeonmap.png')
         
         def openMapWindow():
+            self.Game.AudioController.playUISound('MAP')
             self.Game.Player.scriptSay('En karta. Så användarvänligt!')
             self.Game.Player.scriptSay('Hm, det verkar vara ett enda virrvarr av gångar.')
             
         def closeMapWindow():
+            self.Game.AudioController.playUISound('MAP')
             self.Game.Player.scriptSay('Jag kommer inte att komma ihåg något ändå med mitt lokalsinne.')
             
         dungeonMapWindow.setOpenMethod(openMapWindow)
