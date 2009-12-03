@@ -1,93 +1,6 @@
 # -*- coding: utf-8 -*-
 import os,pygame
 
-class Topic: 
-    def __init__(self,game,name,text,method):
-        self.Game = game
-        self.name = name
-        self.text = text
-        self.hover = False
-        self.callbackMethod = method
-        self.dialouge = []
-        self.pos = (0,0)
-        self.inactive = self.Game.Renderer.topicMenuFont.render(self.text,1,(216,203,163))
-        self.active = self.Game.Renderer.topicMenuFont.render(self.text,1,(255,255,255))
-        self.render = self.inactive
-        self.rect = self.render.get_rect()
-        self.rect.left,self.rect.top = self.pos
-                
-    def setDialogue(self):
-        self.dialouge
-        
-    def setPos(self,pos):
-        self.pos = pos
-        self.rect.left,self.rect.top = self.pos
-        
-    def setActive(self):
-        self.render = self.active
-
-    def clearActive(self):
-        self.render = self.inactive
-        
-    def setCallbackMethod(self,method):
-        self.callbackMethod = method
-        
-    def runCallbackMethod(self):
-        self.callbackMethod()
-            
-    def update(self):
-        return 
-
-class Item:
-    def __init__(self,name='unknown',title='Unknown item',acceptElement=None,resultElement=None):
-        self.name = name
-        self.title = title
-        self.current = False
-        self.acceptItem = None
-        self.resultItem = None
-        if acceptElement is not None and resultElement is not None:
-            self.addCombimnation(acceptElement,resultElement)
-
-        self.rect = pygame.Rect(10,10,48,48)
-        self.loadImage(self.name)
-        
-    def setName(self,name):
-        #Auto-reloads image on name change
-        self.name = namec
-        self.loadImage(self.name)
-        
-    def getName(self):
-        return self.name
-        
-    def setTitle(self,title):
-        self.title = title
-
-    def getTitle(self):
-        return self.title
-        
-    def loadImage(self,name):
-        try:
-            self.image = pygame.image.load(os.path.join('data','items','%s.png' % (name)))
-        except:
-            self.image = pygame.image.load(os.path.join('data','items','unknown.png'))
-                
-    def setPos(self,pos):
-        self.rect.move(pos)
-        
-    def setX(self,x):
-        self.rect.left = x
-        
-    def setY(self,y):
-        self.rect.top = y
-
-    def addCombination(self,acceptItem,resultItem):
-        self.acceptItem = acceptItem
-        self.resultItem = resultItem
-#        print self.name,"can recieve",acceptItem,"and will give you",resultItem
-        
-    def combine(self,comboItem):
-        if self.acceptItem is not None and self.resultItem is not None and self.acceptItem == comboItem.name:
-            self.Game.Inventory.combineItems(self,comboItem,self.resultItem)
     
 class Element(pygame.sprite.DirtySprite):
     def __init__(self):
@@ -100,9 +13,6 @@ class Element(pygame.sprite.DirtySprite):
         
     def setName(self,name):
         self.name = name
-
-    def update(self):
-        pass
 
     def getName(self):
         return self.name 
@@ -135,6 +45,7 @@ class VisibleElement(Element):
         self.textColor = (255,255,255)
         self.acceptElement = None
         self.resultElement = None
+        self.animated = True
 
     def setTextColor(self,color):
         self.textColor = color
@@ -226,24 +137,45 @@ class VisibleElement(Element):
     def toItem(self):
         #Gets properties and returns an Item
         return Item(self.name,self.title,self.acceptElement,self.resultElement)
-                
+        
 class AnimatedElement(VisibleElement):
     def __init__(self):
         VisibleElement.__init__(self)
         self.sequences = {}
         self.currentFrame = 0
         self.currentSequence = None
+        self.animated = True
         
-    def addSequence(sequenceName,frames):
-        self.sequences[sequenceName] = frames
-        
-    def getFrame():
-        frame = self.sequences[self.currentSequence][self.currentFrame]
-        if self.currentFrame >= len(self.sequences[currentSequence]-1):
-            self.currentFrame = 0
+    def addSequence(self,sequenceName,frames):
+        imageFrames = []
+        if self.isCharacter:
+            directory = 'characters'
         else:
-            self.currentFrame = self.currentFrame + 1
-        return frame
+            directory = 'elements'
+        for image in frames:
+            imageFrames.append(pygame.image.load(os.path.join('data',directory,image)))
+        self.sequences[sequenceName] = imageFrames
+        if sequenceName == 'default':
+            self.currentSequence = sequenceName
+        if self.image is None:
+            self.setImage = frames[0]
+        
+    def setSequence(self,sequence):
+        if sequence in self.sequences:
+            self.currentSequence = sequence
+        else:
+            self.currentSequence = None
+    
+    def update(self):
+        if self.currentSequence is not None:
+            frame = self.sequences[self.currentSequence][self.currentFrame]
+            if self.currentFrame >= len(self.sequences[self.currentSequence])-1:
+                self.currentFrame = 0
+            else:
+                self.currentFrame += 1
+            self.image = frame
+        else:
+            return self.image
 
 class Area(Element):
     def __init__(self):
@@ -265,15 +197,19 @@ class ConversationPart:
         self.text = text
 
 class Character(AnimatedElement):
-    def __init__(self,game):
+    def __init__(self):
         AnimatedElement.__init__(self)
-        self.Game = game
         self.isCharacter = True
         self.name = None
         self.topics = []
         self.textColor = (255,255,255)
         self.text = None
         self.textTimer = 0
+
+    def setImage(self,fileName):
+        self.image = pygame.image.load(os.path.join('data','characters',fileName))
+        if self.rect is None:
+            self.rect = self.image.get_rect()
         
     def loop(self):
         print self.name,"looped"
@@ -341,3 +277,88 @@ class Widget(AnimatedElement):
         
     def runClickMethod(self):
         self.clickMethod()
+        
+class Topic: 
+    def __init__(self,game,name,text,method):
+        self.Game = game
+        self.name = name
+        self.text = text
+        self.hover = False
+        self.callbackMethod = method
+        self.dialouge = []
+        self.pos = (0,0)
+        self.inactive = self.Game.Renderer.topicMenuFont.render(self.text,1,(216,203,163))
+        self.active = self.Game.Renderer.topicMenuFont.render(self.text,1,(255,255,255))
+        self.render = self.inactive
+        self.rect = self.render.get_rect()
+        self.rect.left,self.rect.top = self.pos
+                
+    def setDialogue(self):
+        self.dialouge
+        
+    def setPos(self,pos):
+        self.pos = pos
+        self.rect.left,self.rect.top = self.pos
+        
+    def setActive(self):
+        self.render = self.active
+
+    def clearActive(self):
+        self.render = self.inactive
+        
+    def setCallbackMethod(self,method):
+        self.callbackMethod = method
+        
+    def runCallbackMethod(self):
+        self.callbackMethod()
+            
+class Item:
+    def __init__(self,name='unknown',title='Unknown item',acceptElement=None,resultElement=None):
+        self.name = name
+        self.title = title
+        self.current = False
+        self.acceptItem = None
+        self.resultItem = None
+        if acceptElement is not None and resultElement is not None:
+            self.addCombimnation(acceptElement,resultElement)
+
+        self.rect = pygame.Rect(10,10,48,48)
+        self.loadImage(self.name)
+        
+    def setName(self,name):
+        #Auto-reloads image on name change
+        self.name = namec
+        self.loadImage(self.name)
+        
+    def getName(self):
+        return self.name
+        
+    def setTitle(self,title):
+        self.title = title
+
+    def getTitle(self):
+        return self.title
+        
+    def loadImage(self,name):
+        try:
+            self.image = pygame.image.load(os.path.join('data','items','%s.png' % (name)))
+        except:
+            self.image = pygame.image.load(os.path.join('data','items','unknown.png'))
+                
+    def setPos(self,pos):
+        self.rect.move(pos)
+        
+    def setX(self,x):
+        self.rect.left = x
+        
+    def setY(self,y):
+        self.rect.top = y
+
+    def addCombination(self,acceptItem,resultItem):
+        self.acceptItem = acceptItem
+        self.resultItem = resultItem
+#        print self.name,"can recieve",acceptItem,"and will give you",resultItem
+        
+    def combine(self,comboItem):
+        if self.acceptItem is not None and self.resultItem is not None and self.acceptItem == comboItem.name:
+            self.Game.Inventory.combineItems(self,comboItem,self.resultItem)

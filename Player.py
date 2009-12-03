@@ -6,7 +6,7 @@ from Elements import Character
 
 class Player(Character):
     def __init__(self,game):
-        Character.__init__(self,game)
+        Character.__init__(self)
         
         
         self.tempVar = False

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import imp
 import pygame
 
 class Scene:
@@ -13,7 +14,19 @@ class Scene:
         self.mapData = []
         self.insertPoint = ()
         self.backgroundImage = None
+        self.pos1 = (0,0)
+        self.pos2 = (0,0)
+        self.cameraPos = (0,0)
         
+    def setPos1(self,pos):
+        self.pos1 = pos
+    
+    def setPos2(self,pos):
+        self.pos2 = pos
+        
+    def setCameraPos(self,pos):
+        self.cameraPos = pos
+                
     def getName(self,sceneName):
         self.name = sceneName
         
@@ -28,7 +41,7 @@ class Scene:
         
     def addVisibleElement(self,element):
         self.visibleElements.add(element)
-        
+                
     def getElement(self,elementName):
         for element in self.visibleElements:
             if element.name == elementName:
@@ -70,3 +83,14 @@ class Scene:
                     self.mapData.append(int(char))
         print self.mapData
         self.mapFile.close()
+        
+    def loadElement(self,elementName):
+        module = imp.load_source(elementName,'./Elms/'+elementName+'.py')
+        elementClass = getattr(module,elementName);
+        element = elementClass(self.Game)
+        return element
+       
+        
+        
+        
+        

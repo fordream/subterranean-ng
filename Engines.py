@@ -172,6 +172,8 @@ class Renderer:
                     self.screen.blit(self.debugPoint,element.actionPos)
             self.screen.blit(self.debugPoint,pygame.mouse.get_pos())
             pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
+            pygame.draw.lines(self.screen,(255,000,00),1,[self.Game.currentScene.pos1,self.Game.currentScene.cameraPos])
+            pygame.draw.lines(self.screen,(000,000,255),1,[self.Game.currentScene.pos2,self.Game.currentScene.cameraPos])
 
         pygame.display.flip()
         
@@ -203,7 +205,8 @@ class AudioController:
             self.musicTracks = {}
 
         self.ambienceSounds = {
-            'AMBI001':os.path.join('data','sound','ambience','ambience001.ogg')
+            'AMBI001':os.path.join('data','sound','ambience','ambience001.ogg'),
+            'WATER001':os.path.join('data','sound','ambience','water001.ogg')
         }
         
         self.UISounds = {
