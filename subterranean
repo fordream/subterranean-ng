@@ -1,4 +1,9 @@
 #!/bin/bash
 python main.py $1
+
 rm *.pyc
-rm Scenes/*.pyc
+rm ./Scenes/*.pyc
+rm ./Assets/*.pyc
+rm ./Assets/Characters/*.pyc
+rm ./Assets/Items/*.pyc
+rm ./Assets/Elements/*.pyc

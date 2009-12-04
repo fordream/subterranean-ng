@@ -40,7 +40,7 @@ class Renderer:
         
     def setupTimer(self):
         self.Timer = Timer()
-        self.Timer.setFPS(32)
+        self.Timer.setFPS(24)
         
     def setupScreen(self,fullscreen=False):
         pygame.display.get_surface()

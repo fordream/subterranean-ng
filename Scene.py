@@ -6,6 +6,7 @@ import pygame
 class Scene:
     def __init__(self,game):
         self.Game = game
+        self.Game.currentRoom = self
         self.visible = False
         self.name = None
         self.mapFileName = None
@@ -41,7 +42,7 @@ class Scene:
         
     def addVisibleElement(self,element):
         self.visibleElements.add(element)
-                
+              
     def getElement(self,elementName):
         for element in self.visibleElements:
             if element.name == elementName:
@@ -84,13 +85,21 @@ class Scene:
         print self.mapData
         self.mapFile.close()
         
+    def loadItem(self,itemName):
+        return self.loadAsset('Items',itemName)
+
     def loadElement(self,elementName):
-        module = imp.load_source(elementName,'./Elms/'+elementName+'.py')
-        elementClass = getattr(module,elementName);
-        element = elementClass(self.Game)
-        return element
-       
+        return self.loadAsset('Elements',elementName)
         
+    def loadCharacter(self,characterName):
+        return self.loadAsset('Characters',characterName)
         
-        
-        
+    def loadAsset(self,assetType,assetName):
+        try:
+            module = imp.load_source(assetName,os.path.join('Assets',assetType,assetName+'.py'))
+            assetClass = getattr(module,assetName); 
+            asset = assetClass(self.Game)
+            return asset
+        except IOError:
+            print "Fatal error: Could not load",assetName,"from",assetType
+            exit()

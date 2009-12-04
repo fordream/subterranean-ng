@@ -116,7 +116,8 @@ class Player(Character):
         self.frameKey = 0
         
     def getFrameKey(self,sequence):
-        if self.Game.Renderer.Timer.currentFrame - 3 == self.startFrame:
+        #Every frame takes twice the time == a nice speed at 12fps
+        if self.Game.Renderer.Timer.currentFrame -2 == self.startFrame:
             self.walk()
             self.resetStartFrame()
             if self.frameKey < len(sequence)-1:

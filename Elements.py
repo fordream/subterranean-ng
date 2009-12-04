@@ -327,7 +327,7 @@ class Item:
         
     def setName(self,name):
         #Auto-reloads image on name change
-        self.name = namec
+        self.name = name
         self.loadImage(self.name)
         
     def getName(self):
