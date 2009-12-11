@@ -245,6 +245,9 @@ class Player(Character):
         else:
             self.scriptSay(self.standardResponses['GIVE'])
 
+    def exit(self,exit):
+        self.Game.loadScene(exit.sceneName)
+
     def randomTalk(self):
         if not self.tempVar:
             self.scriptSay("Hur kom jag hit egentligen? Det vet jag inte, men det är ju väldigt coolt i alla fall.","PLAYER001")

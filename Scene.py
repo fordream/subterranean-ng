@@ -2,6 +2,7 @@
 import os
 import imp
 import pygame
+from Elements import Exit
 
 class Scene:
     def __init__(self,game):
@@ -18,6 +19,7 @@ class Scene:
         self.pos1 = (0,0)
         self.pos2 = (0,0)
         self.cameraPos = (0,0)
+        self.exits = []
         
     def setPos1(self,pos):
         self.pos1 = pos
@@ -103,3 +105,11 @@ class Scene:
         except IOError:
             print "Fatal error: Could not load",assetName,"from",assetType
             exit()
+
+    def addExit(self,exitX,exitY,exitW,exitH,exitPoint,roomName,direction):
+        exit = Exit()
+        exit.setRect(pygame.Rect(exitX,exitY,exitW,exitH))
+        exit.setSceneName(roomName)
+        exit.setExitPoint(exitPoint)
+        exit.setDirection(direction)
+        self.exits.append(exit)

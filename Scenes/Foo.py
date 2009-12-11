@@ -29,6 +29,8 @@ class Room(Scene):
         self.setPos2((1000,500))
         self.setCameraPos((512,700))
         self.Game.AudioController.playMusic('THEME')
+        
+        self.addExit(290,230,125,200,(330,400),"Bar",'NORTH')
         self.show()
         
         #self.Game.Player.walkTo((500,670))

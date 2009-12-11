@@ -1,7 +1,8 @@
-GUI:
 x Lösa framelängder i animationer.
 x Kombination av items
 x Använd Items->Objekt på skärmen
 - Fixa stöd för flera rum
-- Hantera skriptdelslängd automatiskt
-- Fixa ämnesmenyn
+x Hantera skriptdelslängd automatiskt
+x Fixa ämnesmenyn
+- Lösa enpunkts-nedskalning av karaktär
+- 

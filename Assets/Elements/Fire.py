@@ -27,4 +27,3 @@ class Fire(AnimatedElement):
 
     def fireUse(self):
         self.Game.Player.scriptSay("Aj!")
-    

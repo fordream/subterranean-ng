@@ -174,7 +174,9 @@ class Renderer:
             pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
             pygame.draw.lines(self.screen,(255,000,00),1,[self.Game.currentScene.pos1,self.Game.currentScene.cameraPos])
             pygame.draw.lines(self.screen,(000,000,255),1,[self.Game.currentScene.pos2,self.Game.currentScene.cameraPos])
-
+            for exit in self.Game.currentScene.exits:
+                pygame.draw.lines(self.screen,(000,255,255),1,[exit.rect.topleft,exit.rect.topright,exit.rect.bottomright,exit.rect.bottomleft])
+                self.screen.blit(self.debugPoint,exit.exitPoint)
         pygame.display.flip()
         
 class AudioController:
@@ -387,6 +389,8 @@ class EventManager:
                         self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
                     elif self.Game.Cursor.getCursorName() == 'LOOK':
                         self.Game.Player.look(self.Game.Cursor.currentElement)
+                elif self.Game.Cursor.currentExit is not None:
+                    self.Game.Player.walkTo(self.Game.Cursor.currentExit.exitPoint,self.Game.Player.exit,self.Game.Cursor.currentExit)
                 else:
                     self.Game.Player.walkTo(pygame.mouse.get_pos())
         else:

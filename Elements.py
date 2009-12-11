@@ -362,3 +362,22 @@ class Item:
     def combine(self,comboItem):
         if self.acceptItem is not None and self.resultItem is not None and self.acceptItem == comboItem.name:
             self.Game.Inventory.combineItems(self,comboItem,self.resultItem)
+
+class Exit:
+    def __init__(self):
+        self.rect = None
+        self.sceneName = None
+        self.direction = "NORTH"
+        self.exitPoint = ()
+    
+    def setRect(self,rect):
+        self.rect = rect
+        
+    def setExitPoint(self,point):
+        self.exitPoint = point
+        
+    def setDirection(self,direction):
+        self.direction = direction
+        
+    def setSceneName(self,sceneName):
+        self.sceneName = sceneName

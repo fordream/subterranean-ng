@@ -384,15 +384,25 @@ class Cursor():
             'TALK': pygame.image.load(os.path.join('data','cursors','cursor_talk.png'))
         }
         
-        #Kept in its own variable so we don't loop over it while scrolling.
+        #Keep these here so we don't loop over it while scrolling.
         self.pausedCursor = pygame.image.load(os.path.join('data','cursors','cursor_paused.png'))
-        
+        self.exitCursors = {
+            'EXIT_NORTH': pygame.image.load(os.path.join('data','cursors','cursor_exit_north.png')),
+            'EXIT_EAST': pygame.image.load(os.path.join('data','cursors','cursor_exit_east.png')),
+            'EXIT_SOUTH': pygame.image.load(os.path.join('data','cursors','cursor_exit_south.png')),
+            'EXIT_WEST': pygame.image.load(os.path.join('data','cursors','cursor_exit_west.png'))
+
+        }
         self.setCursor('DEFAULT')
      
     def setCursor(self,cursorName):
+        #TODO: Make this prettier 
         if cursorName in self.cursors:
             self.cursorName = cursorName
             self.currentCursor = self.cursors[cursorName]
+        elif cursorName in self.exitCursors:
+            self.cursorName = cursorName
+            self.currentCursor = self.exitCursors[cursorName]
             
     def getCursor(self):
         if self.Game.paused:
@@ -478,12 +488,18 @@ class Cursor():
                         if self.getCursorName() == 'DEFAULT':
                             self.setCursor('USE')
                         return self.currentElement
-            
-        
+                
+                #Last resorts, are there any exits here?
+                for exit in self.Game.currentScene.exits:
+                    if(exit.rect.collidepoint(pygame.mouse.get_pos())):
+                        self.setCursor('EXIT_'+exit.direction)
+                        self.currentExit = exit
+                        return self.currentExit
 
         self.Game.TitleManager.clearElement()
         self.setCursor('DEFAULT')
         self.currentElement = None;
+        self.currentExit = None
         
 class ElementWindow:
     def __init__(self,game):

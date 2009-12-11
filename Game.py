@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os,sys,time,pygame
+import os,sys,time,pygame,imp
 from Constants import *
 from Player import Player
 from Engines import Renderer,AudioController,EventManager,Timer
@@ -26,7 +26,7 @@ class Game:
         self.Player = Player(self)
         self.EventManager = EventManager(self)
         self.parseArguments(arguments)
-        self.loadScene("someScene")
+        self.loadScene("Foo")
         self.run()
         
     def parseArguments(self,arguments):
@@ -54,8 +54,9 @@ class Game:
             self.Renderer.draw()
 
     def loadScene(self,sceneName):
-        from Scenes.Foo import Room
-        self.currentScene = Room(self)
+        scene = imp.load_source(sceneName,os.path.join('Scenes',sceneName+'.py'))
+        sceneClass = getattr(scene,'Room');
+        self.currentScene = sceneClass(self)
         
     def quit(self,event=None):
         self.running = False
