@@ -10,17 +10,12 @@ class Room(Scene):
         Scene.__init__(self,self.Game)
         self.setBackground('foo.jpg')
         self.setMap('Foo.map')
-        self.setInsertPoint((334,416))
+
         self.talkedToWorm = False
         self.happyWorm = False
 
-        
-        self.Game.Inventory.addItem(self.loadItem('Potion'))
-        self.Game.Inventory.addItem(self.loadItem('Chili'))
-
         self.addVisibleElement(self.loadElement('Fire'))
         self.addVisibleElement(self.loadCharacter('Worm'))
-
         self.addVisibleElement(self.loadElement('Map'))
                 
         self.Game.AudioController.playAmbienceSound('AMBI001')
@@ -28,9 +23,15 @@ class Room(Scene):
         self.setPos1((24,500))
         self.setPos2((1000,500))
         self.setCameraPos((512,700))
-        self.Game.AudioController.playMusic('THEME')
-        
+
+        self.Game.Inventory.addItem(self.loadItem('Potion'))
+        self.Game.Inventory.addItem(self.loadItem('Chili'))
         self.addExit(290,230,125,200,(330,400),"Bar",'NORTH')
+        self.enter()
+
+    def enter(self):
+        self.Game.AudioController.playMusic('THEME')
+        self.setInsertPoint((334,416))        
         self.show()
         
         #self.Game.Player.walkTo((500,670))

@@ -246,7 +246,8 @@ class Player(Character):
             self.scriptSay(self.standardResponses['GIVE'])
 
     def exit(self,exit):
-        self.Game.loadScene(exit.sceneName)
+        if self.inRange(exit):
+            self.Game.loadScene(exit.sceneName)
 
     def randomTalk(self):
         if not self.tempVar:

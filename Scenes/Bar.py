@@ -10,9 +10,12 @@ class Room(Scene):
         Scene.__init__(self,self.Game)
         self.setBackground('wheel.jpg')
         self.setMap('Bar.map')
-        self.setInsertPoint((465,434))
-        self.Game.AudioController.playMusic('THEME')
         self.addExit(440,260,100,150,(465,420),"Foo",'NORTH')
+        self.enter()
+        
+    def enter(self):
+        self.Game.AudioController.playMusic('THEME')
+        self.setInsertPoint((465,434))
         self.show()
         
         #self.Game.Player.walkTo((500,670))

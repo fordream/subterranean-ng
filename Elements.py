@@ -369,6 +369,9 @@ class Exit:
         self.sceneName = None
         self.direction = "NORTH"
         self.exitPoint = ()
+        
+    def getBasePosition(self):
+        return (self.rect.centerx,self.rect.left)
     
     def setRect(self,rect):
         self.rect = rect

@@ -11,6 +11,7 @@ class Game:
         self.running = True;
         self.fullscreen = False
         self.paused = False
+        self.cachedScenes = {}
         self.currentScene = None
         self.currentElement = None
         self.currentWindow = None
@@ -54,9 +55,20 @@ class Game:
             self.Renderer.draw()
 
     def loadScene(self,sceneName):
-        scene = imp.load_source(sceneName,os.path.join('Scenes',sceneName+'.py'))
-        sceneClass = getattr(scene,'Room');
-        self.currentScene = sceneClass(self)
+        if sceneName in self.cachedScenes:
+            self.log("Got "+sceneName+" from cache")
+            self.currentScene = self.cachedScenes.get(sceneName)
+            #Run the enter method if it is not the first time we do
+            self.currentScene.enter()
+        else:
+            self.log("Loaded "+sceneName+" from file")
+            scene = imp.load_source(sceneName,os.path.join('Scenes',sceneName+'.py'))
+            sceneClass = getattr(scene,'Room');
+            self.currentScene = sceneClass(self)
+            self.cacheScene(self.currentScene,sceneName)
+        
+    def cacheScene(self,sceneObject,sceneName):
+        self.cachedScenes[sceneName] = sceneObject
         
     def quit(self,event=None):
         self.running = False
@@ -72,6 +84,10 @@ class Game:
         else:
             self.fullscreen = False
             self.Renderer.setupScreen(False)
+            
+    def log(self,value):
+        #TODO: Something fancier here.
+        print value
         
     def dump(self):
         if self.debug:
