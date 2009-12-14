@@ -18,11 +18,9 @@ class Room(Scene):
         self.addVisibleElement(self.loadCharacter('Worm'))
         self.addVisibleElement(self.loadElement('Map'))
                 
-        self.Game.AudioController.playAmbienceSound('AMBI001')
                                     
-        self.setPos1((24,500))
-        self.setPos2((1000,500))
-        self.setCameraPos((512,700))
+        self.setFarthestPoint(415)
+        self.setClosestPoint(715)
 
         self.Game.Inventory.addItem(self.loadItem('Potion'))
         self.Game.Inventory.addItem(self.loadItem('Chili'))
@@ -31,6 +29,7 @@ class Room(Scene):
 
     def enter(self):
         self.Game.AudioController.playMusic('THEME')
+        self.Game.AudioController.playAmbienceSound('AMBI001')
         self.setInsertPoint((334,416))        
         self.show()
         

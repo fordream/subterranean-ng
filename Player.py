@@ -70,7 +70,7 @@ class Player(Character):
         while frameNum <= frames:
             frameSet.append(pygame.image.load(os.path.join('data','maincharacter','%s-%s-%d.png' % (direction,status,frameNum))))
             frameNum += 1
-        return frameSet
+        return frameSet      
             
     def findPath(self,x,y):
         startX = self.getX()/16
@@ -143,7 +143,23 @@ class Player(Character):
                 currentFrame = sequence[0]
 
         self.currentFrame = currentFrame
-        return self.currentFrame
+        return self.scale(self.currentFrame)
+        
+    def scale(self,image):
+        return image
+        #WORK IN PROGRESS
+        self.Game.currentRoom.farthestPoint
+        self.Game.currentRoom.closestPoint
+        self.Game.currentRoom.farthestScale
+        self.Game.currentRoom.closestScale
+        pointDiff = self.Game.currentRoom.closestPoint - self.Game.currentRoom.farthestPoint
+        print "pointDiff",pointDiff
+        scaleDiff = self.Game.currentRoom.closestScale - self.Game.currentRoom.farthestScale
+        print self.pos[1] - self.Game.currentRoom.farthestPoint
+        print "scaleDiff",scaleDiff
+
+        scale = self.rect.centery - self.Game.currentRoom.farthestPoint
+        return pygame.transform.rotozoom(image,0,scale/100.0)
 
     def getRenderPos(self):
         return self.renderPos
@@ -247,6 +263,7 @@ class Player(Character):
 
     def exit(self,exit):
         if self.inRange(exit):
+            self.Game.currentScene.exit()
             self.Game.loadScene(exit.sceneName)
 
     def randomTalk(self):

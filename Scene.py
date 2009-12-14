@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
-import imp
-import pygame
+import os,imp,time,pygame
 from Elements import Exit
 
 class Scene:
@@ -16,16 +14,24 @@ class Scene:
         self.mapData = []
         self.insertPoint = ()
         self.backgroundImage = None
-        self.pos1 = (0,0)
-        self.pos2 = (0,0)
+        self.farthestPoint = 350
+        self.closestPoint = 768
+        self.farthestScale = 50
+        self.closestScale = 100
         self.cameraPos = (0,0)
         self.exits = []
         
-    def setPos1(self,pos):
-        self.pos1 = pos
+    def setFarthestPoint(self,pos):
+        self.farthestPoint = pos
     
-    def setPos2(self,pos):
-        self.pos2 = pos
+    def setClosestPoint(self,pos):
+        self.closestPoint = pos
+
+    def setFarthestScale(self,scale):
+        self.farthestScale = scale
+    
+    def setClosestScale(self,scale):
+        self.closestScale = scale
         
     def setCameraPos(self,pos):
         self.cameraPos = pos
@@ -113,3 +119,11 @@ class Scene:
         exit.setExitPoint(exitPoint)
         exit.setDirection(direction)
         self.exits.append(exit)
+        
+    def enter(self):
+        pass
+    
+    def exit(self):
+        self.Game.AudioController.stopAmbience()
+        #self.Game.Renderer.fadeOut()
+        pass

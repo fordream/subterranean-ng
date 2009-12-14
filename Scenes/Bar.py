@@ -14,7 +14,8 @@ class Room(Scene):
         self.enter()
         
     def enter(self):
-        self.Game.AudioController.playMusic('THEME')
+        self.Game.AudioController.playMusic('NOTEXPECTED')
+        self.Game.AudioController.playAmbienceSound('WATER001')
         self.setInsertPoint((465,434))
         self.show()
         

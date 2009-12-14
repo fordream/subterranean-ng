@@ -31,23 +31,37 @@ class Timer:
 class Renderer:
     def __init__(self,game):
         self.Game = game
+        self.screen = pygame.Surface((1024,768))
+        self.screen.fill((0,0,0))
+        self.rect = self.screen.get_rect()
         self.setupScreen(False)
         self.loadIcon()
         self.loadFonts()
         self.loadGraphics()
         self.setupTimer()
         self.frame = 0
+        self.fadingOut = False
         
+    def fadeOut(self):
+        if self.fadingOut and self.overlay.get_alpha() < 100:
+            self.overlay.set_alpha(self.overlay.get_alpha()+2)
+        elif self.fadingOut and self.overlay.get_alpha() > 99:
+            self.fadingOut = False
+        else:
+            self.fadingOut = True
+                    
     def setupTimer(self):
         self.Timer = Timer()
         self.Timer.setFPS(24)
         
     def setupScreen(self,fullscreen=False):
-        pygame.display.get_surface()
+        #There seems to be no way to make this work right other than doing this:
         if fullscreen:
-            self.screen = pygame.display.set_mode((1025,768),pygame.FULLSCREEN)
+            self.window = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+            self.rect.center = self.window.get_rect().center 
         else:
-            self.screen = pygame.display.set_mode((1025,768))
+            self.window = pygame.display.set_mode((1024,768))
+            self.rect.center = self.window.get_rect().center 
         pygame.display.set_caption('Subterranean')
         
     def loadGraphics(self):
@@ -57,6 +71,9 @@ class Renderer:
         self.topicMenuImage = pygame.image.load(os.path.join('data','ui','topicmenu.png'))
         self.debugPoint = pygame.Surface((2,2))
         self.debugPoint.fill((255,0,0))
+        self.overlay = pygame.Surface((1024,768))
+        self.overlay.fill((0,0,0))
+        self.overlay.set_alpha(0)
 
     def loadFonts(self):
         pygame.font.init()
@@ -72,8 +89,8 @@ class Renderer:
         
     def draw(self):
         pygame.mouse.set_visible(0)
-        #Draw game background
-        #self.screen.blit(self.backgroundImage,(0,0))
+        #Draw game screen
+        self.window.blit(self.screen,self.rect)
 
         if self.Game.currentScene.visible:
             #Draw current background
@@ -87,7 +104,7 @@ class Renderer:
             self.screen.blit(self.Game.Player.getCurrentFrame(),self.Game.Player.getRenderPos())
             
         #Draw border
-        self.screen.blit(self.borderImage,(0,0))
+        #self.screen.blit(self.borderImage,(0,0))
 
             
         #Draw inventory
@@ -172,11 +189,13 @@ class Renderer:
                     self.screen.blit(self.debugPoint,element.actionPos)
             self.screen.blit(self.debugPoint,pygame.mouse.get_pos())
             pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
-            pygame.draw.lines(self.screen,(255,000,00),1,[self.Game.currentScene.pos1,self.Game.currentScene.cameraPos])
-            pygame.draw.lines(self.screen,(000,000,255),1,[self.Game.currentScene.pos2,self.Game.currentScene.cameraPos])
             for exit in self.Game.currentScene.exits:
                 pygame.draw.lines(self.screen,(000,255,255),1,[exit.rect.topleft,exit.rect.topright,exit.rect.bottomright,exit.rect.bottomleft])
                 self.screen.blit(self.debugPoint,exit.exitPoint)
+                
+        #Overlay
+        if self.fadingOut:
+            self.fadeOut()
         pygame.display.flip()
         
 class AudioController:
@@ -226,8 +245,7 @@ class AudioController:
     def playMusic(self,trackName):
         if self.soundEnabled and self.musicEnabled and trackName in self.musicTracks:
             if self.currentMusicTrack is not None and self.currentMusicTrack != trackName:
-                pygame.mixer.music.fadeout(1500)
-                pygame.mixer.music.stop()
+                pygame.mixer.music.fadeout(0)
             self.currentMusicTrack = trackName
             pygame.mixer.music.load(self.musicTracks.get(trackName))
             pygame.mixer.music.play(-1)
