@@ -16,6 +16,8 @@ class Game:
         self.currentElement = None
         self.currentWindow = None
         self.currentWidget = None
+        
+        self.values = {}
 
         self.TitleManager = TitleManager(self)
         self.Cursor = Cursor(self)
@@ -88,6 +90,12 @@ class Game:
     def log(self,value):
         #TODO: Something fancier here.
         print value
+        
+    def setValue(self,key,value):
+        self.values[key] = value
+    
+    def getValue(self,key):
+        return self.values.get(key)
         
     def dump(self):
         if self.debug:
