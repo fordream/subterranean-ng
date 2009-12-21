@@ -9,6 +9,7 @@ class Room(Scene):
         self.Game = game
         Scene.__init__(self,self.Game)
         self.setBackground('foo.jpg')
+        self.setForeground('foo.png')
         self.setMap('Foo.map')
 
         self.talkedToWorm = False
@@ -18,9 +19,10 @@ class Room(Scene):
         self.addVisibleElement(self.loadCharacter('Worm'))
         self.addVisibleElement(self.loadElement('Map'))
                 
-                                    
         self.setFarthestPoint(415)
         self.setClosestPoint(715)
+        self.setFarthestScale(50)
+        self.setClosestScale(100)
 
         self.Game.Inventory.addItem(self.loadItem('Potion'))
         self.Game.Inventory.addItem(self.loadItem('Chili'))

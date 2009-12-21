@@ -14,6 +14,7 @@ class Scene:
         self.mapData = []
         self.insertPoint = ()
         self.backgroundImage = None
+        self.foregroundImage = None
         self.farthestPoint = 350
         self.closestPoint = 768
         self.farthestScale = 50
@@ -32,10 +33,7 @@ class Scene:
     
     def setClosestScale(self,scale):
         self.closestScale = scale
-        
-    def setCameraPos(self,pos):
-        self.cameraPos = pos
-                
+                        
     def getName(self,sceneName):
         self.name = sceneName
         
@@ -47,6 +45,12 @@ class Scene:
         
     def setBackground(self,backgroundImage):
         self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds',backgroundImage)).convert()
+
+    def getForeground(self):
+        return self.foregroundImage
+
+    def setForeground(self,foregroundImage):
+        self.foregroundImage = pygame.image.load(os.path.join('data','foregrounds',foregroundImage)).convert_alpha()
         
     def addVisibleElement(self,element):
         self.visibleElements.add(element)
@@ -63,8 +67,12 @@ class Scene:
         
         
         self.insertPoint = pos
-        self.Game.Player.setPosition(pos)
 
+        #Sadly neccesary    
+        self.Game.Player.setPosition(pos)
+        self.Game.Player.scaleImage()
+        self.Game.Player.setPosition(pos)
+        
     def show(self):
         self.visible = True
         

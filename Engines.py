@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 import os,pygame
 from time import time
 import pygame.locals as pygl
@@ -32,8 +32,12 @@ class Renderer:
     def __init__(self,game):
         self.Game = game
         self.screen = pygame.Surface((1024,768))
-        self.screen.fill((0,0,0))
+        self.scene = pygame.Surface((1024,768))
+        self.sceneRect = self.scene.get_rect()
+        
         self.rect = self.screen.get_rect()
+        self.camera = pygame.Rect((0,0),(1024,768))
+
         self.setupScreen(False)
         self.loadIcon()
         self.loadFonts()
@@ -41,6 +45,13 @@ class Renderer:
         self.setupTimer()
         self.frame = 0
         self.fadingOut = False
+        
+    def translate(self,x):
+        x = (self.camera.centerx-self.Game.Player.rect.centerx)
+        return x
+        
+    def translateMouse(self,pos):
+        return (self.translate(pos[0]),pos[1])
         
     def fadeOut(self):
         if self.fadingOut and self.overlay.get_alpha() < 100:
@@ -90,22 +101,29 @@ class Renderer:
     def draw(self):
         pygame.mouse.set_visible(0)
         #Draw game screen
+        #Put this somewhere else?
+        #self.sceneRect.left = self.translate(self.sceneRect.left)
+            
         self.window.blit(self.screen,self.rect)
-
+        self.screen.blit(self.scene,self.sceneRect)
+        
         if self.Game.currentScene.visible:
             #Draw current background
-            self.screen.blit(self.Game.currentScene.getBackground(),(0,0))
+            self.scene.blit(self.Game.currentScene.getBackground(),(0,0))
             
             #Draw room objects
             self.Game.currentScene.visibleElements.update()
-            self.Game.currentScene.visibleElements.draw(self.screen)
+            self.Game.currentScene.visibleElements.draw(self.scene)
         
             #Draw main character
-            self.screen.blit(self.Game.Player.getCurrentFrame(),self.Game.Player.getRenderPos())
+            self.scene.blit(self.Game.Player.getCurrentFrame(),self.Game.Player.getRenderPos())
+            
+            #Draw current foreground
+            if self.Game.currentScene.getForeground():
+                self.scene.blit(self.Game.currentScene.getForeground(),(0,0))
             
         #Draw border
         #self.screen.blit(self.borderImage,(0,0))
-
             
         #Draw inventory
         self.Game.Inventory.animateHeight()
@@ -120,7 +138,7 @@ class Renderer:
             for topic in self.Game.TopicMenu.topics:
                 self.screen.blit(topic.render,topic.pos)
                 
-        #HUD
+        #Window widgets
         if self.Game.currentWindow is not None:
             self.screen.blit(self.Game.currentWindow.background,self.Game.currentWindow.rect)
             for widget in self.Game.currentWindow.widgets:
@@ -184,15 +202,16 @@ class Renderer:
             if len(self.Game.Player.path) > 1:
                 pygame.draw.lines(self.screen, (255,255,255,255), 0, self.Game.Player.path)
             for element in self.Game.currentScene.visibleElements:
-                pygame.draw.lines(self.screen,(255,0,255),1,[element.rect.topleft,element.rect.topright,element.rect.bottomright,element.rect.bottomleft])
+                pygame.draw.lines(self.scene,(255,0,255),1,[element.rect.topleft,element.rect.topright,element.rect.bottomright,element.rect.bottomleft])
                 if element.actionPos is not None:
-                    self.screen.blit(self.debugPoint,element.actionPos)
+                    self.scene.blit(self.debugPoint,element.actionPos)
             self.screen.blit(self.debugPoint,pygame.mouse.get_pos())
             pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
             for exit in self.Game.currentScene.exits:
                 pygame.draw.lines(self.screen,(000,255,255),1,[exit.rect.topleft,exit.rect.topright,exit.rect.bottomright,exit.rect.bottomleft])
-                self.screen.blit(self.debugPoint,exit.exitPoint)
-                
+                self.scene.blit(self.debugPoint,exit.exitPoint)
+            pygame.draw.lines(self.scene,(255,100,255),0,[(0,self.Game.currentScene.farthestPoint),(1024,self.Game.currentScene.farthestPoint)])
+            pygame.draw.lines(self.scene,(255,110,24),0,[(0,self.Game.currentScene.closestPoint),(1024,self.Game.currentScene.closestPoint)])
         #Overlay
         if self.fadingOut:
             self.fadeOut()

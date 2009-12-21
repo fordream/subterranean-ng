@@ -438,16 +438,17 @@ class Cursor():
             self.setCursor(self.previousCursor())
             
     def checkCollisions(self):
+        translatedPos = self.Game.Renderer.translateMouse(pygame.mouse.get_pos())
         if pygame.mouse.get_pos()[1] < 80:
                 for item in self.Game.Inventory.items:
-                    if(item.rect.collidepoint(pygame.mouse.get_pos())):
+                    if(item.rect.collidepoint(translatedPos)):
                         if self.Game.Inventory.currentItem is not None and item.current is False:
                             self.Game.TitleManager.setElement(item)
                             self.Game.TitleManager.setPrefix('COMBINE')
                             self.Game.TitleManager.setSuffix('WITH')
                             self.currentItem = item
                             return item
-                        elif(item.rect.collidepoint(pygame.mouse.get_pos())):
+                        elif(item.rect.collidepoint(translatedPos)):
                             self.Game.TitleManager.setElement(item)
                             self.setCursor('USE')
                             self.currentItem = item
@@ -455,14 +456,14 @@ class Cursor():
         elif pygame.mouse.get_pos()[1] > 660 and self.Game.TopicMenu.visible:
             self.Game.TopicMenu.clearCurrentTopic()
             for topic in self.Game.TopicMenu.topics:
-                if(topic.rect.collidepoint(pygame.mouse.get_pos())):
+                if(topic.rect.collidepoint(translatedPos)):
                     self.Game.TopicMenu.setCurrentTopic(topic)
         elif pygame.mouse.get_pos()[1] < 660 and self.Game.TopicMenu.visible:
             self.Game.TopicMenu.clearCurrentTopic()
         else:
             if self.Game.currentWindow is not None:
                 for widget in self.Game.currentWindow.widgets:
-                    if(widget.rect.collidepoint(pygame.mouse.get_pos())):
+                    if(widget.rect.collidepoint(translatedPos)):
                         self.Game.TitleManager.setElement(widget)
                         self.currentElement = widget
                         self.setCursor('USE')
@@ -473,10 +474,10 @@ class Cursor():
                     #Also set the prefix correctly.
                     #TODO: Make this loop smarter. Really.
                     if self.Game.Cursor.currentItem is not None:
-                        mouse = pygame.mouse.get_pos()
+                        mouse = translatedPos
                         pos = (mouse[0]+24,mouse[1]+24)
                     else:
-                        pos = pygame.mouse.get_pos()
+                        pos = translatedPos
                     if(element.rect.collidepoint(pos)):
                         self.Game.TitleManager.setElement(element)
                         self.currentElement = element
@@ -491,7 +492,7 @@ class Cursor():
                 
                 #Last resorts, are there any exits here?
                 for exit in self.Game.currentScene.exits:
-                    if(exit.rect.collidepoint(pygame.mouse.get_pos())):
+                    if(exit.rect.collidepoint(translatedPos)):
                         self.setCursor('EXIT_'+exit.direction)
                         self.currentExit = exit
                         return self.currentExit

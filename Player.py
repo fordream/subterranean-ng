@@ -44,6 +44,7 @@ class Player(Character):
         }
         self.pos = (0,0)
         self.renderPos = (0,0)
+        self.scale = 1
         self.walking = False
         self.talking = False
         self.standardResponses = {
@@ -143,23 +144,16 @@ class Player(Character):
                 currentFrame = sequence[0]
 
         self.currentFrame = currentFrame
-        return self.scale(self.currentFrame)
+        return self.scaleImage(self.currentFrame)
         
-    def scale(self,image):
-        return image
-        #WORK IN PROGRESS
-        self.Game.currentRoom.farthestPoint
-        self.Game.currentRoom.closestPoint
-        self.Game.currentRoom.farthestScale
-        self.Game.currentRoom.closestScale
+    def scaleImage(self,image=None):
+        #WORK IN PROGRESS    
         pointDiff = self.Game.currentRoom.closestPoint - self.Game.currentRoom.farthestPoint
-        print "pointDiff",pointDiff
         scaleDiff = self.Game.currentRoom.closestScale - self.Game.currentRoom.farthestScale
-        print self.pos[1] - self.Game.currentRoom.farthestPoint
-        print "scaleDiff",scaleDiff
-
-        scale = self.rect.centery - self.Game.currentRoom.farthestPoint
-        return pygame.transform.rotozoom(image,0,scale/100.0)
+        diff = float(scaleDiff)/float(pointDiff)        
+        self.scale = (self.Game.Player.getPosition()[1]*diff)/100
+        if image:
+            return pygame.transform.rotozoom(image,0,self.scale)
 
     def getRenderPos(self):
         return self.renderPos
@@ -168,7 +162,7 @@ class Player(Character):
         self.rect.left = pos[0]
         self.rect.top = pos[1]
         self.pos = pos
-        self.renderPos = (self.pos[0],self.pos[1]-180)
+        self.renderPos = (self.pos[0],self.rect.bottom-(200*self.scale))
         
     def setDirection(self,newPos):
         if self.getPosition()[0] < newPos[0] and self.getPosition()[1] == newPos[1]:
