@@ -15,11 +15,10 @@ class Scene:
         self.insertPoint = ()
         self.backgroundImage = None
         self.foregroundImage = None
-        self.farthestPoint = 350
+        self.farthestPoint = 250
         self.closestPoint = 768
         self.farthestScale = 50
         self.closestScale = 100
-        self.cameraPos = (0,0)
         self.exits = []
         
     def setFarthestPoint(self,pos):
@@ -64,8 +63,6 @@ class Scene:
         #TODO: Check that it is a valid placement on the map
         posX = pos[0]/16
         posY = pos[0]/16
-        
-        
         self.insertPoint = pos
 
         #Sadly neccesary    
@@ -82,7 +79,7 @@ class Scene:
 
     #This is just me being lazy. Coda makes a neat line of the syntax highlight if I have 1 and x.
     def loadMap(self,mapFileName):
-        self.mapFile = open(os.path.join('Scenes',mapFileName))
+        self.mapFile = open(os.path.join('Assets','Maps',mapFileName))
         mapTiles = self.mapFile.read().rsplit(',')
         for tile in mapTiles:
             tile = tile.replace('x','-1')

@@ -11,13 +11,7 @@ class Worm(Character):
         self.setPosition((434,446))
         self.setTextColor((255,128,0))
         
-        self.addTopic('whatsup','Hur är läget?',self.talkWhatsUp)
-        self.addTopic('whatsup','Tror ni på hjulen?',self.talkSky)
-        self.addTopic('whatsup','Var är paketet?',self.talkSky)
-        self.addTopic('whatsup','Hur får man upp den röda dörren?',self.talkSky)
-        self.addTopic('whatsup','Vad är kärlek?',self.talkSky)
-        self.addTopic('whatsup','Är du en vampyr?',self.talkSky)
-        
+        self.addTopic('whatsup','Hur är läget?',self.talkWhatsUp)        
         self.addTopic('sky','Vilken himmel vi har!',self.talkSky)
         
         self.addGiveMethod(self.giveChiliToWorm,'chili')

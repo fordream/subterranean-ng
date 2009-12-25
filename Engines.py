@@ -44,6 +44,7 @@ class Renderer:
         self.loadGraphics()
         self.setupTimer()
         self.frame = 0
+        
         self.fadingOut = False
         
     def translate(self,x):
@@ -51,15 +52,28 @@ class Renderer:
         return x
         
     def translateMouse(self,pos):
-        return (self.translate(pos[0]),pos[1])
+        return pos
+        #return (self.translate(pos[0]),pos[1])
+        
+    def transitionFade(self):
+        pass
         
     def fadeOut(self):
-        if self.fadingOut and self.overlay.get_alpha() < 100:
+        print "fading Out"
+        if self.fading and self.overlay.get_alpha() < 100:
             self.overlay.set_alpha(self.overlay.get_alpha()+2)
-        elif self.fadingOut and self.overlay.get_alpha() > 99:
-            self.fadingOut = False
+        elif self.fading and self.overlay.get_alpha() > 99:
+            self.fading = False
         else:
-            self.fadingOut = True
+            self.fading = True
+            
+    def fadeIn(self):
+        print "fading In"
+        if self.fading and self.overlay.get_alpha() < 100:
+            self.overlay.set_alpha(self.overlay.get_alpha()+2)
+        else:
+            pass
+            
                     
     def setupTimer(self):
         self.Timer = Timer()
@@ -133,7 +147,7 @@ class Renderer:
                 self.screen.blit(item.image,item.rect)
 
         #Topicmenu
-        if self.Game.TopicMenu.visible:
+        if self.Game.TopicMenu.visible and not self.Game.ScriptManager.isActive():
             self.screen.blit(self.topicMenuImage,self.Game.TopicMenu.rect)
             for topic in self.Game.TopicMenu.topics:
                 self.screen.blit(topic.render,topic.pos)
@@ -406,11 +420,10 @@ class EventManager:
                     self.Game.Cursor.currentItem.combine(self.Game.Inventory.currentItem)
                 else:
                     self.Game.Inventory.clearCurrentItem()
-            elif pygame.mouse.get_pos()[1] > 660:
-                if self.Game.TopicMenu.currentTopic:
-                    self.Game.TopicMenu.currentTopic.callbackMethod()            
             else:
-                if self.Game.Cursor.currentElement is not None:
+                if self.Game.TopicMenu.currentTopic:
+                    self.Game.TopicMenu.currentTopic.callbackMethod()
+                elif self.Game.Cursor.currentElement is not None:
                     pos = self.Game.Cursor.currentElement.getActionPosition()
                     if pos is None:
                         pos = self.Game.Cursor.currentElement.getBasePosition()
