@@ -127,6 +127,12 @@ class Player(Character):
                 self.resetFrameKey()
         elif self.Game.Renderer.Timer.currentFrame == self.startFrame or self.frameKey is None:
             self.resetFrameKey()
+            
+        if self.frameKey == 3:
+            self.Game.AudioController.playMiscSound("STEP001")
+        elif self.frameKey == 7:
+            self.Game.AudioController.playMiscSound("STEP002")
+            
         return self.frameKey
         
     def getCurrentFrame(self):

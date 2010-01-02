@@ -249,6 +249,7 @@ class AudioController:
         self.ambienceChannel = pygame.mixer.Channel(1)
         self.speechChannel = pygame.mixer.Channel(2)
         self.UIChannel = pygame.mixer.Channel(3)
+        self.miscChannel = pygame.mixer.Channel(1)
         try:
             self.musicTracks = {
                 'DEFAULT':os.path.join('data','music','default.ogg'),
@@ -273,6 +274,11 @@ class AudioController:
             'PLAYER001':os.path.join('data','sound','speech','player001.ogg'),
             'PLAYER002':os.path.join('data','sound','speech','player002.ogg'),
             'PLAYER003':os.path.join('data','sound','speech','player003.ogg')
+        }
+
+        self.miscSounds = {
+            'STEP001':os.path.join('data','sound','misc','step001.ogg'),
+            'STEP002':os.path.join('data','sound','misc','step002.ogg')
         }
 
     def playMusic(self,trackName):
@@ -328,6 +334,10 @@ class AudioController:
     def playUISound(self,soundName):
         if self.soundEnabled:
             self.playSound(self.UIChannel,self.UISounds,soundName)
+
+    def playMiscSound(self,soundName):
+        if self.soundEnabled:
+            self.playSound(self.miscChannel,self.miscSounds,soundName)
                 
     def playSound(self,channel,soundList,soundName,loops=0):
         if self.soundEnabled and soundName in soundList:
