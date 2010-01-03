@@ -11,14 +11,14 @@ class Room(Scene):
         self.setBackground('bar.jpg')
         self.setForeground('bar.png')
         self.setMap('Bar.map')
-        self.addExit(490,305,110,180,(465,420),"Foo",'NORTH')
+        self.addExit(490,305,110,180,(550,500),"Foo",'NORTH')
         
         self.enter()
         
     def enter(self):
         self.Game.AudioController.playMusic('NOTEXPECTED')
         self.Game.AudioController.playAmbienceSound('WATER001')
-        self.setInsertPoint((465,500))
+        self.setInsertPoint((550,530))
         
         self.setFarthestPoint(415)
         self.setClosestPoint(715)
