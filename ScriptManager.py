@@ -128,6 +128,7 @@ class ScriptManager:
             self.Game.pause()
         elif self.Game.Renderer.Timer.currentFrame - self.durationFrames == self.startFrame or self.skipped:
             #After each part is done or skipped
+            self.getActor().setSequence('default')
             self.Game.AudioController.stopSpeech()
             self.skipped = False
             self.script.pop(0)

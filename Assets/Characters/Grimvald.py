@@ -56,10 +56,20 @@ class Grimvald(Character):
 
         self.addSequence('talk',[
             'grimvald-talk-1.png',
+            'grimvald-talk-1.png',
+            'grimvald-talk-1.png',
+            'grimvald-talk-2.png',
+            'grimvald-talk-2.png',
             'grimvald-talk-2.png',
             'grimvald-talk-3.png',
+            'grimvald-talk-3.png',
+            'grimvald-talk-3.png',
             'grimvald-talk-4.png',
-            'grimvald-talk-5.png'
+            'grimvald-talk-4.png',
+            'grimvald-talk-4.png',
+            'grimvald-talk-5.png',
+            'grimvald-talk-5.png',
+            'grimvald-talk-5.png',
             ])
 
         self.setPosition((634,306))
