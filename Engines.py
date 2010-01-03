@@ -220,7 +220,7 @@ class Renderer:
                     posY -= 30                
                 
             elif self.Game.ScriptManager.getCurrentPartType() == 'ScriptWalkPart':
-                self.Game.ScriptManager.runScriptetWalk()
+                self.Game.ScriptManager.runScriptedWalk()
             self.Game.ScriptManager.loop()            
 
         #Draw mouse cursor

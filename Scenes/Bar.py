@@ -18,13 +18,12 @@ class Room(Scene):
     def enter(self):
         self.Game.AudioController.playMusic('NOTEXPECTED')
         self.Game.AudioController.playAmbienceSound('WATER001')
-        self.setInsertPoint((550,530))
+        self.setInsertPoint((550,500))
         
         self.setFarthestPoint(415)
         self.setClosestPoint(715)
         self.setFarthestScale(50)
         self.setClosestScale(100)
 
+        self.Game.Player.scriptWalk((550,570))
         self.show()
-        
-        #self.Game.Player.walkTo((500,670))

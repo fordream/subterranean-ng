@@ -28,7 +28,7 @@ class Room(Scene):
     def enter(self):
         self.Game.AudioController.playMusic('THEME')
         self.Game.AudioController.playAmbienceSound('AMBI001')
-        self.setInsertPoint((450,446))        
+        self.setInsertPoint((360,420))      
         
         self.setFarthestPoint(415)
         self.setClosestPoint(715)
@@ -36,5 +36,4 @@ class Room(Scene):
         self.setClosestScale(100)
 
         self.show()
-        
-        #self.Game.Player.walkTo((500,670))
+        self.Game.Player.scriptWalk((360,490))

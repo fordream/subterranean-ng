@@ -14,7 +14,7 @@ class Room(Scene):
         self.enter()
         
     def enter(self):
-        self.setInsertPoint((240,420))
+        self.setInsertPoint((220,420))
         self.setFarthestPoint(350)
         self.setClosestPoint(715)
         self.setFarthestScale(45)
@@ -23,4 +23,5 @@ class Room(Scene):
         self.Game.AudioController.playMusic('DEFAULT')
         self.Game.AudioController.playAmbienceSound('AMBI001')
 
+        self.Game.Player.scriptWalk((220,440))
         self.show()

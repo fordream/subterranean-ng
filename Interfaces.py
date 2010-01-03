@@ -357,7 +357,10 @@ class ScriptManager:
         self.setDurationFrames(scriptPart)
         self.valuesLoaded = True
         
-    def runScriptetWalk(self):
+    def runScriptedWalk(self):        
+        if len(self.getActor().path) == 0:
+            self.skip()
+            
         if not self.getActor().walking:
             self.getActor().walkTo(self.getWalkPos())
         
