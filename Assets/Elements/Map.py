@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from Elements import VisibleElement,AnimatedElement,Widget
-from Interfaces import ElementWindow
+from ElementWindow import ElementWindow
 
 class Map(AnimatedElement):
     def __init__(self,game):

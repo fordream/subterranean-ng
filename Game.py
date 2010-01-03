@@ -2,8 +2,14 @@
 import os,sys,time,pygame,imp
 from Constants import *
 from Player import Player
-from Engines import Renderer,AudioController,EventManager,Timer
-from Interfaces import ScriptManager,Cursor,Inventory,TitleManager,TopicMenu
+from Renderer import Renderer
+from AudioController import AudioController
+from EventManager import EventManager
+from ScriptManager import ScriptManager
+from Cursor import Cursor
+from Inventory import Inventory
+from TitleManager import TitleManager
+from TopicMenu import TopicMenu
 
 class Game:
     def __init__(self,arguments):

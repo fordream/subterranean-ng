@@ -1,10 +1,8 @@
 #-coding:utf-8-
 from Scene import Scene
 from Elements import Element,VisibleElement,AnimatedElement,Area,Puzzle,Character,Item,Widget
-from Interfaces import ElementWindow
 
 class Room(Scene):
-
     def __init__(self,game):
         self.Game = game
         Scene.__init__(self,self.Game)
