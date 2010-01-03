@@ -62,15 +62,15 @@ class Scene:
     def setInsertPoint(self,pos):
         #TODO: Check that it is a valid placement on the map
         posX = pos[0]/16
-        posY = pos[0]/16
+        posY = pos[1]/16
         self.insertPoint = pos
 
         #Sadly neccesary    
-        self.Game.Player.setPosition(pos)
-        self.Game.Player.scaleImage()
+#        self.Game.Player.scaleImage()
         self.Game.Player.setPosition(pos)
         
     def show(self):
+        self.Game.Renderer.fadeIn()
         self.visible = True
         
     def setMap(self,mapFileName):
@@ -128,7 +128,6 @@ class Scene:
     def enter(self):
         pass
     
-    def exit(self):
+    def exit(self,sceneName):
         self.Game.AudioController.stopAmbience()
-        #self.Game.Renderer.fadeOut()
-        pass
+        self.Game.Renderer.fadeOut(self.Game.loadScene,sceneName)

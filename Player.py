@@ -31,19 +31,18 @@ class Player(Character):
             'ses':self.loadFrames('southeast','stand',1),
             'sws':self.loadFrames('southwest','stand',1),
             'nws':self.loadFrames('northwest','stand',1),
-            'nw':self.loadFrames('north','walk',1),
-            'sw':self.loadFrames('south','walk',1),
-            'sww':self.loadFrames('southwest','walk',1),
-            'nww':self.loadFrames('northwest','walk',1),
-            'sew':self.loadFrames('southeast','walk',1),
-            'new':self.loadFrames('northeast','walk',1),
+            'nw':self.loadFrames('north','walk',8),
+            'sw':self.loadFrames('south','walk',8),
+            'sww':self.loadFrames('southwest','walk',8),
+            'nww':self.loadFrames('northwest','walk',8),
+            'sew':self.loadFrames('southeast','walk',8),
+            'new':self.loadFrames('northeast','walk',8),
             'ew':self.loadFrames('east','walk',8),
             'ww':self.loadFrames('west','walk',8),
-            'nw':self.loadFrames('north','walk',2),
-            'sw':self.loadFrames('south','walk',2)
+            'nw':self.loadFrames('north','walk',8),
+            'sw':self.loadFrames('south','walk',8)
         }
         self.pos = (0,0)
-        self.renderPos = (0,0)
         self.scale = 1
         self.walking = False
         self.talking = False
@@ -92,8 +91,6 @@ class Player(Character):
         else:
             return False
 
-
-        
     def walk(self):
         if len(self.path):
             self.setPosition(self.path[0])
@@ -149,8 +146,8 @@ class Player(Character):
             except IndexError:
                 currentFrame = sequence[0]
 
-        self.currentFrame = currentFrame
-        return self.scaleImage(self.currentFrame)
+        self.currentFrame = self.scaleImage(currentFrame)
+        return self.currentFrame
         
     def scaleImage(self,image=None):
         #WORK IN PROGRESS    
@@ -162,14 +159,13 @@ class Player(Character):
             return pygame.transform.rotozoom(image,0,self.scale)
 
     def getRenderPos(self):
-        return self.renderPos
+        return (self.rect.left,self.rect.bottom-self.currentFrame.get_height())
 
     def setPosition(self,pos):
-        self.rect.left = pos[0]
-        self.rect.top = pos[1]
+        self.rect.centerx = pos[0]
+        self.rect.centery = pos[1]
         self.pos = pos
-        self.renderPos = (self.pos[0],self.rect.bottom-(200*self.scale))
-        
+                
     def setDirection(self,newPos):
         if self.getPosition()[0] < newPos[0] and self.getPosition()[1] == newPos[1]:
             self.direction = 'e'
@@ -263,8 +259,7 @@ class Player(Character):
 
     def exit(self,exit):
         if self.inRange(exit):
-            self.Game.currentScene.exit()
-            self.Game.loadScene(exit.sceneName)
+            self.Game.currentScene.exit(exit.sceneName)
 
     def randomTalk(self):
         if not self.tempVar:

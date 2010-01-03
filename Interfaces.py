@@ -438,7 +438,8 @@ class Cursor():
             self.setCursor(self.previousCursor())
             
     def checkCollisions(self):
-        translatedPos = self.Game.Renderer.translateMouse(pygame.mouse.get_pos())
+        #translatedPos = self.Game.Renderer.translatePos(pygame.mouse.get_pos())
+        translatedPos = pygame.mouse.get_pos()
         if pygame.mouse.get_pos()[1] < 80:
                 for item in self.Game.Inventory.items:
                     if(item.rect.collidepoint(translatedPos)):

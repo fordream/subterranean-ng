@@ -45,36 +45,52 @@ class Renderer:
         self.setupTimer()
         self.frame = 0
         
-        self.fadingOut = False
+        self.fadeMode = None
+        self.fadeCallback = None
+        self.fadeCallbackArgument = None
         
     def translate(self,x):
         x = (self.camera.centerx-self.Game.Player.rect.centerx)
         return x
         
-    def translateMouse(self,pos):
-        return pos
-        #return (self.translate(pos[0]),pos[1])
+    def translatePos(self,pos):
+        return (self.translate(pos[0]),pos[1])
         
     def transitionFade(self):
         pass
         
-    def fadeOut(self):
-        print "fading Out"
-        if self.fading and self.overlay.get_alpha() < 100:
-            self.overlay.set_alpha(self.overlay.get_alpha()+2)
-        elif self.fading and self.overlay.get_alpha() > 99:
-            self.fading = False
-        else:
-            self.fading = True
-            
-    def fadeIn(self):
-        print "fading In"
-        if self.fading and self.overlay.get_alpha() < 100:
-            self.overlay.set_alpha(self.overlay.get_alpha()+2)
-        else:
-            pass
-            
+    def handleOverlay(self):
+        if self.fadeMode == 'fadeOut':
+            if self.overlay.get_alpha() < 255:
+                self.overlay.set_alpha(self.overlay.get_alpha()+25)
+            else:
+                self.resetFade()
+                
+        elif self.fadeMode == 'fadeIn':
+            if self.overlay.get_alpha() > 0:
+                self.overlay.set_alpha(self.overlay.get_alpha()-25)
+            else:
+                self.resetFade()
+
+    def resetFade(self):
+        self.fadeMode = None
+        if self.fadeCallback:
+            self.fadeCallback(self.fadeCallbackArgument)
+        self.fadeCallback = None
+        self.fadeCallbackArgument = None
+    
+    def fadeIn(self,fadeCallback=None,fadeCallbackArgument=None):
+        self.fadeCallback = fadeCallback
+        self.fadeCallbackArgument = fadeCallbackArgument
+        self.fadeMode = 'fadeIn'
+        self.overlay.set_alpha(255)
                     
+    def fadeOut(self,fadeCallback=None,fadeCallbackArgument=None):
+        self.fadeCallback = fadeCallback
+        self.fadeCallbackArgument = fadeCallbackArgument
+        self.fadeMode = 'fadeOut'
+        self.overlay.set_alpha(0)
+
     def setupTimer(self):
         self.Timer = Timer()
         self.Timer.setFPS(24)
@@ -210,6 +226,10 @@ class Renderer:
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
         self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
+
+        #Draw overlay
+        self.handleOverlay()
+        self.window.blit(self.overlay,self.rect)
             
         #Debug points
         if self.Game.debug:
@@ -226,9 +246,7 @@ class Renderer:
                 self.scene.blit(self.debugPoint,exit.exitPoint)
             pygame.draw.lines(self.scene,(255,100,255),0,[(0,self.Game.currentScene.farthestPoint),(1024,self.Game.currentScene.farthestPoint)])
             pygame.draw.lines(self.scene,(255,110,24),0,[(0,self.Game.currentScene.closestPoint),(1024,self.Game.currentScene.closestPoint)])
-        #Overlay
-        if self.fadingOut:
-            self.fadeOut()
+
         pygame.display.flip()
         
 class AudioController:
@@ -249,7 +267,7 @@ class AudioController:
         self.ambienceChannel = pygame.mixer.Channel(1)
         self.speechChannel = pygame.mixer.Channel(2)
         self.UIChannel = pygame.mixer.Channel(3)
-        self.miscChannel = pygame.mixer.Channel(1)
+        self.miscChannel = pygame.mixer.Channel(4)
         try:
             self.musicTracks = {
                 'DEFAULT':os.path.join('data','music','default.ogg'),
