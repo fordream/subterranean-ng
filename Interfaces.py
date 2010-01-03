@@ -491,7 +491,10 @@ class Cursor():
                         else:
                             self.Game.TitleManager.setPrefix(self.getCursorName())
                         if self.getCursorName() == 'DEFAULT':
-                            self.setCursor('USE')
+                            if element.isCharacter:
+                                self.setCursor('TALK')
+                            else:
+                                self.setCursor('USE')
                         return self.currentElement
                 
                 #Last resorts, are there any exits here?

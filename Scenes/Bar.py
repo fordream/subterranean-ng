@@ -11,6 +11,7 @@ class Room(Scene):
         self.setBackground('bar.jpg')
         self.setForeground('bar.png')
         self.setMap('Bar.map')
+        self.addVisibleElement(self.loadElement('Map'))
         self.addExit(490,305,110,180,(550,500),"Foo",'NORTH')
         
         self.enter()

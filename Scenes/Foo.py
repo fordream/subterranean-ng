@@ -17,7 +17,7 @@ class Room(Scene):
 
         self.addVisibleElement(self.loadElement('Fire'))
         self.addVisibleElement(self.loadElement('Map'))
-        self.addVisibleElement(self.loadCharacter('Grumpley'))
+        self.addVisibleElement(self.loadCharacter('Grimvald'))
                 
         self.Game.Inventory.addItem(self.loadItem('Potion'))
         self.Game.Inventory.addItem(self.loadItem('Chili'))

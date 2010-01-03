@@ -272,4 +272,4 @@ class Player(Character):
             self.scriptSay("Hej då!")
                         
     def getTextPos(self):
-        return (self.rect.centerx,self.renderPos[1]-30)
+        return (self.rect.centerx,self.getRenderPos()[1]-30)
