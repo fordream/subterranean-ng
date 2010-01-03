@@ -10,8 +10,8 @@ class Map(AnimatedElement):
         self.setName("dungeonmap")
         self.setTitle('Dungeon map')
         self.setImage('dungeonmap.png')
-        self.setPosition((624,276))
-        self.setActionPosition((624,476))
+        self.setPosition((330,326))
+        self.setActionPosition((410,500))
      
         self.setLookMethod(self.mapLook)
         self.setUseMethod(self.mapUse)        

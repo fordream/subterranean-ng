@@ -14,7 +14,7 @@ class Room(Scene):
         self.happyWorm = False
 
         self.addVisibleElement(self.loadElement('Fire'))
-        self.addVisibleElement(self.loadElement('Map'))
+        self.addVisibleElement(self.loadElement('ToolBarrel'))
         self.addVisibleElement(self.loadCharacter('Grimvald'))
                 
         self.Game.Inventory.addItem(self.loadItem('Potion'))

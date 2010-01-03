@@ -49,6 +49,7 @@ class ScriptManager:
         self.currentPartType = None
         self.valuesLoaded = False
         self.skipped = False
+        self.speaker = None
         
     def skip(self):
         self.skipped = True
@@ -142,9 +143,12 @@ class ScriptManager:
 
         if self.Game.Renderer.Timer.currentFrame == self.startFrame:
             #Every part
-            if self.script[0].__class__.__name__ == 'ScriptConversationPart' and self.script[0].speech is not None:
-                self.Game.AudioController.decreaseMusicVolume()
-                self.Game.AudioController.playSpeechSound(self.script[0].speech)
+            
+            if self.script[0].__class__.__name__ == 'ScriptConversationPart':
+                self.getActor().setSequence('talk')
+                if self.script[0].speech is not None:
+                    self.Game.AudioController.decreaseMusicVolume()
+                    self.Game.AudioController.playSpeechSound(self.script[0].speech)
 
                         
     def loadScriptValues(self,scriptPart):

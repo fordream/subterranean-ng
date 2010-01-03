@@ -163,17 +163,21 @@ class AnimatedElement(VisibleElement):
     def setSequence(self,sequence):
         if sequence in self.sequences:
             self.currentSequence = sequence
+            self.currentFrame = 0
         else:
             self.currentSequence = None
     
     def update(self):
         if self.currentSequence is not None:
-            frame = self.sequences[self.currentSequence][self.currentFrame]
-            if self.currentFrame >= len(self.sequences[self.currentSequence])-1:
-                self.currentFrame = 0
-            else:
-                self.currentFrame += 1
-            self.image = frame
+            try:
+                frame = self.sequences[self.currentSequence][self.currentFrame]
+                if self.currentFrame >= len(self.sequences[self.currentSequence])-1:
+                    self.currentFrame = 0
+                else:
+                    self.currentFrame += 1
+                self.image = frame
+            except:
+                return self.image
         else:
             return self.image
 

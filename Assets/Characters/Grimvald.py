@@ -8,10 +8,63 @@ class Grimvald(Character):
         self.setName("grimvald")
         self.setTitle("Smith")
         self.setImage("grimvald.png")
+        self.addSequence('default',[
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',
+            'grimvald-stand-1.png',                        
+            'grimvald-stand-2.png',
+            'grimvald-stand-2.png',
+            'grimvald-stand-2.png',
+            'grimvald-stand-2.png',
+            ])
+
+        self.addSequence('talk',[
+            'grimvald-talk-1.png',
+            'grimvald-talk-2.png',
+            'grimvald-talk-3.png',
+            'grimvald-talk-4.png',
+            'grimvald-talk-5.png'
+            ])
+
         self.setPosition((634,306))
         self.setActionPosition((604,486))
-        self.setTextColor((255,128,0))
-        
+        self.setTextColor((255,128,0))        
         
         self.addTopic("who","Who are you?",self.talkWho)
         self.addTopic("what","Whar are you doing?",self.talkWhat)

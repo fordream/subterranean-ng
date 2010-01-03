@@ -8,6 +8,7 @@ class Room(Scene):
         Scene.__init__(self,self.Game)
         self.setBackground('bar.jpg')
         self.setForeground('bar.png')
+        self.addVisibleElement(self.loadElement('Map'))
         self.setMap('Bar.map')
         self.addExit(490,305,110,180,(550,500),"Foo",'NORTH')
         
