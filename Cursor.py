@@ -9,6 +9,11 @@ class Cursor:
         self.currentItem = None
         self.cursorName = None
         self.currentCursor = None
+        self.actionStartPos = (0,0)
+        self.actionMenu = pygame.image.load(os.path.join('data','ui','actionmenu.png'))
+        self.actionMenuVisible = False
+        self.actionElement = None
+        
 
         self.cursors = {
             'DEFAULT': pygame.image.load(os.path.join('data','cursors','cursor_default.png')),
@@ -139,3 +144,13 @@ class Cursor:
         self.setCursor('DEFAULT')
         self.currentElement = None;
         self.currentExit = None
+
+    def showActionMenu(self):
+        self.actionMenuVisible = True
+        self.actionElement = self.currentElement
+        self.actionStartPos = pygame.mouse.get_pos()
+        
+    def hideActionMenu(self):
+        self.actionMenuVisible = False
+        self.actionElement = None
+        self.actionStartPos = (0,0)

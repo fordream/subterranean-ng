@@ -158,7 +158,7 @@ class AnimatedElement(VisibleElement):
         if sequenceName == 'default':
             self.currentSequence = sequenceName
         if self.image is None:
-            self.setImage = frames[0]
+            self.setImage(frames[0])
         
     def setSequence(self,sequence):
         if sequence in self.sequences:

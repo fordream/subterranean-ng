@@ -8,7 +8,10 @@ class EventManager:
         self.eventSignals = {pygl.QUIT: self.Game.quit,
                             pygl.KEYDOWN: self.readKey,
                             pygl.MOUSEBUTTONDOWN: self.readMouseClick,
-                            pygl.MOUSEMOTION: self.readMousePos}
+                            pygl.MOUSEMOTION: self.readMousePos,
+                            pygl.MOUSEBUTTONDOWN: self.handleMouseDown,
+                            pygl.MOUSEBUTTONUP: self.handleMouseUp,
+                            }
                             
         self.keySignals = {pygl.K_q: self.Game.quit,
                             pygl.K_ESCAPE: self.Game.quit,
@@ -53,8 +56,49 @@ class EventManager:
         if eventMethod is not None:
             eventMethod(event)
             
+    def handleMouseDown(self,event):
+        self.mouseHold = True
+        if self.Game.Cursor.currentElement is not None and self.Game.Cursor.currentItem is None:
+            self.Game.Cursor.showActionMenu()
+        else:
+            self.handleLeftClick(event)
+                       
+    def handleMouseUp(self,event):
+        if self.Game.Cursor.actionMenuVisible and self.Game.Cursor.actionElement is not None:
+            self.mouseHold = False
+            gesture = self.checkGesture()        
+            pos = self.Game.Cursor.actionElement.getActionPosition()
+            if pos is None:
+                pos = self.Game.Cursor.actionElement.getBasePosition()
+                
+            if gesture == 'PICKUP':
+                self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.actionElement)
+            elif gesture == 'USE':
+                self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.actionElement)
+            elif gesture == 'TALK':
+                self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.actionElement)
+            elif gesture == 'LOOK':
+                self.Game.Player.look(self.Game.Cursor.actionElement)
+            self.Game.Cursor.hideActionMenu()
+            
+    def checkGesture(self):
+        sx,sy = self.Game.Cursor.actionStartPos
+        cx,cy = pygame.mouse.get_pos()
+
+        if cx > sx and cy < sy:
+            return "TALK"
+        elif cx > sx and cy > sy:
+            return "USE"
+        elif cx < sx and cy < sy:
+            return "LOOK"
+        elif cx < sx and cy > sy:
+            return "PICKUP"
+        else:
+            return None
+            
     def handleLeftClick(self,event):
-        if not self.Game.paused:
+        #not used atm, sry
+        if not self.Game.paused:    
             if pygame.mouse.get_pos()[1] < 70:
                 if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
                     self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
@@ -65,7 +109,8 @@ class EventManager:
             else:
                 if self.Game.TopicMenu.currentTopic:
                     self.Game.TopicMenu.currentTopic.callbackMethod()
-                elif self.Game.Cursor.currentElement is not None:
+                #REMOVE FALSE OMG
+                elif False and self.Game.Cursor.currentElement is not None:
                     pos = self.Game.Cursor.currentElement.getActionPosition()
                     if pos is None:
                         pos = self.Game.Cursor.currentElement.getBasePosition()

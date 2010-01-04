@@ -241,10 +241,10 @@ class Player(Character):
             self.scriptSay(self.standardResponses['LOOK'])
 
     def talk(self,character):
-        self.face(character)
-        self.Game.TopicMenu.loadCharacterTopics(character)
-        self.Game.TopicMenu.show()
-        if character.talkMethod is not None:
+        if character.isCharacter and character.talkMethod is not None::
+            self.face(character)
+            self.Game.TopicMenu.loadCharacterTopics(character)
+            self.Game.TopicMenu.show()
             character.talkMethod()
         else:
             self.scriptSay(self.standardResponses['TALK'])

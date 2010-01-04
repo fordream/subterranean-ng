@@ -67,7 +67,7 @@ class Renderer:
 
     def setupTimer(self):
         self.Timer = Timer()
-        self.Timer.setFPS(24)
+        self.Timer.setFPS(25)
         
     def setupScreen(self,fullscreen=False):
         #There seems to be no way to make this work right other than doing this:
@@ -199,7 +199,10 @@ class Renderer:
 
         #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
-        self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
+        if self.Game.Cursor.actionMenuVisible:
+            self.screen.blit(self.Game.Cursor.actionMenu,(self.Game.Cursor.actionStartPos[0]-62,self.Game.Cursor.actionStartPos[1]-62))
+        else:
+            self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
 
         #Draw overlay
         self.handleOverlay()
