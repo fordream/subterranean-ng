@@ -94,7 +94,7 @@ class EventManager:
         elif cx < sx and cy > sy:
             return "PICKUP"
         else:
-            return None
+            return "DEFAULT"
             
     def handleLeftClick(self,event):
         #not used atm, sry

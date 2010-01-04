@@ -241,7 +241,7 @@ class Player(Character):
             self.scriptSay(self.standardResponses['LOOK'])
 
     def talk(self,character):
-        if character.isCharacter and character.talkMethod is not None::
+        if character.isCharacter and character.talkMethod is not None:
             self.face(character)
             self.Game.TopicMenu.loadCharacterTopics(character)
             self.Game.TopicMenu.show()

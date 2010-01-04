@@ -10,7 +10,15 @@ class Cursor:
         self.cursorName = None
         self.currentCursor = None
         self.actionStartPos = (0,0)
-        self.actionMenu = pygame.image.load(os.path.join('data','ui','actionmenu.png'))
+        self.actionMenuImages = {
+            'DEFAULT':pygame.image.load(os.path.join('data','ui','actionmenu_default.png')),
+            'USE':pygame.image.load(os.path.join('data','ui','actionmenu_use.png')),        
+            'PICKUP':pygame.image.load(os.path.join('data','ui','actionmenu_pickup.png')),
+            'LOOK':pygame.image.load(os.path.join('data','ui','actionmenu_look.png')),
+            'TALK':pygame.image.load(os.path.join('data','ui','actionmenu_talk.png'))
+        }
+        
+        self.actionMenuImage = 'DEFAULT'
         self.actionMenuVisible = False
         self.actionElement = None
         
@@ -154,3 +162,6 @@ class Cursor:
         self.actionMenuVisible = False
         self.actionElement = None
         self.actionStartPos = (0,0)
+        
+    def getActionMenuImage(self):
+        return self.actionMenuImages.get(self.Game.EventManager.checkGesture())

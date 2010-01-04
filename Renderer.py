@@ -197,12 +197,11 @@ class Renderer:
                 self.Game.ScriptManager.runScriptedWalk()
             self.Game.ScriptManager.loop()            
 
-        #Draw mouse cursor
         self.Game.Cursor.checkCollisions()
+        #ActionMenu
         if self.Game.Cursor.actionMenuVisible:
-            self.screen.blit(self.Game.Cursor.actionMenu,(self.Game.Cursor.actionStartPos[0]-62,self.Game.Cursor.actionStartPos[1]-62))
-        else:
-            self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
+            self.screen.blit(self.Game.Cursor.getActionMenuImage(),(self.Game.Cursor.actionStartPos[0]-62,self.Game.Cursor.actionStartPos[1]-62))
+        self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
 
         #Draw overlay
         self.handleOverlay()
