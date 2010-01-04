@@ -204,8 +204,6 @@ class Player(Character):
         return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
         
     def walkTo(self,(x,y),callbackMethod=None,argument=None):
-        if self.Game.TopicMenu.visible:
-            self.Game.TopicMenu.hide()
         if callbackMethod is not None and argument is not None:
             self.callbackMethod = callbackMethod
             self.argument = argument
@@ -213,6 +211,8 @@ class Player(Character):
             if self.findPath(x,y):
                 self.resetStartFrame()
                 self.walking = True
+                if self.Game.TopicMenu.visible:
+                    self.Game.TopicMenu.hide()
             else:
                 print "No avalible tiles at",x,y
         

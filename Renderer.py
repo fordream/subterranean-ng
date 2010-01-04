@@ -222,3 +222,5 @@ class Renderer:
             pygame.draw.lines(self.scene,(255,110,24),0,[(0,self.Game.currentScene.closestPoint),(1024,self.Game.currentScene.closestPoint)])
 
         pygame.display.flip()
+        if self.Game.capturing:
+            self.Game.captureScreen()

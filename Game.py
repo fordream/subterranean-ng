@@ -13,8 +13,10 @@ from TopicMenu import TopicMenu
 
 class Game:
     def __init__(self,arguments):
-        self.debug = False;
-        self.running = True;
+        self.debug = False
+        self.capturing = False
+        self.captureFPSWait = 0
+        self.running = True
         self.fullscreen = False
         self.paused = False
         self.cachedScenes = {}
@@ -108,3 +110,27 @@ class Game:
             self.debug = False
         else:
             self.debug = True
+                        
+    def toggleCapture(self):
+        if self.capturing:
+            self.capturing = False
+            print "Stopped capturing. Saving to disk"
+            count = 0
+            print "Got",len(self.capturedImages),"images"
+            for image in self.capturedImages:
+                pygame.image.save(image,'/Users/kallepersson/Desktop/captures/capture-'+str(count)+'.png')
+                count+=1
+            self.capturedImages = []
+            print "Done"
+        else:
+            print "Started capturing"
+            self.capturedImages = []
+            self.captureFPSWait = 0
+            self.capturing = True
+            
+    def captureScreen(self):
+        if self.captureFPSWait > 2:
+            self.capturedImages.append(self.Renderer.screen.copy())
+            self.captureFPSWait = 0
+        else:
+            self.captureFPSWait+=1
