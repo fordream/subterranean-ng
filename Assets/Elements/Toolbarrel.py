@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Elements import VisibleElement
 
-class ToolBarrel(VisibleElement):
+class Toolbarrel(VisibleElement):
     def __init__(self,game):
         VisibleElement.__init__(self)
         self.Game = game
