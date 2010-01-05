@@ -8,13 +8,13 @@ class Room(Scene):
         Scene.__init__(self,self.Game)
         self.setBackground('foo.jpg')
         self.setForeground('foo.png')
-        self.setMap('Foo.map')
+        self.setMap('foo.map')
 
         self.talkedToWorm = False
         self.happyWorm = False
 
         self.addVisibleElement(self.loadElement('Fire'))
-        self.addVisibleElement(self.loadElement('ToolBarrel'))
+        self.addVisibleElement(self.loadElement('Toolbarrel'))
         self.addVisibleElement(self.loadCharacter('Grimvald'))
                 
         self.Game.Inventory.addItem(self.loadItem('Potion'))
