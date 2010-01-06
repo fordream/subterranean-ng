@@ -6,7 +6,7 @@ class Grimvald(Character):
         Character.__init__(self)
         self.Game = game
         self.setName("grimvald")
-        self.setTitle("Smith")
+        self.setTitle("Blacksmith")
         self.setImage("grimvald.png")
         self.addSequence('default',[
             'grimvald-stand-1.png',
@@ -76,6 +76,36 @@ class Grimvald(Character):
             'grimvald-talk-5.png',
             ])
 
+        self.addSequence('silly',[
+            'grimvald-silly-1.png',
+            'grimvald-silly-1.png',
+            'grimvald-silly-2.png',
+            'grimvald-silly-2.png',
+            'grimvald-silly-2.png',
+            'grimvald-silly-2.png',
+            'grimvald-silly-2.png',    
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',                        
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',            
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-4.png',
+            'grimvald-silly-2.png',
+            'grimvald-silly-2.png',
+            'grimvald-silly-2.png',
+            'grimvald-silly-1.png',
+            'grimvald-silly-1.png',
+            'grimvald-silly-1.png',
+            ])
         self.setPosition((634,306))
         self.setActionPosition((604,486))
         self.setTextColor((255,128,0))        
@@ -84,11 +114,18 @@ class Grimvald(Character):
         self.addTopic("what","Whar are you doing?",self.talkWhat)
         self.addTopic("where","Where are we?",self.talkWhere)
         self.setTalkMethod(self.startTalk)
+        
+        self.setUseMethod(self.onUse)
+        self.setLookMethod(self.onLook)
+        self.setPickupMethod(self.onPickup)
+        
+        self.knowName = False
 
     def talkWho(self):
         self.Game.Player.scriptSay("Who are you?")
         self.scriptSay("The name's Grimvald. The smith of Undergård. Who are you, youngster?")
         self.setTitle("Grimvald")
+        self.knowName = True
         if not self.hasTopic("undergard"):
             self.addTopic("undergard","What is Undergård?",self.talkUndergard)
         self.Game.Player.scriptSay("I'm Nils.")
@@ -124,3 +161,16 @@ class Grimvald(Character):
     def startTalk(self):
         self.Game.Player.scriptSay("Hi there!")
         self.scriptSay("What do you want?")
+        
+    def onLook(self):
+        if self.knowName:
+            self.Game.Player.scriptSay("It's Grimvald, the blacksmith.")
+        else:
+            self.Game.Player.scriptSay("It's a blacksmith.")
+    
+    def onUse(self):
+        self.scriptSay("This is not Facebook")
+        self.scriptSequence("silly")
+
+    def onPickup(self):
+        self.scriptSay("Are you hitting on me, lad?")

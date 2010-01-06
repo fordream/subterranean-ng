@@ -147,13 +147,16 @@ class AnimatedElement(VisibleElement):
         self.animated = True
         
     def addSequence(self,sequenceName,frames):
+        #tmpholder stores names and images to avoid duplicate loading
+        tmpHolder = {}
         imageFrames = []
         if self.isCharacter:
             directory = 'characters'
         else:
             directory = 'elements'
-        for image in frames:
-            imageFrames.append(pygame.image.load(os.path.join('data',directory,image)))
+        for imageFilename in frames:
+            frame = tmpHolder.setdefault(imageFilename,pygame.image.load(os.path.join('data',directory,imageFilename)))
+            imageFrames.append(frame)
         self.sequences[sequenceName] = imageFrames
         if sequenceName == 'default':
             self.currentSequence = sequenceName
@@ -246,6 +249,9 @@ class Character(AnimatedElement):
         
     def scriptSay(self,text,speech=None):
         self.Game.ScriptManager.addConversationPart(self,text,speech)
+
+    def scriptSequence(self,sequenceName,duration=None):
+        self.Game.ScriptManager.addSequencePart(self,sequenceName,duration)
 
     def scriptWalk(self,pos):
         self.Game.ScriptManager.addWalkPart(self,pos)
