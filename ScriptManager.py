@@ -19,9 +19,13 @@ class ScriptWalkPart:
         return self.__class__.__name__
 
 class ScriptSequencePart:
-    def __init__(self,actor,sequenceName):
+    def __init__(self,actor,sequenceName,duration=None):
         self.actor = actor
         self.sequenceName = sequenceName
+        if duration is not None:
+            self.duration = duration
+        else:
+            self.duration = len(self.actor.sequences.get(self.sequenceName))
 
     def getType(self):
         return self.__class__.__name__
@@ -71,6 +75,8 @@ class ScriptManager:
             #Calculate frames from path length
             #TODO: Calculate this
             self.durationFrames = 100
+        elif part.getType() == 'ScriptSequencePart':
+            self.durationFrames = part.duration
         else:
             #Default
             self.durationFrames = 100
@@ -102,14 +108,17 @@ class ScriptManager:
     def getWalkPos(self):
         return self.script[0].walkPos
 
+    def getSequenceName(self):
+        return self.script[0].sequenceName
+
     def addConversationPart(self,actor,text,speech):
         self.script.append(ScriptConversationPart(actor,text,speech))
 
     def addWalkPart(self,actor,endPos):
         self.script.append(ScriptWalkPart(actor,endPos))
 
-    def addSequencePart(self,actor,sequenceName):
-        self.script.append(ScriptSequencePart(actor,sequenceName))
+    def addSequencePart(self,actor,sequenceName,duration=None):
+        self.script.append(ScriptSequencePart(actor,sequenceName,duration))
 
     def addMethodPart(self,method,args):
         self.script.append(ScriptMethodPart(method,args))
@@ -138,18 +147,18 @@ class ScriptManager:
                 self.Game.AudioController.restoreMusicVolume()
                 self.resetScriptValues()
                 self.Game.unpause()
-            else:
-                #Load the part values
-                self.loadScriptValues(self.script[0])
 
         if self.Game.Renderer.Timer.currentFrame == self.startFrame:
             #Every part
+            self.loadScriptValues(self.script[0])
             
             if self.script[0].__class__.__name__ == 'ScriptConversationPart':
                 self.getActor().setSequence('talk')
                 if self.script[0].speech is not None:
                     self.Game.AudioController.decreaseMusicVolume()
                     self.Game.AudioController.playSpeechSound(self.script[0].speech)
+            elif self.script[0].__class__.__name__ == 'ScriptSequencePart':
+                self.getActor().setSequence(self.getSequenceName())
 
                         
     def loadScriptValues(self,scriptPart):

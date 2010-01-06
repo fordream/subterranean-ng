@@ -203,7 +203,7 @@ class Player(Character):
         closenessY = self.getPosition()[1] - element.getBasePosition()[1]
         return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
         
-    def walkTo(self,(x,y),callbackMethod=None,argument=None):
+    def walkTo(self,(x,y),callbackMethod=None,argument=None):        
         if callbackMethod is not None and argument is not None:
             self.callbackMethod = callbackMethod
             self.argument = argument
@@ -228,7 +228,8 @@ class Player(Character):
         
     def use(self,element):
         self.face(element)
-        if self.inRange(element) and element.useMethod is not None:
+        print element.useMethod
+        if element.useMethod is not None:
             element.useMethod()
         else:
             self.scriptSay(self.standardResponses['USE'])

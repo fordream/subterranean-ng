@@ -22,7 +22,8 @@ class Renderer:
         self.fadeMode = None
         self.fadeCallback = None
         self.fadeCallbackArgument = None
-        
+        pygame.mouse.set_visible(0)
+
     def translate(self,x):
         x = (self.camera.centerx-self.Game.Player.rect.centerx)
         return x
@@ -103,7 +104,6 @@ class Renderer:
         pygame.display.set_icon(pygame.image.load(os.path.join('data','icons','gameicon.png')))
         
     def draw(self):
-        pygame.mouse.set_visible(0)
         #Draw game screen
         #Put this somewhere else?
         #self.sceneRect.left = self.translate(self.sceneRect.left)
@@ -200,8 +200,10 @@ class Renderer:
         self.Game.Cursor.checkCollisions()
         #ActionMenu
         if self.Game.Cursor.actionMenuVisible:
-            self.screen.blit(self.Game.Cursor.getActionMenuImage(),(self.Game.Cursor.actionStartPos[0]-62,self.Game.Cursor.actionStartPos[1]-62))
-        self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
+            self.Game.Cursor.updateActionMenu()
+            self.screen.blit(self.Game.Cursor.actionMenuImage,(self.Game.Cursor.actionStartPos[0]-62,self.Game.Cursor.actionStartPos[1]-62))
+        else:
+	        self.screen.blit(self.Game.Cursor.getCursor(),pygame.mouse.get_pos())
 
         #Draw overlay
         self.handleOverlay()
