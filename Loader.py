@@ -8,10 +8,12 @@ class Loader:
         self.data = {}
         self.imageDirectory = './data'
         self.audioDirectory = os.path.join('data','audio')
+        self.numAssets = 0
         
     def load(self,key,fileObject):
         self.data[key] = fileObject
         print "Loaded",key
+        self.numAssets += 1
         
     def loadImage(self,key,category,filename):
         def convertPixels(image):
@@ -78,4 +80,24 @@ class Loader:
         self.loadImage('MAP_UNDERFJORD','widgets','map-underfjord.png')
         self.loadImage('MAP_SUNMINE','widgets','map-sunmine.png')
         
-        print "Loaded game assets in",time.clock()-start,"seconds"
+        self.loadSequence('PLAYER_STAND_N_','maincharacter','north-stand-.png',1)
+        self.loadSequence('PLAYER_STAND_E_','maincharacter','east-stand-.png',1)
+        self.loadSequence('PLAYER_STAND_S_','maincharacter','south-stand-.png',1)
+        self.loadSequence('PLAYER_STAND_W_','maincharacter','west-stand-.png',1)
+        self.loadSequence('PLAYER_STAND_NE_','maincharacter','northeast-stand-.png',1)
+        self.loadSequence('PLAYER_STAND_SE_','maincharacter','southeast-stand-.png',1)
+        self.loadSequence('PLAYER_STAND_SW_','maincharacter','southwest-stand-.png',1)
+        self.loadSequence('PLAYER_STAND_NW_','maincharacter','northwest-stand-.png',1)
+        
+        self.loadSequence('PLAYER_WALK_N_','maincharacter','north-walk-.png',8)
+        self.loadSequence('PLAYER_WALK_S_','maincharacter','south-walk-.png',8)
+        self.loadSequence('PLAYER_WALK_E_','maincharacter','east-walk-.png',8)
+        self.loadSequence('PLAYER_WALK_N_','maincharacter','north-walk-.png',8)
+        self.loadSequence('PLAYER_WALK_NE_','maincharacter','northeast-walk-.png',8)
+        self.loadSequence('PLAYER_WALK_SE_','maincharacter','southeast-walk-.png',8)
+        self.loadSequence('PLAYER_WALK_SW_','maincharacter','southwest-walk-.png',8)        
+        self.loadSequence('PLAYER_WALK_NW_','maincharacter','northwest-walk-.png',8)
+
+
+
+        print "Loaded",self.numAssets,"game assets in",time.clock()-start,"seconds"

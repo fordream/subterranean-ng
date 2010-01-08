@@ -32,15 +32,18 @@ class Game:
         self.TitleManager = TitleManager(self)
         self.Cursor = Cursor(self)
         self.Renderer = Renderer(self)
+        self.AudioController = AudioController(self)
+        
+        self.Loader.preload()
+        
         self.Inventory = Inventory(self)
         self.TopicMenu = TopicMenu(self)
-        self.AudioController = AudioController(self)
+
         self.ScriptManager = ScriptManager(self)
         self.Player = Player(self)
         self.EventManager = EventManager(self)
         self.parseArguments(arguments)
 
-        self.Loader.preload()
         self.loadScene("blacksmith")
         self.run()
         
