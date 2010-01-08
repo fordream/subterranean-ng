@@ -7,15 +7,14 @@ class Fire(AnimatedElement):
         self.Game = game
         self.setName("fire")
         self.setTitle('Fire')
-        self.setImage('fire1.png')
         self.addSequence('default',[
-            'fire1.png',
-            'fire2.png',
-            'fire3.png',
-            'fire4.png',
-            'fire3.png',
-            'fire2.png',
-            'fire1.png',
+            self.Game.get('FIRE_DEFAULT_1'),
+            self.Game.get('FIRE_DEFAULT_2'),
+            self.Game.get('FIRE_DEFAULT_3'),
+            self.Game.get('FIRE_DEFAULT_4'),
+            self.Game.get('FIRE_DEFAULT_3'),
+            self.Game.get('FIRE_DEFAULT_2'),
+            self.Game.get('FIRE_DEFAULT_1')
             ])
         self.setPosition((540,276))
         self.setActionPosition((434,446))

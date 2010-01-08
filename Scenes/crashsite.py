@@ -1,6 +1,5 @@
 #-coding:utf-8-
 from Scene import Scene
-from Elements import Element,VisibleElement,AnimatedElement,Area,Puzzle,Character,Item,Widget
 
 class Room(Scene):
 

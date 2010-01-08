@@ -53,8 +53,8 @@ class VisibleElement(Element):
     def getTextPos(self):
         return (self.pos[0]-20,self.pos[1]-30)
 
-    def setImage(self,fileName):
-        self.image = pygame.image.load(os.path.join('data','elements',fileName))
+    def setImage(self,image):
+        self.image = image
         if self.rect is None:
             self.rect = self.image.get_rect()
     
@@ -146,7 +146,7 @@ class AnimatedElement(VisibleElement):
         self.currentSequence = None
         self.animated = True
         
-    def addSequence(self,sequenceName,frames):
+    def addSequence(self,sequenceName,sequence):
         #tmpholder stores names and images to avoid duplicate loading
         tmpHolder = {}
         imageFrames = []
@@ -154,14 +154,22 @@ class AnimatedElement(VisibleElement):
             directory = 'characters'
         else:
             directory = 'elements'
-        for imageFilename in frames:
-            frame = tmpHolder.setdefault(imageFilename,pygame.image.load(os.path.join('data',directory,imageFilename)))
-            imageFrames.append(frame)
+
+        #Load all frames in the sequence (Surface,length)
+        for frame in sequence:
+            try:
+                for length in range(frame[1]):
+                    imageFrames.append(frame[0])
+            except TypeError:
+                imageFrames.append(frame)
+                
         self.sequences[sequenceName] = imageFrames
         if sequenceName == 'default':
             self.currentSequence = sequenceName
+            
+        #Just in case default loop stops:
         if self.image is None:
-            self.setImage(frames[0])
+            self.setImage(self.sequences[sequenceName][0])
         
     def setSequence(self,sequence):
         if sequence in self.sequences:
@@ -184,25 +192,6 @@ class AnimatedElement(VisibleElement):
         else:
             return self.image
 
-class Area(Element):
-    def __init__(self):
-        self.rect = pygame.Rect(0,0,0,0)
-        
-    def setSize(w,h):
-        self.rect.inflate_ip(w,h)
-    
-    def setPosition(pos):
-        self.rect.move_ip(pos)
-
-class Puzzle(VisibleElement):
-    def __init__(self):
-        print self.__class__.__name__
-        
-class ConversationPart:
-    def __init__(self,actor,text):
-        self.actor = actor
-        self.text = text
-
 class Character(AnimatedElement):
     def __init__(self):
         AnimatedElement.__init__(self)
@@ -213,8 +202,8 @@ class Character(AnimatedElement):
         self.text = None
         self.textTimer = 0
 
-    def setImage(self,fileName):
-        self.image = pygame.image.load(os.path.join('data','characters',fileName))
+    def setImage(self,image):
+        self.image = image
         if self.rect is None:
             self.rect = self.image.get_rect()
         
@@ -279,7 +268,7 @@ class Widget(AnimatedElement):
         self.rect.top += self.parent.rect.top
         
     def setImage(self,image):
-        self.image = pygame.image.load(os.path.join('data','widgets',image))
+        self.image = image
         self.rect = self.image.get_rect()
         
     def setClickMethod(self,method):

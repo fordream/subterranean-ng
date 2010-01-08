@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os,sys,time,pygame,imp
 from Constants import *
+from Loader import Loader
 from Player import Player
 from Renderer import Renderer
 from AudioController import AudioController
@@ -27,6 +28,7 @@ class Game:
         
         self.values = {}
 
+        self.Loader = Loader(self)
         self.TitleManager = TitleManager(self)
         self.Cursor = Cursor(self)
         self.Renderer = Renderer(self)
@@ -37,7 +39,9 @@ class Game:
         self.Player = Player(self)
         self.EventManager = EventManager(self)
         self.parseArguments(arguments)
-        self.loadScene("Foo")
+
+        self.Loader.preload()
+        self.loadScene("blacksmith")
         self.run()
         
     def parseArguments(self,arguments):
@@ -61,8 +65,8 @@ class Game:
     def loop(self):
         while self.running:
             self.EventManager.checkEvents()
-            self.Renderer.Timer.tick()
             self.Renderer.draw()
+            self.Renderer.Timer.tick()
 
     def loadScene(self,sceneName):
         if sceneName in self.cachedScenes:
@@ -134,3 +138,6 @@ class Game:
             self.captureFPSWait = 0
         else:
             self.captureFPSWait+=1
+            
+    def get(self,key):
+        return self.Loader.get(key)

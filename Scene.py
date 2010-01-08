@@ -43,13 +43,13 @@ class Scene:
         return self.backgroundImage
         
     def setBackground(self,backgroundImage):
-        self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds',backgroundImage)).convert()
+        self.backgroundImage = self.Game.get(backgroundImage)
 
     def getForeground(self):
         return self.foregroundImage
 
     def setForeground(self,foregroundImage):
-        self.foregroundImage = pygame.image.load(os.path.join('data','foregrounds',foregroundImage)).convert_alpha()
+        self.foregroundImage = self.Game.get(foregroundImage)
         
     def addVisibleElement(self,element):
         self.visibleElements.add(element)

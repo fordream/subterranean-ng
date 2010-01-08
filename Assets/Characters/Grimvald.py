@@ -7,110 +7,31 @@ class Grimvald(Character):
         self.Game = game
         self.setName("grimvald")
         self.setTitle("Blacksmith")
-        self.setImage("grimvald.png")
         self.addSequence('default',[
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',
-            'grimvald-stand-1.png',                        
-            'grimvald-stand-2.png',
-            'grimvald-stand-2.png',
-            'grimvald-stand-2.png',
-            'grimvald-stand-2.png',
+            (self.Game.get('GRIMVALD_STAND_1'),25),
+            (self.Game.get('GRIMVALD_STAND_2'),4),
             ])
 
         self.addSequence('talk',[
-            'grimvald-talk-1.png',
-            'grimvald-talk-1.png',
-            'grimvald-talk-1.png',
-            'grimvald-talk-2.png',
-            'grimvald-talk-2.png',
-            'grimvald-talk-2.png',
-            'grimvald-talk-2.png',
-            'grimvald-talk-2.png',
-            'grimvald-talk-3.png',
-            'grimvald-talk-3.png',
-            'grimvald-talk-3.png',
-            'grimvald-talk-4.png',
-            'grimvald-talk-4.png',
-            'grimvald-talk-4.png',
-            'grimvald-talk-4.png',
-            'grimvald-talk-4.png',
-            'grimvald-talk-5.png',
-            'grimvald-talk-5.png',
-            'grimvald-talk-5.png',
+            (self.Game.get('GRIMVALD_TALK_1'),2),
+            (self.Game.get('GRIMVALD_TALK_2'),4),
+            (self.Game.get('GRIMVALD_TALK_3'),3),
+            (self.Game.get('GRIMVALD_TALK_4'),4),
+            (self.Game.get('GRIMVALD_TALK_5'),5),
             ])
 
         self.addSequence('silly',[
-            'grimvald-silly-1.png',
-            'grimvald-silly-1.png',
-            'grimvald-silly-2.png',
-            'grimvald-silly-2.png',
-            'grimvald-silly-2.png',
-            'grimvald-silly-2.png',
-            'grimvald-silly-2.png',    
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',                        
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',            
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-4.png',
-            'grimvald-silly-2.png',
-            'grimvald-silly-2.png',
-            'grimvald-silly-2.png',
-            'grimvald-silly-1.png',
-            'grimvald-silly-1.png',
-            'grimvald-silly-1.png',
+            (self.Game.get('GRIMVALD_SILLY_1'),2),
+            (self.Game.get('GRIMVALD_SILLY_2'),4),
+            (self.Game.get('GRIMVALD_SILLY_3'),14),
+            (self.Game.get('GRIMVALD_SILLY_2'),3),
+            (self.Game.get('GRIMVALD_SILLY_1'),2),
             ])
+
         self.setPosition((634,306))
         self.setActionPosition((604,486))
         self.setTextColor((255,128,0))        
         
-        self.addTopic("who","Who are you?",self.talkWho)
         self.addTopic("what","Whar are you doing?",self.talkWhat)
         self.addTopic("where","Where are we?",self.talkWhere)
         self.setTalkMethod(self.startTalk)
@@ -120,16 +41,6 @@ class Grimvald(Character):
         self.setPickupMethod(self.onPickup)
         
         self.knowName = False
-
-    def talkWho(self):
-        self.Game.Player.scriptSay("Who are you?")
-        self.scriptSay("The name's Grimvald. The smith of Undergård. Who are you, youngster?")
-        self.setTitle("Grimvald")
-        self.knowName = True
-        if not self.hasTopic("undergard"):
-            self.addTopic("undergard","What is Undergård?",self.talkUndergard)
-        self.Game.Player.scriptSay("I'm Nils.")
-        self.scriptSay("Nils. What a peculiar name.")
 
     def talkWhat(self):
         self.Game.Player.scriptSay("What are you doing?")
@@ -160,7 +71,14 @@ class Grimvald(Character):
 
     def startTalk(self):
         self.Game.Player.scriptSay("Hi there!")
-        self.scriptSay("What do you want?")
+        self.scriptSay("I haven't seen you before. Who are you?")
+        self.Game.Player.scriptSay("I'm Nils.")
+        self.scriptSay("Nils. That's a peculiar name.")
+        self.scriptSay("I'm Grimvald. The smith of Undergård.")
+        self.setTitle("Grimvald")
+        self.knowName = True
+        if not self.hasTopic("undergard"):
+            self.addTopic("undergard","What is Undergård?",self.talkUndergard)
         
     def onLook(self):
         if self.knowName:

@@ -110,7 +110,7 @@ class EventManager:
                 if self.Game.TopicMenu.currentTopic:
                     self.Game.TopicMenu.currentTopic.callbackMethod()
                 #REMOVE FALSE OMG
-                elif False and self.Game.Cursor.currentElement is not None:
+                elif self.Game.Cursor.currentElement is not None:
                     pos = self.Game.Cursor.currentElement.getActionPosition()
                     if pos is None:
                         pos = self.Game.Cursor.currentElement.getBasePosition()
@@ -118,6 +118,7 @@ class EventManager:
                         self.Game.Cursor.currentElement.clickMethod()
                     elif self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
                         self.Game.Player.walkTo(pos,self.Game.Player.give,self.Game.Cursor.currentElement)
+                    '''
                     elif self.Game.Cursor.getCursorName() == 'PICKUP':
                         self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
                     elif self.Game.Cursor.getCursorName() == 'USE':
@@ -126,6 +127,7 @@ class EventManager:
                         self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
                     elif self.Game.Cursor.getCursorName() == 'LOOK':
                         self.Game.Player.look(self.Game.Cursor.currentElement)
+                    '''
                 elif self.Game.Cursor.currentExit is not None:
                     self.Game.Player.walkTo(self.Game.Cursor.currentExit.exitPoint,self.Game.Player.exit,self.Game.Cursor.currentExit)
                 else:

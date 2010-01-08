@@ -11,7 +11,7 @@ class ElementWindow:
         self.closeMethod = None
         
     def setBackground(self,background):
-        self.background = pygame.image.load(os.path.join('data','windows',background))
+        self.background = background
         self.rect = self.background.get_rect()
         self.align()
         

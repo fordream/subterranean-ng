@@ -9,7 +9,7 @@ class Map(AnimatedElement):
         
         self.setName("dungeonmap")
         self.setTitle('Dungeon map')
-        self.setImage('dungeonmap.png')
+        self.setImage(self.Game.get('MAP_DEFAULT'))
         self.setPosition((330,326))
         self.setActionPosition((410,500))
      
@@ -17,56 +17,56 @@ class Map(AnimatedElement):
         self.setUseMethod(self.mapUse)        
         
         self.window = ElementWindow(self.Game)
-        self.window.setBackground('dungeonmap.png')
+        self.window.setBackground(self.Game.get('MAP_BACKGROUND'))
         self.window.setOpenMethod(self.openMapWindow)
         self.window.setCloseMethod(self.closeMapWindow)
                    
         cross = Widget()
         cross.setName('cross')
         cross.setTitle('You are here')
-        cross.setImage('cross.png')
+        cross.setImage(self.Game.get('MAP_CROSS'))
         cross.setPosition((338,208))
         self.window.addWidget(cross)
 
         room1 = Widget()
         room1.setName('cross')
         room1.setTitle('The Sunmine')
-        room1.setImage('room1.png')
+        room1.setImage(self.Game.get('MAP_SUNMINE'))
         room1.setPosition((80,127))
         self.window.addWidget(room1)
 
         room2 = Widget()
         room2.setName('cross')
         room2.setTitle('The Gates')
-        room2.setImage('room2.png')
+        room2.setImage(self.Game.get('MAP_GATES'))
         room2.setPosition((360,64))
         self.window.addWidget(room2)
         
         room3 = Widget()
         room3.setName('cross')
         room3.setTitle("The Elderbeards' chamber")
-        room3.setImage('room3.png')
+        room3.setImage(self.Game.get('MAP_CHAMBER'))
         room3.setPosition((520,84))
         self.window.addWidget(room3)
         
         room4 = Widget()
         room4.setName('cross')
         room4.setTitle('The Underfjord')
-        room4.setImage('room4.png')
+        room4.setImage(self.Game.get('MAP_UNDERFJORD'))
         room4.setPosition((530,365))
         self.window.addWidget(room4)
         
         room5 = Widget()
         room5.setName('cross')
         room5.setTitle('The altar')
-        room5.setImage('room5.png')
+        room5.setImage(self.Game.get('MAP_ALTAR'))
         room5.setPosition((244,378))
         self.window.addWidget(room5)
 
         room6 = Widget()
         room6.setName('cross')
         room6.setTitle('The Quarry')
-        room6.setImage('room6.png')
+        room6.setImage(self.Game.get('MAP_QUARRY'))
         room6.setPosition((125,305))
         self.window.addWidget(room6)
 
@@ -85,7 +85,7 @@ class Map(AnimatedElement):
         self.mapUse()
         
     def openMapWindow(self):
-        self.Game.AudioController.playUISound("MAP")
+        self.Game.AudioController.playUISound("MAP_OPEN")
         
     def closeMapWindow(self):
         self.Game.AudioController.playUISound('MAP')

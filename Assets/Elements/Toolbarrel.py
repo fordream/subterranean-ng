@@ -7,7 +7,7 @@ class Toolbarrel(VisibleElement):
         self.Game = game
         self.setName("toolbarrel")
         self.setTitle('Barrel of tools')
-        self.setImage('toolbarrel.png')
+        self.setImage(self.Game.get('TOOLBARREL_DEFAULT'))
         self.setPosition((750,346))
         self.setActionPosition((644,486))
         self.setLookMethod(self.look)

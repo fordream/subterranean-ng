@@ -4,6 +4,7 @@ import os,pygame
 class AudioController:
 
     def __init__(self,game):
+        self.Game = game
         try:
             pygame.mixer.init(44100)
         except:
@@ -20,39 +21,15 @@ class AudioController:
         self.speechChannel = pygame.mixer.Channel(2)
         self.UIChannel = pygame.mixer.Channel(3)
         self.miscChannel = pygame.mixer.Channel(4)
-        try:
-            self.musicTracks = {
-                'DEFAULT':os.path.join('data','music','default.ogg'),
-                'THEME':os.path.join('data','music','theme.ogg'),
-                'NOTEXPECTED':os.path.join('data','music','notexpected.ogg')
+        
+        self.musicTracks = {
+            'BLACKSMITH_MUSIC':os.path.join('data','audio','music','blacksmith.ogg'),
+            'DEFAULT':os.path.join('data','audio','music','default.ogg'),
+            'NOTEXPECTED':os.path.join('data','audio','music','notexpected.ogg')
             }
-        except:
-            self.musicTracks = {}
-
-        self.ambienceSounds = {
-            'AMBI001':os.path.join('data','sound','ambience','ambience001.ogg'),
-            'WATER001':os.path.join('data','sound','ambience','water001.ogg')
-        }
-        
-        self.UISounds = {
-            'SLIDEIN':os.path.join('data','sound','ui','slidein.ogg'),
-            'SLIDEOUT':os.path.join('data','sound','ui','slideout.ogg'),
-            'MAP':os.path.join('data','sound','ui','map.ogg'),
-        }        
-        
-        self.speechSounds = {
-            'PLAYER001':os.path.join('data','sound','speech','player001.ogg'),
-            'PLAYER002':os.path.join('data','sound','speech','player002.ogg'),
-            'PLAYER003':os.path.join('data','sound','speech','player003.ogg')
-        }
-
-        self.miscSounds = {
-            'STEP001':os.path.join('data','sound','misc','step001.ogg'),
-            'STEP002':os.path.join('data','sound','misc','step002.ogg')
-        }
 
     def playMusic(self,trackName):
-        if self.soundEnabled and self.musicEnabled and trackName in self.musicTracks:
+        if self.soundEnabled and self.musicEnabled:
             if self.currentMusicTrack is not None and self.currentMusicTrack != trackName:
                 pygame.mixer.music.fadeout(0)
             self.currentMusicTrack = trackName
@@ -94,26 +71,24 @@ class AudioController:
     
     def playAmbienceSound(self,soundName):
         if self.soundEnabled:
-            self.playSound(self.ambienceChannel,self.ambienceSounds,soundName,-1)
+            self.playSound(self.ambienceChannel,soundName,-1)
 
     def playSpeechSound(self,soundName):
         if self.soundEnabled:
             self.decreaseMusicVolume()
-            self.playSound(self.speechChannel,self.speechSounds,soundName)
+            self.playSound(self.speechChannel,soundName)
 
     def playUISound(self,soundName):
         if self.soundEnabled:
-            self.playSound(self.UIChannel,self.UISounds,soundName)
+            self.playSound(self.UIChannel,soundName)
 
     def playMiscSound(self,soundName):
         if self.soundEnabled:
-            self.playSound(self.miscChannel,self.miscSounds,soundName)
+            self.playSound(self.miscChannel,soundName)
                 
-    def playSound(self,channel,soundList,soundName,loops=0):
-        if self.soundEnabled and soundName in soundList:
-            channel.play(pygame.mixer.Sound(soundList.get(soundName)),loops)
-        else:
-            print "Cound not find sound!:",soundName
+    def playSound(self,channel,soundName,loops=0):
+        if self.soundEnabled:
+            channel.play(self.Game.get(soundName),loops)
 
     def stopSpeech(self):
         self.stopSound(self.speechChannel)

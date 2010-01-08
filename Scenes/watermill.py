@@ -1,17 +1,15 @@
 #-coding:utf-8-
 from Scene import Scene
-from Elements import Element,VisibleElement,AnimatedElement,Area,Puzzle,Character,Item,Widget
 
 class Room(Scene):
     def __init__(self,game):
         self.Game = game
         Scene.__init__(self,self.Game)
-        self.setBackground('bar.jpg')
-        self.setForeground('bar.png')
+        self.setBackground('WATERMILL_BACKGROUND')
+        self.setForeground('WATERMILL_FOREGROUND')
         self.addVisibleElement(self.loadElement('Map'))
         self.setMap('bar.map')
         self.addExit(490,305,110,180,(550,500),"Foo",'NORTH')
-        
         self.enter()
         
     def enter(self):
