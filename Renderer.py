@@ -96,7 +96,6 @@ class Renderer:
             
         self.window.blit(self.screen,self.rect)
         self.screen.blit(self.scene,self.sceneRect)
-        #self.screen.blit(self.logo,(100,100))
         
         if self.Game.currentScene.visible:
             #Draw current background
@@ -107,7 +106,8 @@ class Renderer:
             self.Game.currentScene.visibleElements.draw(self.scene)
         
             #Draw main character
-            self.scene.blit(self.Game.Player.getCurrentFrame(),self.Game.Player.getRenderPos())
+            self.Game.Player.update()
+            self.scene.blit(self.Game.Player.image,self.Game.Player.getRenderPos())
             
             #Draw current foreground
             if self.Game.currentScene.getForeground():

@@ -19,8 +19,6 @@ class EventManager:
                             pygl.K_l: self.Game.AudioController.toggleMusicVolume,
                             pygl.K_d: self.Game.dump,
                             pygl.K_f: self.Game.toggleFullscreen,
-                            pygl.K_t: self.Game.Player.randomTalk,
-                           #pygl.K_s: self.Game.toggleCapture
                             }
                             
         self.mouseSignals = {1: self.handleLeftClick,

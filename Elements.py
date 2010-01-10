@@ -147,8 +147,6 @@ class AnimatedElement(VisibleElement):
         self.animated = True
         
     def addSequence(self,sequenceName,sequence):
-        #tmpholder stores names and images to avoid duplicate loading
-        tmpHolder = {}
         imageFrames = []
         if self.isCharacter:
             directory = 'characters'
@@ -177,6 +175,9 @@ class AnimatedElement(VisibleElement):
             self.currentFrame = 0
         else:
             self.currentSequence = None
+            
+    def getSequence(self):
+        return self.currentSequence
     
     def update(self):
         if self.currentSequence is not None:

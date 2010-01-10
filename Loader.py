@@ -12,7 +12,7 @@ class Loader:
         
     def load(self,key,fileObject):
         self.data[key] = fileObject
-        #print "Loaded",key
+        self.Game.log("Loaded",key)
         self.numAssets += 1
         
     def loadImage(self,key,category,filename):
@@ -109,4 +109,4 @@ class Loader:
 
 
 
-        print "Loaded",self.numAssets,"game assets in",time.clock()-start,"seconds"
+        self.Game.log("Loaded",str(self.numAssets),"game assets in",str(time.clock()-start),"seconds")

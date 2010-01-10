@@ -7,8 +7,7 @@ from Elements import Character
 class Player(Character):
     def __init__(self,game):
         Character.__init__(self)
-        
-        
+
         self.tempVar = False
                 
         self.Game = game
@@ -52,84 +51,84 @@ class Player(Character):
         
         #Walk
         self.addSequence('nw',[
-            self.Game.get('PLAYER_WALK_N_1'),
-            self.Game.get('PLAYER_WALK_N_2'),
-            self.Game.get('PLAYER_WALK_N_3'),
-            self.Game.get('PLAYER_WALK_N_4'),
-            self.Game.get('PLAYER_WALK_N_5'),
-            self.Game.get('PLAYER_WALK_N_6'),
-            self.Game.get('PLAYER_WALK_N_7'),
-            self.Game.get('PLAYER_WALK_N_8'),
+            (self.Game.get('PLAYER_WALK_N_1'),3),
+            (self.Game.get('PLAYER_WALK_N_2'),3),
+            (self.Game.get('PLAYER_WALK_N_3'),3),
+            (self.Game.get('PLAYER_WALK_N_4'),3),
+            (self.Game.get('PLAYER_WALK_N_5'),3),
+            (self.Game.get('PLAYER_WALK_N_6'),3),
+            (self.Game.get('PLAYER_WALK_N_7'),3),
+            (self.Game.get('PLAYER_WALK_N_8'),3),
         ])
         self.addSequence('sw',[
-            self.Game.get('PLAYER_WALK_S_1'),
-            self.Game.get('PLAYER_WALK_S_2'),
-            self.Game.get('PLAYER_WALK_S_3'),
-            self.Game.get('PLAYER_WALK_S_4'),
-            self.Game.get('PLAYER_WALK_S_5'),
-            self.Game.get('PLAYER_WALK_S_6'),
-            self.Game.get('PLAYER_WALK_S_7'),
-            self.Game.get('PLAYER_WALK_S_8'),
+            (self.Game.get('PLAYER_WALK_S_1'),3),
+            (self.Game.get('PLAYER_WALK_S_2'),3),
+            (self.Game.get('PLAYER_WALK_S_3'),3),
+            (self.Game.get('PLAYER_WALK_S_4'),3),
+            (self.Game.get('PLAYER_WALK_S_5'),3),
+            (self.Game.get('PLAYER_WALK_S_6'),3),
+            (self.Game.get('PLAYER_WALK_S_7'),3),
+            (self.Game.get('PLAYER_WALK_S_8'),3),
         ])
         self.addSequence('ew',[
-            self.Game.get('PLAYER_WALK_E_1'),
-            self.Game.get('PLAYER_WALK_E_2'),
-            self.Game.get('PLAYER_WALK_E_3'),
-            self.Game.get('PLAYER_WALK_E_4'),
-            self.Game.get('PLAYER_WALK_E_5'),
-            self.Game.get('PLAYER_WALK_E_6'),
-            self.Game.get('PLAYER_WALK_E_7'),
-            self.Game.get('PLAYER_WALK_E_8'),
+            (self.Game.get('PLAYER_WALK_E_1'),3),
+            (self.Game.get('PLAYER_WALK_E_2'),3),
+            (self.Game.get('PLAYER_WALK_E_3'),3),
+            (self.Game.get('PLAYER_WALK_E_4'),3),
+            (self.Game.get('PLAYER_WALK_E_5'),3),
+            (self.Game.get('PLAYER_WALK_E_6'),3),
+            (self.Game.get('PLAYER_WALK_E_7'),3),
+            (self.Game.get('PLAYER_WALK_E_8'),3),
         ])
         self.addSequence('ww',[
-            self.Game.get('PLAYER_WALK_W_1'),
-            self.Game.get('PLAYER_WALK_W_2'),
-            self.Game.get('PLAYER_WALK_W_3'),
-            self.Game.get('PLAYER_WALK_W_4'),
-            self.Game.get('PLAYER_WALK_W_5'),
-            self.Game.get('PLAYER_WALK_W_6'),
-            self.Game.get('PLAYER_WALK_W_7'),
-            self.Game.get('PLAYER_WALK_W_8'),
+            (self.Game.get('PLAYER_WALK_W_1'),3),
+            (self.Game.get('PLAYER_WALK_W_2'),3),
+            (self.Game.get('PLAYER_WALK_W_3'),3),
+            (self.Game.get('PLAYER_WALK_W_4'),3),
+            (self.Game.get('PLAYER_WALK_W_5'),3),
+            (self.Game.get('PLAYER_WALK_W_6'),3),
+            (self.Game.get('PLAYER_WALK_W_7'),3),
+            (self.Game.get('PLAYER_WALK_W_8'),3),
         ])
         self.addSequence('new',[
-            self.Game.get('PLAYER_WALK_NE_1'),
-            self.Game.get('PLAYER_WALK_NE_2'),
-            self.Game.get('PLAYER_WALK_NE_3'),
-            self.Game.get('PLAYER_WALK_NE_4'),
-            self.Game.get('PLAYER_WALK_NE_5'),
-            self.Game.get('PLAYER_WALK_NE_6'),
-            self.Game.get('PLAYER_WALK_NE_7'),
-            self.Game.get('PLAYER_WALK_NE_8'),
+            (self.Game.get('PLAYER_WALK_NE_1'),3),
+            (self.Game.get('PLAYER_WALK_NE_2'),3),
+            (self.Game.get('PLAYER_WALK_NE_3'),3),
+            (self.Game.get('PLAYER_WALK_NE_4'),3),
+            (self.Game.get('PLAYER_WALK_NE_5'),3),
+            (self.Game.get('PLAYER_WALK_NE_6'),3),
+            (self.Game.get('PLAYER_WALK_NE_7'),3),
+            (self.Game.get('PLAYER_WALK_NE_8'),3),
         ])
         self.addSequence('sew',[
-            self.Game.get('PLAYER_WALK_SE_1'),
-            self.Game.get('PLAYER_WALK_SE_2'),
-            self.Game.get('PLAYER_WALK_SE_3'),
-            self.Game.get('PLAYER_WALK_SE_4'),
-            self.Game.get('PLAYER_WALK_SE_5'),
-            self.Game.get('PLAYER_WALK_SE_6'),
-            self.Game.get('PLAYER_WALK_SE_7'),
-            self.Game.get('PLAYER_WALK_SE_8'),
+            (self.Game.get('PLAYER_WALK_SE_1'),3),
+            (self.Game.get('PLAYER_WALK_SE_2'),3),
+            (self.Game.get('PLAYER_WALK_SE_3'),3),
+            (self.Game.get('PLAYER_WALK_SE_4'),3),
+            (self.Game.get('PLAYER_WALK_SE_5'),3),
+            (self.Game.get('PLAYER_WALK_SE_6'),3),
+            (self.Game.get('PLAYER_WALK_SE_7'),3),
+            (self.Game.get('PLAYER_WALK_SE_8'),3),
         ])
         self.addSequence('sww',[
-            self.Game.get('PLAYER_WALK_SW_1'),
-            self.Game.get('PLAYER_WALK_SW_2'),
-            self.Game.get('PLAYER_WALK_SW_3'),
-            self.Game.get('PLAYER_WALK_SW_4'),
-            self.Game.get('PLAYER_WALK_SW_5'),
-            self.Game.get('PLAYER_WALK_SW_6'),
-            self.Game.get('PLAYER_WALK_SW_7'),
-            self.Game.get('PLAYER_WALK_SW_8'),
+            (self.Game.get('PLAYER_WALK_SW_1'),3),
+            (self.Game.get('PLAYER_WALK_SW_2'),3),
+            (self.Game.get('PLAYER_WALK_SW_3'),3),
+            (self.Game.get('PLAYER_WALK_SW_4'),3),
+            (self.Game.get('PLAYER_WALK_SW_5'),3),
+            (self.Game.get('PLAYER_WALK_SW_6'),3),
+            (self.Game.get('PLAYER_WALK_SW_7'),3),
+            (self.Game.get('PLAYER_WALK_SW_8'),3),
         ])
         self.addSequence('nww',[
-            self.Game.get('PLAYER_WALK_NW_1'),
-            self.Game.get('PLAYER_WALK_NW_2'),
-            self.Game.get('PLAYER_WALK_NW_3'),
-            self.Game.get('PLAYER_WALK_NW_4'),
-            self.Game.get('PLAYER_WALK_NW_5'),
-            self.Game.get('PLAYER_WALK_NW_6'),
-            self.Game.get('PLAYER_WALK_NW_7'),
-            self.Game.get('PLAYER_WALK_NW_8'),
+            (self.Game.get('PLAYER_WALK_NW_1'),3),
+            (self.Game.get('PLAYER_WALK_NW_2'),3),
+            (self.Game.get('PLAYER_WALK_NW_3'),3),
+            (self.Game.get('PLAYER_WALK_NW_4'),3),
+            (self.Game.get('PLAYER_WALK_NW_5'),3),
+            (self.Game.get('PLAYER_WALK_NW_6'),3),
+            (self.Game.get('PLAYER_WALK_NW_7'),3),
+            (self.Game.get('PLAYER_WALK_NW_8'),3),
         ])
         
         self.pos = (0,0)
@@ -153,6 +152,26 @@ class Player(Character):
         
     def facePos(self,pos):
         self.setDirection(pos)
+        
+    def getMode(self):
+        if self.walking:
+            return 'w'
+        else:
+            return 's'
+        
+    def update(self):
+        self.walk()
+        if self.getSequence() != self.getDirection()+self.getMode():
+            self.setSequence(self.getDirection()+self.getMode())
+        try:
+            frame = self.sequences[self.currentSequence][self.currentFrame]
+            if self.currentFrame >= len(self.sequences[self.currentSequence])-1:
+                self.currentFrame = 0
+            else:
+                self.currentFrame += 1
+            self.image = self.scaleImage(frame)
+        except:
+            return self.image
             
     def findPath(self,x,y):
         startX = self.getX()/16
@@ -172,69 +191,11 @@ class Player(Character):
             return True
         else:
             return False
-
-    def walk(self):
-        if len(self.path):
-            self.setPosition(self.path[0])
-            self.path.pop(0)
-            if len(self.path) > 1:
-                self.setDirection(self.path[1])
-        else:
-            self.walking = False
-            if self.callbackMethod is not None:
-                self.runCallback()
                 
     def runCallback(self):
         self.callbackMethod(self.argument)
         self.callbackMethod = None
         self.callbackArgument = None
-        
-    def resetStartFrame(self):
-        self.startFrame = self.Game.Renderer.Timer.currentFrame
-
-    def resetFrameKey(self):
-        self.frameKey = 0
-        
-    def getFrameKey(self,sequence):
-        #Every frame takes twice the time == a nice speed at 12fps
-        if self.Game.Renderer.Timer.currentFrame -2 == self.startFrame:
-            self.walk()
-            self.resetStartFrame()
-            if self.frameKey < len(sequence)-1:
-                self.frameKey += 1
-            else:
-                self.resetFrameKey()
-        elif self.Game.Renderer.Timer.currentFrame == self.startFrame or self.frameKey is None:
-            self.resetFrameKey()
-            
-        if self.frameKey == 3:
-            self.Game.AudioController.playMiscSound("STEP001")
-        elif self.frameKey == 7:
-            self.Game.AudioController.playMiscSound("STEP002")
-            
-        return self.frameKey
-        
-    def getCurrentFrame(self):
-        if self.walking:
-            state = 'w'
-        else:
-            state = 's'
-            
-        sequence = self.sequences.get('%s%s' % (self.getDirection(),state))
-        if sequence is not None:
-            #FIXME: Bugging
-            try:
-                currentFrame = sequence[self.getFrameKey(sequence)]
-            except IndexError:
-                currentFrame = sequence[0]
-
-        self.currentFrame = self.scaleImage(currentFrame)
-
-        #Catch!
-        if self.currentFrame is None:
-            self.currenFrame = sequence[0]
-
-        return self.currentFrame
         
     def scaleImage(self,image=None):
         #WORK IN PROGRESS    
@@ -246,7 +207,7 @@ class Player(Character):
             return pygame.transform.rotozoom(image,0,self.scale)
 
     def getRenderPos(self):
-        return (self.rect.left,self.rect.bottom-self.currentFrame.get_height())
+        return (self.rect.left,self.rect.bottom-self.image.get_height())
 
     def setPosition(self,pos):
         self.rect.centerx = pos[0]
@@ -290,18 +251,28 @@ class Player(Character):
         closenessY = self.getPosition()[1] - element.getBasePosition()[1]
         return(closenessX + closenessY < 100 and closenessX + closenessY > -100)
         
-    def walkTo(self,(x,y),callbackMethod=None,argument=None):        
+    def walkTo(self,(x,y),callbackMethod=None,argument=None):
         if callbackMethod is not None and argument is not None:
             self.callbackMethod = callbackMethod
             self.argument = argument
         if not self.walking:
             if self.findPath(x,y):
-                self.resetStartFrame()
                 self.walking = True
                 if self.Game.TopicMenu.visible:
                     self.Game.TopicMenu.hide()
             else:
-                print "No avalible tiles at",x,y
+                self.Game.log("No avalible tiles at ",x,y)
+
+    def walk(self):
+        if len(self.path):
+            self.setPosition(self.path[0])
+            self.path.pop(0)
+            if len(self.path) > 1:
+                self.setDirection(self.path[1])
+        else:
+            self.walking = False
+            if self.callbackMethod is not None:
+                self.runCallback()
         
     def pickUp(self,element):
         self.face(element)
@@ -315,7 +286,6 @@ class Player(Character):
         
     def use(self,element):
         self.face(element)
-        print element.useMethod
         if element.useMethod is not None:
             element.useMethod()
         else:
@@ -348,16 +318,6 @@ class Player(Character):
     def exit(self,exit):
         if self.inRange(exit):
             self.Game.currentScene.exit(exit.sceneName)
-
-    def randomTalk(self):
-        if not self.tempVar:
-            self.scriptSay("Hur kom jag hit egentligen? Det vet jag inte, men det är ju väldigt coolt i alla fall.","PLAYER001")
-            self.scriptWalk((600,460))
-            self.scriptSay("Här kan man vara.","PLAYER002")
-            self.tempVar = True
-        else:
-            self.scriptWalk((334,416))
-            self.scriptSay("Hej då!")
-                        
+                       
     def getTextPos(self):
         return (self.rect.centerx,self.getRenderPos()[1]-30)

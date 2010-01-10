@@ -94,12 +94,12 @@ class Game:
 
     def loadScene(self,sceneName):
         if sceneName in self.cachedScenes:
-            self.log("Got "+sceneName+" from cache")
+            self.log("Got",sceneName,"from cache")
             self.currentScene = self.cachedScenes.get(sceneName)
             #Run the enter method if it is not the first time we do
             self.currentScene.enter()
         else:
-            self.log("Loaded "+sceneName+" from file")
+            self.log("Loaded",sceneName,"from file")
             scene = imp.load_source(sceneName,os.path.join('Scenes',sceneName+'.py'))
             sceneClass = getattr(scene,'Room');
             self.currentScene = sceneClass(self)
@@ -123,9 +123,11 @@ class Game:
             self.fullscreen = False
             self.setupScreen(False)
             
-    def log(self,value):
-        #TODO: Something fancier here.
-        print value
+    def log(self,*values):
+        logValues = []
+        for value in values:
+            logValues.append(str(value)+" ")
+        print "".join(logValues)
         
     def setValue(self,key,value):
         self.values[key] = value
@@ -139,29 +141,5 @@ class Game:
         else:
             self.debug = True
                         
-    def toggleCapture(self):
-        if self.capturing:
-            self.capturing = False
-            print "Stopped capturing. Saving to disk"
-            count = 0
-            print "Got",len(self.capturedImages),"images"
-            for image in self.capturedImages:
-                pygame.image.save(image,'/Users/kallepersson/Desktop/captures/capture-'+str(count)+'.png')
-                count+=1
-            self.capturedImages = []
-            print "Done"
-        else:
-            print "Started capturing"
-            self.capturedImages = []
-            self.captureFPSWait = 0
-            self.capturing = True
-            
-    def captureScreen(self):
-        if self.captureFPSWait > 2:
-            self.capturedImages.append(self.Renderer.screen.copy())
-            self.captureFPSWait = 0
-        else:
-            self.captureFPSWait+=1
-            
     def get(self,key):
         return self.Loader.get(key)
