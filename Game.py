@@ -31,6 +31,7 @@ class Game:
         self.Loader = Loader(self)
         self.setupScreen()
         self.setupAudio()
+        self.displayTitle()
         self.Loader.preload()
 
         self.TitleManager = TitleManager(self)
@@ -55,9 +56,15 @@ class Game:
         if fullscreen:
             self.window = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
         else:
-            self.window = pygame.display.set_mode((1024,768))
+            self.window = pygame.display.set_mode((1024,768),pygame.NOFRAME)
         pygame.display.set_caption('Subterranean')
-
+        
+    def displayTitle(self):
+        #Temporary but neat
+        logo = pygame.image.load(os.path.join('data','ui','logo.png'))
+        self.window.blit(logo,(self.window.get_rect().centerx - logo.get_width()/2,self.window.get_rect().centery - logo.get_height()/2))
+        pygame.display.flip()
+    
     def setupAudio(self):
         pygame.mixer.init(44100)
         

@@ -5,7 +5,6 @@ from Timer import Timer
 class Renderer:
     def __init__(self,game):
         self.Game = game
-        
         self.window = self.Game.window
         self.screen = pygame.Surface((1024,768))
         self.scene = pygame.Surface((1024,768))
@@ -15,7 +14,6 @@ class Renderer:
         self.rect.center = self.window.get_rect().center 
         self.camera = pygame.Rect((0,0),(1024,768))
 
-        self.loadIcon()
         self.loadFonts()
         self.loadGraphics()
         self.setupTimer()
@@ -73,7 +71,7 @@ class Renderer:
         self.Timer.setFPS(25)
         
     def loadGraphics(self):
-        #self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
+        pygame.display.set_icon(self.Game.get('ICON'))
         self.logo = self.Game.get('LOGO')
         self.inventoryImage = self.Game.get('INVENTORY')
         self.debugPoint = pygame.Surface((2,2))
@@ -90,9 +88,6 @@ class Renderer:
         self.generalFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),26)
         self.topicMenuFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),24)
         self.elementTitleFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),26)
-
-    def loadIcon(self):
-        pygame.display.set_icon(pygame.image.load(os.path.join('data','icons','gameicon.png')))
         
     def draw(self):
         #Draw game screen

@@ -12,7 +12,7 @@ class Loader:
         
     def load(self,key,fileObject):
         self.data[key] = fileObject
-        print "Loaded",key
+        #print "Loaded",key
         self.numAssets += 1
         
     def loadImage(self,key,category,filename):
@@ -50,6 +50,7 @@ class Loader:
         self.loadAudio('AMBI001','ambience','ambience001.ogg')
         self.loadAudio('WATER001','ambience','water001.ogg')
         #UI Gfx
+        self.loadImage('ICON','icons','gameicon.png')
         self.loadImage('LOGO','ui','inventory.png')
         self.loadImage('INVENTORY','ui','inventory.png')
         self.loadImage('ACTIONMENU_DEFAULT','ui','actionmenu-default.png')
