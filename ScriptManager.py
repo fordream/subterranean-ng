@@ -65,7 +65,7 @@ class ScriptManager:
         if part.getType() == 'ScriptConversationPart':
             if part.speech is not None:
                 #If there is a sound, calculate the frames from it
-                tmpSound = pygame.mixer.Sound(self.Game.AudioController.speechSounds.get(part.speech))
+                tmpSound = self.Game.get(part.speech)
                 self.durationFrames = int(tmpSound.get_length()*32)
             else:
                 #If not, calculate from the text.
