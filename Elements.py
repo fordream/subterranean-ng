@@ -95,7 +95,7 @@ class VisibleElement(Element):
         self.isCharacter = status
         
     def getRetrievable(self):
-        return self.isCharacter
+        return self.retrievable
         
     def setLookMethod(self,method):
         self.lookMethod = method

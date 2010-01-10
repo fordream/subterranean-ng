@@ -276,7 +276,7 @@ class Player(Character):
         
     def pickUp(self,element):
         self.face(element)
-        if not self.Game.paused and self.inRange(element) and element.getRetrievable():
+        if not self.Game.paused and self.inRange(element) and element.pickupMethod is not None:
             self.Game.Inventory.addItem(element.toItem())
             self.Game.currentScene.visibleElements.remove(element)
             if element.pickupMethod is not None:

@@ -125,18 +125,17 @@ class Renderer:
 
         #Topicmenu
         if self.Game.TopicMenu.visible and not self.Game.ScriptManager.isActive():
-            self.screen.blit(self.topicMenuImage,self.Game.TopicMenu.rect)
             for topic in self.Game.TopicMenu.topics:
                 self.screen.blit(topic.render,topic.pos)
                 
         #Window widgets
-        if self.Game.currentWindow is not None:
+        if self.Game.currentWindow:
             self.screen.blit(self.Game.currentWindow.background,self.Game.currentWindow.rect)
             for widget in self.Game.currentWindow.widgets:
                 self.screen.blit(widget.image,widget.rect)
                 
         #Draw element titles
-        if self.Game.TitleManager.currentElement is not None and not self.Game.TopicMenu.visible:
+        if self.Game.TitleManager.currentElement and not self.Game.TopicMenu.visible:
             elementTitle = self.elementTitleFont.render(self.Game.TitleManager.getTitle(),1,self.defaultTitleColor)
             self.screen.blit(elementTitle,(self.screen.get_rect().centerx-elementTitle.get_width()/2,710))           
                         
@@ -147,7 +146,7 @@ class Renderer:
                 self.Game.ScriptManager.loadScriptValues(self.Game.ScriptManager.script[0])
             if self.Game.ScriptManager.getCurrentPartType() == 'ScriptConversationPart':
             
-                if self.Game.currentWindow is not None:
+                if self.Game.currentWindow:
                     #If we have HUD open, put all dialouge on top of screen
                     posX = 512
                     posY = 50
@@ -202,7 +201,7 @@ class Renderer:
                 pygame.draw.lines(self.screen, (255,255,255,255), 0, self.Game.Player.path)
             for element in self.Game.currentScene.visibleElements:
                 pygame.draw.lines(self.scene,(255,0,255),1,[element.rect.topleft,element.rect.topright,element.rect.bottomright,element.rect.bottomleft])
-                if element.actionPos is not None:
+                if element.actionPos:
                     self.scene.blit(self.debugPoint,element.actionPos)
             self.screen.blit(self.debugPoint,pygame.mouse.get_pos())
             pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
