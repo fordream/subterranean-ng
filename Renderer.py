@@ -5,14 +5,16 @@ from Timer import Timer
 class Renderer:
     def __init__(self,game):
         self.Game = game
+        
+        self.window = self.Game.window
         self.screen = pygame.Surface((1024,768))
         self.scene = pygame.Surface((1024,768))
         self.sceneRect = self.scene.get_rect()
         
         self.rect = self.screen.get_rect()
+        self.rect.center = self.window.get_rect().center 
         self.camera = pygame.Rect((0,0),(1024,768))
 
-        self.setupScreen(False)
         self.loadIcon()
         self.loadFonts()
         self.loadGraphics()
@@ -70,21 +72,10 @@ class Renderer:
         self.Timer = Timer()
         self.Timer.setFPS(25)
         
-    def setupScreen(self,fullscreen=False):
-        #There seems to be no way to make this work right other than doing this:
-        if fullscreen:
-            self.window = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
-            self.rect.center = self.window.get_rect().center 
-        else:
-            self.window = pygame.display.set_mode((1024,768))
-            self.rect.center = self.window.get_rect().center 
-        pygame.display.set_caption('Subterranean')
-        
     def loadGraphics(self):
         #self.backgroundImage = pygame.image.load(os.path.join('data','backgrounds','game.png'))
-        self.borderImage = pygame.image.load(os.path.join('data','ui','border.png'))
-        self.inventoryImage = pygame.image.load(os.path.join('data','ui','inventory.png'))
-        self.topicMenuImage = pygame.image.load(os.path.join('data','ui','topicmenu.png'))
+        self.logo = self.Game.get('LOGO')
+        self.inventoryImage = self.Game.get('INVENTORY')
         self.debugPoint = pygame.Surface((2,2))
         self.debugPoint.fill((255,0,0))
         self.overlay = pygame.Surface((1024,768))
@@ -110,6 +101,7 @@ class Renderer:
             
         self.window.blit(self.screen,self.rect)
         self.screen.blit(self.scene,self.sceneRect)
+        #self.screen.blit(self.logo,(100,100))
         
         if self.Game.currentScene.visible:
             #Draw current background

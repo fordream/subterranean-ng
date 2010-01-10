@@ -29,12 +29,15 @@ class Game:
         self.values = {}
 
         self.Loader = Loader(self)
+        self.setupScreen()
+        self.setupAudio()
+        self.Loader.preload()
+
         self.TitleManager = TitleManager(self)
         self.Cursor = Cursor(self)
         self.Renderer = Renderer(self)
         self.AudioController = AudioController(self)
         
-        self.Loader.preload()
         
         self.Inventory = Inventory(self)
         self.TopicMenu = TopicMenu(self)
@@ -46,6 +49,17 @@ class Game:
 
         self.loadScene("blacksmith")
         self.run()
+        
+    def setupScreen(self,fullscreen=False):
+        #There seems to be no way to make this work right other than doing this:
+        if fullscreen:
+            self.window = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+        else:
+            self.window = pygame.display.set_mode((1024,768))
+        pygame.display.set_caption('Subterranean')
+
+    def setupAudio(self):
+        pygame.mixer.init(44100)
         
     def parseArguments(self,arguments):
         avalibleArguments = {
@@ -97,10 +111,10 @@ class Game:
     def toggleFullscreen(self):
         if self.fullscreen == False:
             self.fullscreen = True
-            self.Renderer.setupScreen(True)
+            self.setupScreen(True)
         else:
             self.fullscreen = False
-            self.Renderer.setupScreen(False)
+            self.setupScreen(False)
             
     def log(self,value):
         #TODO: Something fancier here.

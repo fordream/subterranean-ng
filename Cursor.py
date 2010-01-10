@@ -10,11 +10,11 @@ class Cursor:
         self.currentCursor = None
         self.actionStartPos = (0,0)
         self.actionMenuImages = {
-            'DEFAULT':pygame.image.load(os.path.join('data','ui','actionmenu_default.png')),
-            'USE':pygame.image.load(os.path.join('data','ui','actionmenu_use.png')),        
-            'PICKUP':pygame.image.load(os.path.join('data','ui','actionmenu_pickup.png')),
-            'LOOK':pygame.image.load(os.path.join('data','ui','actionmenu_look.png')),
-            'TALK':pygame.image.load(os.path.join('data','ui','actionmenu_talk.png'))
+            'DEFAULT':self.Game.get('ACTIONMENU_DEFAULT'),
+            'USE':self.Game.get('ACTIONMENU_USE'),        
+            'PICKUP':self.Game.get('ACTIONMENU_PICKUP'),
+            'LOOK':self.Game.get('ACTIONMENU_LOOK'),
+            'TALK':self.Game.get('ACTIONMENU_TALK')
         }
         
         self.actionMenuImage = 'DEFAULT'
@@ -85,7 +85,7 @@ class Cursor:
             
     def checkCollisions(self):
         #TODO:NEEDS MASSIVE CLEANING UP
-        if not self.actionMenuVisible:
+        if self.Game.currentScene and not self.actionMenuVisible:
             #translatedPos = self.Game.Renderer.translatePos(pygame.mouse.get_pos())
             translatedPos = pygame.mouse.get_pos()
             if pygame.mouse.get_pos()[1] < 80:

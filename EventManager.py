@@ -98,7 +98,7 @@ class EventManager:
             
     def handleLeftClick(self,event):
         #not used atm, sry
-        if not self.Game.paused:    
+        if self.Game.currentScene and not self.Game.paused:    
             if pygame.mouse.get_pos()[1] < 70:
                 if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
                     self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)

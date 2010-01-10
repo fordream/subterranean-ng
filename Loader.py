@@ -49,7 +49,15 @@ class Loader:
         #Ambience
         self.loadAudio('AMBI001','ambience','ambience001.ogg')
         self.loadAudio('WATER001','ambience','water001.ogg')
-        #UI
+        #UI Gfx
+        self.loadImage('LOGO','ui','inventory.png')
+        self.loadImage('INVENTORY','ui','inventory.png')
+        self.loadImage('ACTIONMENU_DEFAULT','ui','actionmenu-default.png')
+        self.loadImage('ACTIONMENU_LOOK','ui','actionmenu-look.png')
+        self.loadImage('ACTIONMENU_PICKUP','ui','actionmenu-pickup.png')
+        self.loadImage('ACTIONMENU_TALK','ui','actionmenu-talk.png')
+        self.loadImage('ACTIONMENU_USE','ui','actionmenu-use.png')
+        #UI Sfx
         self.loadAudio('MAP_OPEN','ui','map.ogg'),
         self.loadAudio('SLIDEIN','ui','slidein.ogg'),
         self.loadAudio('SLIDEOUT','ui','slideout.ogg'),
@@ -92,7 +100,7 @@ class Loader:
         self.loadSequence('PLAYER_WALK_N_','maincharacter','north-walk-.png',8)
         self.loadSequence('PLAYER_WALK_S_','maincharacter','south-walk-.png',8)
         self.loadSequence('PLAYER_WALK_E_','maincharacter','east-walk-.png',8)
-        self.loadSequence('PLAYER_WALK_N_','maincharacter','north-walk-.png',8)
+        self.loadSequence('PLAYER_WALK_W_','maincharacter','west-walk-.png',8)
         self.loadSequence('PLAYER_WALK_NE_','maincharacter','northeast-walk-.png',8)
         self.loadSequence('PLAYER_WALK_SE_','maincharacter','southeast-walk-.png',8)
         self.loadSequence('PLAYER_WALK_SW_','maincharacter','southwest-walk-.png',8)        
