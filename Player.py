@@ -8,7 +8,7 @@ class Player(Character):
     def __init__(self,game):
         Character.__init__(self)
 
-        self.tempVar = False
+        self.leftFoot = False
                 
         self.Game = game
         self.rect = None
@@ -161,6 +161,7 @@ class Player(Character):
         
     def update(self):
         self.walk()
+        self.playStepSound()
         if self.getSequence() != self.getDirection()+self.getMode():
             self.setSequence(self.getDirection()+self.getMode())
         try:
@@ -262,6 +263,15 @@ class Player(Character):
                     self.Game.TopicMenu.hide()
             else:
                 self.Game.log("No avalible tiles at ",x,y)
+                
+    def playStepSound(self):
+        if self.walking and self.currentFrame % 8 == 0:
+            if self.leftFoot:
+                self.leftFoot = False
+                self.Game.AudioController.playMiscSound('STEP001')
+            else:
+                self.leftFoot = True
+                self.Game.AudioController.playMiscSound('STEP002')
 
     def walk(self):
         if len(self.path):
