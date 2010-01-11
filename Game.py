@@ -73,6 +73,7 @@ class Game:
             '--fullscreen':self.toggleFullscreen,
             '--nomusic':self.AudioController.disableMusic,
             '--nosound':self.AudioController.disableSound,
+            '--debug':self.activateDebug
         }
         
         for argument in avalibleArguments.keys():
@@ -122,12 +123,16 @@ class Game:
         else:
             self.fullscreen = False
             self.setupScreen(False)
-            
+
+    def activateDebug(self):
+        self.debug = True
+                   
     def log(self,*values):
-        logValues = []
-        for value in values:
-            logValues.append(str(value)+" ")
-        print "".join(logValues)
+        if self.debug:
+            logValues = []
+            for value in values:
+                logValues.append(str(value)+" ")
+            print "".join(logValues)
         
     def setValue(self,key,value):
         self.values[key] = value

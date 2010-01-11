@@ -45,6 +45,7 @@ class Loader:
         self.loadImage('BLACKSMITH_FOREGROUND','foregrounds','blacksmith.png')
         self.loadImage('WATERMILL_BACKGROUND','backgrounds','watermill.jpg')
         self.loadImage('WATERMILL_FOREGROUND','foregrounds','watermill.png')
+        self.loadImage('CRASHSITE_BACKGROUND','backgrounds','crashsite.jpg')
         
         #Ambience
         self.loadAudio('AMBI001','ambience','ambience001.ogg')

@@ -19,7 +19,7 @@ class Player(Character):
         self.frameDuration = 3
         self.callbackMethod = None
         self.callbackArgument = None
-        self.rect = pygame.Rect(0,0,60,20)
+        self.rect = pygame.Rect(0,0,129,20)
         self.direction = 's'
 
         

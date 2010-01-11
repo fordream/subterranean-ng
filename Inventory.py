@@ -85,7 +85,8 @@ class Inventory:
     def clearCurrentItem(self):
         self.Game.TitleManager.clearElement()
         self.Game.Cursor.currentItem = None
-        self.currentItem.current = False
+        if self.currentItem:
+            self.currentItem.current = False
         self.currentItem = None
         self.arrangeItems()
                     
