@@ -92,8 +92,11 @@ class Inventory:
                     
     def animateHeight(self):
         if self.animating:
-            if self.visible and self.y < 10:
-                self.y+=10
+            if self.visible and self.y < 13:
+                if self.y == 10:
+                    self.y=13
+                else:
+                    self.y+=10
                 for item in self.items:
                     item.setY(self.y+10)
             elif not self.visible and self.y > -80:
