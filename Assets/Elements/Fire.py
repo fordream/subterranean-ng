@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Elements import AnimatedElement
+from Libraries.Elements import AnimatedElement
 
 class Fire(AnimatedElement):
     def __init__(self,game):

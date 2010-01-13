@@ -61,7 +61,7 @@ class Game:
         
     def displayTitle(self):
         #Temporary but neat
-        logo = pygame.image.load(os.path.join('data','ui','logo.png'))
+        logo = pygame.image.load(os.path.join('Resources','Graphics','UI','logo.png'))
         self.window.blit(logo,(self.window.get_rect().centerx - logo.get_width()/2,self.window.get_rect().centery - logo.get_height()/2))
         pygame.display.flip()
     
@@ -101,7 +101,7 @@ class Game:
             self.currentScene.enter()
         else:
             self.log("Loaded",sceneName,"from file")
-            scene = imp.load_source(sceneName,os.path.join('Scenes',sceneName+'.py'))
+            scene = imp.load_source(sceneName,os.path.join('Assets','Scenes',sceneName+'.py'))
             sceneClass = getattr(scene,'Room');
             self.currentScene = sceneClass(self)
             self.cacheScene(self.currentScene,sceneName)

@@ -86,9 +86,9 @@ class Renderer:
         self.defaultFontColor = (255,255,255)
         self.defaultTitleColor = (239,240,173)
         self.defaultOutlineFontColor = (0,0,0)
-        self.generalFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),26)
-        self.topicMenuFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),24)
-        self.elementTitleFont = pygame.font.Font(os.path.join('data','fonts','HVD_Edding.otf'),26)
+        self.generalFont = pygame.font.Font(os.path.join('Resources','Fonts','HVD_Edding.otf'),26)
+        self.topicMenuFont = pygame.font.Font(os.path.join('Resources','Fonts','HVD_Edding.otf'),24)
+        self.elementTitleFont = pygame.font.Font(os.path.join('Resources','Fonts','HVD_Edding.otf'),26)
         
     def draw(self):
         #Draw game screen

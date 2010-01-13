@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Elements import Character
+from Libraries.Elements import Character
 
 class Grimvald(Character):
     def __init__(self,game):

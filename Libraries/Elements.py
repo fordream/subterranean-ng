@@ -341,9 +341,9 @@ class Item:
         
     def loadImage(self,name):
         try:
-            self.image = pygame.image.load(os.path.join('data','items','%s.png' % (name)))
+            self.image = pygame.image.load(os.path.join('Resources','Graphics','Items','%s.png' % (name)))
         except:
-            self.image = pygame.image.load(os.path.join('data','items','unknown.png'))
+            self.image = pygame.image.load(os.path.join('Resources','Graphics','Items','unknown.png'))
                 
     def setPos(self,pos):
         self.rect.move(pos)

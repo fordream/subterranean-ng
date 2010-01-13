@@ -1,5 +1,5 @@
 #-coding:utf-8-
-from Scene import Scene
+from Libraries.Scene import Scene
 
 class Room(Scene):
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Elements import Item
+from Libraries.Elements import Item
 
 class Chili(Item):
     def __init__(self,game):
