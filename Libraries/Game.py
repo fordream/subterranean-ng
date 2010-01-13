@@ -56,7 +56,7 @@ class Game:
         if fullscreen:
             self.window = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
         else:
-            self.window = pygame.display.set_mode((1024,768),pygame.NOFRAME)
+            self.window = pygame.display.set_mode((1024,768))
         pygame.display.set_caption('Subterranean')
         
     def displayTitle(self):
