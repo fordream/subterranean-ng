@@ -23,20 +23,20 @@ class Cursor:
         
 
         self.cursors = {
-            'DEFAULT': pygame.image.load(os.path.join('Resources','Cursors','cursor_default.png')),
-            'USE': pygame.image.load(os.path.join('Resources','Cursors','cursor_use.png')),
-            'PICKUP': pygame.image.load(os.path.join('Resources','Cursors','cursor_pickup.png')),
-            'LOOK': pygame.image.load(os.path.join('Resources','Cursors','cursor_look.png')),
-            'TALK': pygame.image.load(os.path.join('Resources','Cursors','cursor_talk.png'))
+            'DEFAULT': pygame.image.load(os.path.join('Resources','Cursors','cursor_default.png')).convert_alpha(),
+            'USE': pygame.image.load(os.path.join('Resources','Cursors','cursor_use.png')).convert_alpha(),
+            'PICKUP': pygame.image.load(os.path.join('Resources','Cursors','cursor_pickup.png')).convert_alpha(),
+            'LOOK': pygame.image.load(os.path.join('Resources','Cursors','cursor_look.png')).convert_alpha(),
+            'TALK': pygame.image.load(os.path.join('Resources','Cursors','cursor_talk.png')).convert_alpha()
         }
         
         #Keep these here so we don't loop over it while scrolling.
         self.pausedCursor = pygame.image.load(os.path.join('Resources','Cursors','cursor_paused.png'))
         self.exitCursors = {
-            'EXIT_NORTH': pygame.image.load(os.path.join('Resources','Cursors','cursor_exit_north.png')),
-            'EXIT_EAST': pygame.image.load(os.path.join('Resources','Cursors','cursor_exit_east.png')),
-            'EXIT_SOUTH': pygame.image.load(os.path.join('Resources','Cursors','cursor_exit_south.png')),
-            'EXIT_WEST': pygame.image.load(os.path.join('Resources','Cursors','cursor_exit_west.png'))
+            'EXIT_NORTH': pygame.image.load(os.path.join('Resources','Cursors','cursor_exit_north.png')).convert_alpha(),
+            'EXIT_EAST': pygame.image.load(os.path.join('Resources','Cursors','cursor_exit_east.png')).convert_alpha(),
+            'EXIT_SOUTH': pygame.image.load(os.path.join('Resources','Cursors','cursor_exit_south.png')).convert_alpha(),
+            'EXIT_WEST': pygame.image.load(os.path.join('Resources','Cursors','cursor_exit_west.png')).convert_alpha()
 
         }
         self.setCursor('DEFAULT')
