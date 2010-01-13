@@ -99,23 +99,13 @@ class Scene:
         self.mapFile.close()
         
     def loadItem(self,itemName):
-        return self.loadAsset('Items',itemName)
+        return self.Game.loadAsset('Items',itemName)
 
     def loadElement(self,elementName):
-        return self.loadAsset('Elements',elementName)
+        return self.Game.loadAsset('Elements',elementName)
         
     def loadCharacter(self,characterName):
-        return self.loadAsset('Characters',characterName)
-        
-    def loadAsset(self,assetType,assetName):
-        try:
-            module = imp.load_source(assetName,os.path.join('Assets',assetType,assetName+'.py'))
-            assetClass = getattr(module,assetName); 
-            asset = assetClass(self.Game)
-            return asset
-        except IOError:
-            print "Fatal error: Could not load",assetName,"from",assetType
-            exit()
+        return self.Game.loadAsset('Characters',characterName)
 
     def addExit(self,exitX,exitY,exitW,exitH,exitPoint,roomName,direction):
         exit = Exit()

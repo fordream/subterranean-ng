@@ -3,8 +3,9 @@ from Libraries.Elements import Item
 
 class Potion(Item):
     def __init__(self,game):
-        Item.__init__(self)
+        Item.__init__(self,game)
         self.Game = game
         self.setName("potion")
-        self.setTitle("Kärleksdryck")
-        self.addCombination("chili",Item("firepotion","Eldig"))
+        self.setTitle("Potion")
+        self.setImage("ITEM_0001")
+        self.addCombination("chili",'Firepotion')

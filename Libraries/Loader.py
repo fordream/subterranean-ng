@@ -73,14 +73,14 @@ class Loader:
         self.loadAudio('WATER001',['Ambience','water001.ogg'])
         #UI Gfx
         self.loadResource('ICON',['Icons','gameicon.png'])
-        self.loadImage('LOGO',['UI','logo.png'])
-        self.loadImage('BORDER',['UI','border.png'])
-        self.loadImage('INVENTORY',['UI','inventory.png'])
-        self.loadImage('ACTIONMENU_DEFAULT',['UI','actionmenu-default.png'])
-        self.loadImage('ACTIONMENU_LOOK',['UI','actionmenu-look.png'])
-        self.loadImage('ACTIONMENU_PICKUP',['UI','actionmenu-pickup.png'])
-        self.loadImage('ACTIONMENU_TALK',['UI','actionmenu-talk.png'])
-        self.loadImage('ACTIONMENU_USE',['UI','actionmenu-use.png'])
+        self.loadImage('LOGO',['Misc','logo.png'])
+        self.loadImage('BORDER',['UI','ui-viewport-border.png'])
+        self.loadImage('INVENTORY',['UI','ui-inventory.png'])
+        self.loadImage('ACTIONMENU_DEFAULT',['UI','ui-actionmenu-default.png'])
+        self.loadImage('ACTIONMENU_LOOK',['UI','ui-actionmenu-look.png'])
+        self.loadImage('ACTIONMENU_PICKUP',['UI','ui-actionmenu-pickup.png'])
+        self.loadImage('ACTIONMENU_TALK',['UI','ui-actionmenu-talk.png'])
+        self.loadImage('ACTIONMENU_USE',['UI','ui-actionmenu-use.png'])
         #UI Sfx
         self.loadAudio('MAP_OPEN',['UI','map.ogg']),
         self.loadAudio('SLIDEIN',['UI','slidein.ogg']),
@@ -97,6 +97,10 @@ class Loader:
         self.loadImage('TOOLBARREL_DEFAULT',['Elements','Toolbarrel','toolbarrel.png'])
         self.loadImage('MAP_DEFAULT',['Elements','Map','map.png'])
         #Items
+        self.loadImage('ITEM_0000',['Items','item-0000.png'])
+        self.loadImage('ITEM_0001',['Items','item-0001.png'])
+        self.loadImage('ITEM_0002',['Items','item-0002.png'])
+        self.loadImage('ITEM_0003',['Items','item-0003.png'])
         #Characters
         self.loadSequence('GRIMVALD_STAND_',['Characters','Grimvald','grimvald-stand-.png'],2)
         self.loadSequence('GRIMVALD_TALK_',['Characters','Grimvald','grimvald-talk-.png'],5)

@@ -61,7 +61,7 @@ class Game:
         
     def displayTitle(self):
         #Temporary but neat
-        logo = pygame.image.load(os.path.join('Resources','Graphics','UI','logo.png'))
+        logo = pygame.image.load(os.path.join('Resources','Graphics','Misc','logo.png'))
         self.window.blit(logo,(self.window.get_rect().centerx - logo.get_width()/2,self.window.get_rect().centery - logo.get_height()/2))
         pygame.display.flip()
     
@@ -105,6 +105,16 @@ class Game:
             sceneClass = getattr(scene,'Room');
             self.currentScene = sceneClass(self)
             self.cacheScene(self.currentScene,sceneName)
+
+    def loadAsset(self,assetType,assetName):
+        try:
+            module = imp.load_source(assetName,os.path.join('Assets',assetType,assetName+'.py'))
+            assetClass = getattr(module,assetName); 
+            asset = assetClass(self)
+            return asset
+        except IOError:
+            print "Fatal error: Could not load",assetName,"from",assetType
+            exit()
         
     def cacheScene(self,sceneObject,sceneName):
         self.cachedScenes[sceneName] = sceneObject

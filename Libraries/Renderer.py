@@ -113,16 +113,16 @@ class Renderer:
             #Draw current foreground
             if self.Game.currentScene.getForeground():
                 self.scene.blit(self.Game.currentScene.getForeground(),(0,0))
-            
-        #Draw border
-        self.screen.blit(self.borderImage,(0,0))
-            
+                        
         #Draw inventory
         self.Game.Inventory.animateHeight()
         self.screen.blit(self.inventoryImage,(0,self.Game.Inventory.y))
         for item in self.Game.Inventory.items:
             if item.current is False:
                 self.screen.blit(item.image,item.rect)
+
+        #Draw border
+        self.screen.blit(self.borderImage,(0,0))
 
         #Topicmenu
         if self.Game.TopicMenu.visible and not self.Game.ScriptManager.isActive():

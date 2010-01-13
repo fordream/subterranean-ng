@@ -313,7 +313,9 @@ class Topic:
         self.callbackMethod()
             
 class Item:
-    def __init__(self,name='unknown',title='Unknown item',acceptElement=None,resultElement=None):
+    def __init__(self,game,name='unknown',title='Unknown item',acceptElement=None,resultElement=None):
+        self.Game = game
+        self.image = self.Game.get('ITEM_0000')
         self.name = name
         self.title = title
         self.current = False
@@ -323,12 +325,9 @@ class Item:
             self.addCombimnation(acceptElement,resultElement)
 
         self.rect = pygame.Rect(10,10,48,48)
-        self.loadImage(self.name)
         
     def setName(self,name):
-        #Auto-reloads image on name change
         self.name = name
-        self.loadImage(self.name)
         
     def getName(self):
         return self.name
@@ -339,11 +338,11 @@ class Item:
     def getTitle(self):
         return self.title
         
-    def loadImage(self,name):
+    def setImage(self,key):
         try:
-            self.image = pygame.image.load(os.path.join('Resources','Graphics','Items','%s.png' % (name)))
+            self.image = self.Game.get(key)
         except:
-            self.image = pygame.image.load(os.path.join('Resources','Graphics','Items','unknown.png'))
+            self.image = self.Game.get('ITEM_0000')
                 
     def setPos(self,pos):
         self.rect.move(pos)
@@ -356,8 +355,8 @@ class Item:
 
     def addCombination(self,acceptItem,resultItem):
         self.acceptItem = acceptItem
-        self.resultItem = resultItem
-#        print self.name,"can recieve",acceptItem,"and will give you",resultItem
+        self.resultItem = self.Game.loadAsset('Items',resultItem)
+        #print self.name,"can recieve",acceptItem,"and will give you",resultItem
         
     def combine(self,comboItem):
         if self.acceptItem is not None and self.resultItem is not None and self.acceptItem == comboItem.name:
