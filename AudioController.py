@@ -23,6 +23,7 @@ class AudioController:
         self.miscChannel = pygame.mixer.Channel(4)
         
         self.musicTracks = {
+            'STANDARDMYS':os.path.join('data','audio','music','standardmys.ogg'),
             'BLACKSMITH_MUSIC':os.path.join('data','audio','music','blacksmith.ogg'),
             'DEFAULT':os.path.join('data','audio','music','default.ogg'),
             'NOTEXPECTED':os.path.join('data','audio','music','notexpected.ogg')

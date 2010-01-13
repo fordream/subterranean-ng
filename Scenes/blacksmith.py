@@ -23,7 +23,7 @@ class Room(Scene):
         self.enter()
 
     def enter(self):
-        self.Game.AudioController.playMusic('BLACKSMITH_MUSIC')
+        self.Game.AudioController.playMusic('STANDARDMYS')
         self.Game.AudioController.playAmbienceSound('AMBI001')
         self.setInsertPoint((360,420))      
         
