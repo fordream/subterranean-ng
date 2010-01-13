@@ -53,6 +53,7 @@ class Loader:
         #UI Gfx
         self.loadImage('ICON','icons','gameicon.png')
         self.loadImage('LOGO','ui','inventory.png')
+        self.loadImage('BORDER','ui','border.png')
         self.loadImage('INVENTORY','ui','inventory.png')
         self.loadImage('ACTIONMENU_DEFAULT','ui','actionmenu-default.png')
         self.loadImage('ACTIONMENU_LOOK','ui','actionmenu-look.png')

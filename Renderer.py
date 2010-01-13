@@ -74,6 +74,7 @@ class Renderer:
         pygame.display.set_icon(self.Game.get('ICON'))
         self.logo = self.Game.get('LOGO')
         self.inventoryImage = self.Game.get('INVENTORY')
+        self.borderImage = self.Game.get('BORDER')
         self.debugPoint = pygame.Surface((2,2))
         self.debugPoint.fill((255,0,0))
         self.overlay = pygame.Surface((1024,768))
@@ -114,7 +115,7 @@ class Renderer:
                 self.scene.blit(self.Game.currentScene.getForeground(),(0,0))
             
         #Draw border
-        #self.screen.blit(self.borderImage,(0,0))
+        self.screen.blit(self.borderImage,(0,0))
             
         #Draw inventory
         self.Game.Inventory.animateHeight()
