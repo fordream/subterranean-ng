@@ -56,6 +56,7 @@ class Inventory:
                 number += 1
             else:
                 item.setX(-100)
+            #item.setY(self.Game.Inventory.)
                                                 
     def show(self):
         if not self.visible:

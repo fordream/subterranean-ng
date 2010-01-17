@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os,pygame
+from pygame.locals import *
 from Timer import Timer
 
 class Renderer:
@@ -108,6 +109,7 @@ class Renderer:
         
             #Draw main character
             self.Game.Player.update()
+            #self.Game.Player.image.fill((125,255,125),None,BLEND_MULT)
             self.scene.blit(self.Game.Player.image,self.Game.Player.getRenderPos())
             
             #Draw current foreground
@@ -205,7 +207,9 @@ class Renderer:
                 if element.actionPos:
                     self.scene.blit(self.debugPoint,element.actionPos)
             self.screen.blit(self.debugPoint,pygame.mouse.get_pos())
+
             pygame.draw.lines(self.screen,(000,255,255),1,[self.Game.Player.rect.topleft,self.Game.Player.rect.topright,self.Game.Player.rect.bottomright,self.Game.Player.rect.bottomleft])
+            self.screen.blit(self.debugPoint,self.Game.Player.getPosition())
             for exit in self.Game.currentScene.exits:
                 pygame.draw.lines(self.screen,(000,255,255),1,[exit.rect.topleft,exit.rect.topright,exit.rect.bottomright,exit.rect.bottomleft])
                 self.scene.blit(self.debugPoint,exit.exitPoint)

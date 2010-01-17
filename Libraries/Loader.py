@@ -70,6 +70,7 @@ class Loader:
         
         #Ambience
         self.loadAudio('AMBI001',['Ambience','ambience001.ogg'])
+        self.loadAudio('AMBI002',['Ambience','ambience002.ogg'])
         self.loadAudio('WATER001',['Ambience','water001.ogg'])
         #UI Gfx
         self.loadResource('ICON',['Icons','gameicon.png'])
@@ -101,6 +102,7 @@ class Loader:
         self.loadImage('ITEM_0001',['Items','item-0001.png'])
         self.loadImage('ITEM_0002',['Items','item-0002.png'])
         self.loadImage('ITEM_0003',['Items','item-0003.png'])
+        self.loadImage('ITEM_0004',['Items','item-0004.png'])
         #Characters
         self.loadSequence('GRIMVALD_STAND_',['Characters','Grimvald','grimvald-stand-.png'],2)
         self.loadSequence('GRIMVALD_TALK_',['Characters','Grimvald','grimvald-talk-.png'],5)

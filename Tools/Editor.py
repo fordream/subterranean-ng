@@ -7,6 +7,7 @@ class Editor:
         print "Editor started"
         self.screen = pygame.display.set_mode((1024,768))
         pygame.display.set_caption('Subterranean')
+        pygame.display.set_icon(pygame.image.load(os.path.join('Resources','Icons','gameicon.png')))
         self.running = True
         self.mapSize = 64*48
         self.mapFile = None
@@ -25,13 +26,18 @@ class Editor:
         self.createTiles()
         
         if len(arguments) > 1 and arguments[1] is not "":
-            self.setBackground(arguments[1]+'.jpg')
+            try:
+                self.setBackground(arguments[1]+'.jpg')
+            except pygame.error:
+                self.setBackground(arguments[1]+'.png')
             self.loadTiles(arguments[1]+'.map')
+        else:
+            exit("You must specify a room to edit.")
                     
         self.loop()
         
     def setBackground(self,background):
-        self.background = pygame.image.load(os.path.join('data','backgrounds',background))
+        self.background = pygame.image.load(os.path.join('Resources','Graphics','Backgrounds',background))
         
     def createTiles(self):
         rows = 0
@@ -88,6 +94,10 @@ class Editor:
     def dump(self):
         print self.prepareTiles()
         
+    def clear(self):
+        for tile in self.tiles:
+            tile.blocking = False
+        
     def prepareTiles(self):
         output = ""
         for tile in self.tiles:
@@ -108,6 +118,8 @@ class Editor:
                     self.save()                
                 elif event.key == pygl.K_d:
                     self.dump()
+                elif event.key == pygl.K_c:
+                    self.clear()
             elif event.type == pygl.MOUSEMOTION and event.buttons[0] == 1:
                 for tile in self.tiles:
                     if(tile.rect.collidepoint(pygame.mouse.get_pos())):

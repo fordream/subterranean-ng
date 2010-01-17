@@ -8,18 +8,14 @@ class Room(Scene):
         Scene.__init__(self,self.Game)
         self.setBackground('CRASHSITE_BACKGROUND')
         self.setMap('crashsite.map')
-        
         self.enter()
         
     def enter(self):
-        self.setInsertPoint((220,420))
-        self.setFarthestPoint(350)
-        self.setClosestPoint(715)
-        self.setFarthestScale(45)
-        self.setClosestScale(100)
+        self.setInsertPoint((140,560))
+        self.setFarthestPoint(420)
+        self.setClosestPoint(725)
 
-        self.Game.AudioController.playMusic('DEFAULT')
-        self.Game.AudioController.playAmbienceSound('AMBI001')
-
-        self.Game.Player.scriptWalk((220,440))
+        self.Game.AudioController.playMusic('STANDARDMYS')
+        self.Game.AudioController.playAmbienceSound('AMBI002')
+        #self.Game.Player.scriptWalk((220,640))
         self.show()

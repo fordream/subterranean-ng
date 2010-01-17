@@ -313,17 +313,14 @@ class Topic:
         self.callbackMethod()
             
 class Item:
-    def __init__(self,game,name='unknown',title='Unknown item',acceptElement=None,resultElement=None):
+    def __init__(self,game):
         self.Game = game
         self.image = self.Game.get('ITEM_0000')
-        self.name = name
-        self.title = title
+        self.name = "unknown"
+        self.title = "Unknown item"
         self.current = False
         self.acceptItem = None
         self.resultItem = None
-        if acceptElement is not None and resultElement is not None:
-            self.addCombimnation(acceptElement,resultElement)
-
         self.rect = pygame.Rect(10,10,48,48)
         
     def setName(self,name):

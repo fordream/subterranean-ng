@@ -18,6 +18,7 @@ class Room(Scene):
                 
         self.Game.Inventory.addItem(self.loadItem('Potion'))
         self.Game.Inventory.addItem(self.loadItem('Chili'))
+        self.Game.Inventory.addItem(self.loadItem('Lighter'))
         self.addExit(290,230,125,200,(330,420),"watermill",'NORTH')
         self.addExit(550,600,125,75,(550,670),"crashsite",'WEST')
         self.enter()

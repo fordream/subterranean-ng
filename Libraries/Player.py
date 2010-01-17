@@ -21,7 +21,8 @@ class Player(Character):
         self.callbackArgument = None
         self.rect = pygame.Rect(0,0,129,20)
         self.direction = 's'
-
+        
+        self.walkFrameCount = 0
         
         #Stand
         self.addSequence('ns',[
@@ -162,6 +163,7 @@ class Player(Character):
     def update(self):
         self.walk()
         self.playStepSound()
+        
         if self.getSequence() != self.getDirection()+self.getMode():
             self.setSequence(self.getDirection()+self.getMode())
         try:
@@ -198,17 +200,17 @@ class Player(Character):
         self.callbackMethod = None
         self.callbackArgument = None
         
-    def scaleImage(self,image=None):
-        #WORK IN PROGRESS    
-        pointDiff = self.Game.currentRoom.closestPoint - self.Game.currentRoom.farthestPoint
-        scaleDiff = self.Game.currentRoom.closestScale - self.Game.currentRoom.farthestScale
-        diff = float(scaleDiff)/float(pointDiff)        
-        self.scale = (self.Game.Player.getPosition()[1]*diff)/100
-        if image:
-            return pygame.transform.rotozoom(image,0,self.scale)
+    def scaleImage(self,image=None):        
+        self.scale = float((self.Game.Player.getPosition()[1]-self.Game.currentRoom.farthestPoint))/(self.Game.currentRoom.closestPoint-self.Game.currentRoom.farthestPoint)
+        image = pygame.transform.rotozoom(image,0,self.scale)
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.getPosition()[0]
+        self.rect.bottom = self.getPosition()[1]
+        return image
 
     def getRenderPos(self):
-        return (self.rect.left,self.rect.bottom-self.image.get_height())
+        return self.rect
+        return (self.rect.centerx,self.rect.bottom-self.image.get_height())
 
     def setPosition(self,pos):
         self.rect.centerx = pos[0]
@@ -275,12 +277,17 @@ class Player(Character):
 
     def walk(self):
         if len(self.path):
-            self.setPosition(self.path[0])
-            self.path.pop(0)
-            if len(self.path) > 1:
-                self.setDirection(self.path[1])
+            if self.walkFrameCount == 2:
+                self.walkFrameCount = 0
+                self.setPosition(self.path[0])
+                self.path.pop(0)
+                if len(self.path) > 1:
+                    self.setDirection(self.path[1])
+            else:
+                self.walkFrameCount += 1
         else:
             self.walking = False
+            self.walkFrameCount = 0
             if self.callbackMethod is not None:
                 self.runCallback()
         
@@ -331,3 +338,6 @@ class Player(Character):
                        
     def getTextPos(self):
         return (self.rect.centerx,self.getRenderPos()[1]-30)
+        
+    def testMessage(self):
+        self.scriptSay("Lorem ipsum solor mit amet.")

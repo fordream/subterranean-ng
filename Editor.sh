@@ -1,2 +1,2 @@
 #!/bin/bash
-python editor.py $1
+python ./Tools/Editor.py $1
