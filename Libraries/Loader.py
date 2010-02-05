@@ -69,9 +69,11 @@ class Loader:
         self.loadImage('CRASHSITE_BACKGROUND',['Backgrounds','crashsite.jpg'])
         
         #Ambience
-        self.loadAudio('AMBI001',['Ambience','ambience001.ogg'])
-        self.loadAudio('AMBI002',['Ambience','ambience002.ogg'])
-        self.loadAudio('WATER001',['Ambience','water001.ogg'])
+        self.loadAudio('AMBI_DEFAULT',['Ambience','ambi-noise-default.ogg'])
+        self.loadAudio('AMBI_ELECTRICITY',['Ambience','ambi-noise-electricity.ogg'])
+        self.loadAudio('AMBI_RIVER',['Ambience','ambi-noise-river.ogg'])
+        self.loadAudio('AMBI_DROP',['Ambience','ambi-noise-drop.ogg'])
+        self.loadAudio('AMBI_WATER',['Ambience','ambi-water.ogg'])
         #UI Gfx
         self.loadResource('ICON',['Icons','gameicon.png'])
         self.loadImage('LOGO',['Misc','logo.png'])

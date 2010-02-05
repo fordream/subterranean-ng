@@ -7,7 +7,6 @@ class EventManager:
         self.Game = game
         self.eventSignals = {pygl.QUIT: self.Game.quit,
                             pygl.KEYDOWN: self.readKey,
-                            pygl.MOUSEBUTTONDOWN: self.readMouseClick,
                             pygl.MOUSEMOTION: self.readMousePos,
                             pygl.MOUSEBUTTONDOWN: self.handleMouseDown,
                             pygl.MOUSEBUTTONUP: self.handleMouseUp,
@@ -22,11 +21,14 @@ class EventManager:
                             pygl.K_t: self.Game.Player.testMessage,
                             }
                             
-        self.mouseSignals = {1: self.handleLeftClick,
-                            2: self.handleScrollClick,
-                            3: self.handleRightClick,
-                            4: self.handleScrollDown,
-                            5: self.handleScrollUp
+        self.mouseDownSignals = {
+                            1: self.handleLeftMouseDown,
+                            3: self.handleRightMouseDown,
+                            }
+
+        self.mouseUpSignals = {
+                            1: self.handleLeftMouseUp,
+                            3: self.handleRightMouseUp,
                             }
                             
     def checkEvents(self):
@@ -49,27 +51,80 @@ class EventManager:
         else:
             #Hide the inventory if the game is paused.
             self.Game.Inventory.hide()
-        
-    def readMouseClick(self,event):
-        eventMethod = self.mouseSignals.get(event.button)
-        if eventMethod is not None:
-            eventMethod(event)
             
     def handleMouseDown(self,event):
-        self.mouseHold = True
-        if self.Game.Cursor.currentElement is not None and self.Game.Cursor.currentItem is None:
-            self.Game.Cursor.showActionMenu()
-        else:
-            self.handleLeftClick(event)
-                       
+        eventMethod = self.mouseDownSignals.get(event.button)
+        if eventMethod is not None:
+            eventMethod(event)
+
     def handleMouseUp(self,event):
+        eventMethod = self.mouseUpSignals.get(event.button)
+        if eventMethod is not None:
+            eventMethod(event)
+
+        
+    def handleLeftMouseDown(self,event):    
+        #If the game is not paused
+        if self.Game.currentScene and not self.Game.paused:    
+            #If we are inside inventory
+            if pygame.mouse.get_pos()[1] < 70:
+                #If we are hovering over an item and anen't holding any item
+                if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
+                    self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
+                #If we are hovering over an item and are holding an item
+                elif self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is not None and self.Game.Cursor.currentItem.current is False:
+                    self.Game.Cursor.currentItem.combine(self.Game.Inventory.currentItem)
+                #If we aren't hovering over any item and clicking (with item in hand or not)
+                else:
+                    self.Game.Inventory.clearCurrentItem()
+            #If we are anywhere else on screen
+            else:
+                #If the mouse hovers a topic, activate it.
+                if self.Game.TopicMenu.currentTopic:
+                    self.Game.TopicMenu.currentTopic.callbackMethod()
+                #If we have a window open and are hovering over any widget
+                elif self.Game.currentWindow and self.Game.Cursor.currentElement.clickMethod: 
+                    self.Game.Cursor.currentElement.clickMethod()
+                #If we hare hovering over something and have an item in hand, give it            
+                elif self.Game.Cursor.currentItem and self.Game.Cursor.currentElement:
+                    pos = self.Game.Cursor.currentElement.getActionPosition()
+                    if pos is None:
+                        pos = self.Game.Cursor.currentElement.getBasePosition()
+                    self.Game.Player.walkTo(pos,self.Game.Player.give,self.Game.Cursor.currentElement)
+                #If we are hovering over an exit, go there
+                elif self.Game.Cursor.currentExit and self.Game.Cursor.currentItem is None:
+                    self.Game.Player.walkTo(self.Game.Cursor.currentExit.exitPoint,self.Game.Player.exit,self.Game.Cursor.currentExit)
+                #If nothing else, just walk to the postion
+                else:
+                    self.Game.Player.walkTo(pygame.mouse.get_pos())    
+        #If the game is paused (sequence), skip it                        
+        elif self.Game.ScriptManager.durationFrames > 0 and self.Game.ScriptManager.currentPartType == 'ScriptConversationPart':
+            self.Game.ScriptManager.skip()
+
+    def handleRightMouseDown(self,event):
+        #If the game is not paused
+        if self.Game.currentScene and not self.Game.paused:    
+            self.mouseHold = True
+            #If there is an item in your hand, return it to inventory
+            if self.Game.Inventory.getCurrentItem():
+                self.Game.Inventory.clearCurrentItem()
+            #If there is a window open, hide it
+            elif self.Game.currentWindow:
+                self.Game.currentWindow.hide()
+            #If we have no item in hand, show ActionMenu
+            elif self.Game.Cursor.currentElement and self.Game.Cursor.currentItem is None and self.Game.currentWindow is None:
+                self.Game.Cursor.showActionMenu()
+
+    def handleLeftMouseUp(self,event):
+        pass
+
+    def handleRightMouseUp(self,event):
         if self.Game.Cursor.actionMenuVisible and self.Game.Cursor.actionElement is not None:
             self.mouseHold = False
             gesture = self.checkGesture()        
             pos = self.Game.Cursor.actionElement.getActionPosition()
             if pos is None:
                 pos = self.Game.Cursor.actionElement.getBasePosition()
-                
             if gesture == 'PICKUP':
                 self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.actionElement)
             elif gesture == 'USE':
@@ -94,64 +149,12 @@ class EventManager:
             return "PICKUP"
         else:
             return "DEFAULT"
-            
-    def handleLeftClick(self,event):
-        #not used atm, sry
-        if self.Game.currentScene and not self.Game.paused:    
-            if pygame.mouse.get_pos()[1] < 70:
-                if self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is None:
-                    self.Game.Inventory.setCurrentItem(self.Game.Cursor.currentItem)
-                elif self.Game.Cursor.currentItem is not None and self.Game.Inventory.currentItem is not None and self.Game.Cursor.currentItem.current is False:
-                    self.Game.Cursor.currentItem.combine(self.Game.Inventory.currentItem)
-                else:
-                    self.Game.Inventory.clearCurrentItem()
-            else:
-                if self.Game.TopicMenu.currentTopic:
-                    self.Game.TopicMenu.currentTopic.callbackMethod()
-                #REMOVE FALSE OMG
-                elif self.Game.Cursor.currentElement is not None:
-                    pos = self.Game.Cursor.currentElement.getActionPosition()
-                    if pos is None:
-                        pos = self.Game.Cursor.currentElement.getBasePosition()
-                    if self.Game.currentWindow is not None and self.Game.Cursor.currentElement.clickMethod is not None: 
-                        self.Game.Cursor.currentElement.clickMethod()
-                    elif self.Game.Cursor.currentItem is not None and self.Game.Cursor.currentElement is not None:
-                        self.Game.Player.walkTo(pos,self.Game.Player.give,self.Game.Cursor.currentElement)
-                    '''
-                    elif self.Game.Cursor.getCursorName() == 'PICKUP':
-                        self.Game.Player.walkTo(pos,self.Game.Player.pickUp,self.Game.Cursor.currentElement)
-                    elif self.Game.Cursor.getCursorName() == 'USE':
-                        self.Game.Player.walkTo(pos,self.Game.Player.use,self.Game.Cursor.currentElement)
-                    elif self.Game.Cursor.getCursorName() == 'TALK':
-                        self.Game.Player.walkTo(pos,self.Game.Player.talk,self.Game.Cursor.currentElement)
-                    elif self.Game.Cursor.getCursorName() == 'LOOK':
-                        self.Game.Player.look(self.Game.Cursor.currentElement)
-                    '''
-                elif self.Game.Cursor.currentExit is not None:
-                    self.Game.Player.walkTo(self.Game.Cursor.currentExit.exitPoint,self.Game.Player.exit,self.Game.Cursor.currentExit)
-                else:
-                    self.Game.Player.walkTo(pygame.mouse.get_pos())
-        else:
-            if self.Game.ScriptManager.durationFrames > 0 and self.Game.ScriptManager.currentPartType == 'ScriptConversationPart':
-                self.Game.ScriptManager.skip()
-
-    
-    def handleRightClick(self,event):
-        #Right click cancels.
-        if not self.Game.paused and self.Game.Inventory.getCurrentItem() is not None:
-                self.Game.Inventory.clearCurrentItem()
-        elif self.Game.currentWindow is not None:
-            self.Game.currentWindow.hide()
-        elif self.Game.currentWindow is not None:
-            self.Game.currentWindow.hide()
-        
+                        
     def handleScrollClick(self,event):
         pass
     
     def handleScrollUp(self,event):
-        if self.Game.Cursor.currentElement is not None:
-            self.Game.Cursor.scrollCursor(event.button)
+        pass
     
     def handleScrollDown(self,event):
-        if self.Game.Cursor.currentElement is not None:
-            self.Game.Cursor.scrollCursor(event.button)
+        pass

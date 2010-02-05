@@ -25,7 +25,7 @@ class Room(Scene):
 
     def enter(self):
         self.Game.AudioController.playMusic('STANDARDMYS')
-        self.Game.AudioController.playAmbienceSound('AMBI001')
+        self.Game.AudioController.playAmbienceSound('AMBI_DEFAULT')
         self.setInsertPoint((360,420))      
         
         self.setFarthestPoint(415)
