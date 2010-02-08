@@ -15,7 +15,7 @@ class Room(Scene):
         self.setFarthestPoint(420)
         self.setClosestPoint(725)
 
-        self.Game.AudioController.playMusic('CRASHSITE')
+        self.Game.AudioController.playMusic('STANDARDMYS')
         self.Game.AudioController.playAmbienceSound('AMBI_RIVER')
         #self.Game.Player.scriptWalk((220,640))
         self.show()

@@ -25,9 +25,6 @@ class Cursor:
         self.cursors = {
             'DEFAULT': pygame.image.load(os.path.join('Resources','Cursors','cursor_default.png')).convert_alpha(),
             'USE': pygame.image.load(os.path.join('Resources','Cursors','cursor_use.png')).convert_alpha(),
-            'PICKUP': pygame.image.load(os.path.join('Resources','Cursors','cursor_pickup.png')).convert_alpha(),
-            'LOOK': pygame.image.load(os.path.join('Resources','Cursors','cursor_look.png')).convert_alpha(),
-            'TALK': pygame.image.load(os.path.join('Resources','Cursors','cursor_talk.png')).convert_alpha()
         }
         
         #Keep these here so we don't loop over it while scrolling.
@@ -83,67 +80,79 @@ class Cursor:
         else:
             self.setCursor(self.previousCursor())
             
+    def findCurrentItem(self,pos):
+        for item in self.Game.Inventory.items:
+            if(item.rect.collidepoint(pos)):
+                if self.Game.Inventory.currentItem is not None and item.current is False:
+                    self.Game.TitleManager.setElement(item)
+                    self.Game.TitleManager.setPrefix('COMBINE')
+                    self.Game.TitleManager.setSuffix('WITH')
+                    self.currentItem = item
+                elif(item.rect.collidepoint(pos)):
+                    self.Game.TitleManager.setElement(item)
+                    self.setCursor('USE')
+                    self.currentItem = item
+                    return True
+        return False
+                    
+    def findCurrentTopic(self,pos):
+        self.Game.TopicMenu.clearCurrentTopic()
+        for topic in self.Game.TopicMenu.topics:
+            if(topic.rect.collidepoint(pos)):
+                self.Game.TopicMenu.setCurrentTopic(topic)
+                return True
+        return False
+                
+    def findCurrentWidget(self,pos):
+        for widget in self.Game.currentWindow.widgets:
+            if(widget.rect.collidepoint(pos)):
+                self.Game.TitleManager.setElement(widget)
+                self.currentElement = widget
+                self.setCursor('USE')
+                return True
+        return False
+                
+    def findCurrentElement(self,pos):
+        if self.Game.Cursor.currentItem is not None:
+            mouse = pos
+            pos = (mouse[0]+24,mouse[1]+24)
+        for element in self.Game.currentScene.visibleElements:
+            if(element.rect.collidepoint(pos)):
+                self.Game.TitleManager.setElement(element)
+                self.currentElement = element
+                if self.Game.Inventory.currentItem:
+                    self.Game.TitleManager.setPrefix('GIVE')
+                    self.Game.TitleManager.setSuffix('TO')
+                if self.getCursorName() == 'DEFAULT':
+                    self.setCursor('USE')
+                    return True;
+        return False
+                
+    def findCurrentExit(self,pos):
+        for exit in self.Game.currentScene.exits:
+            if(exit.rect.collidepoint(pos)):
+                self.setCursor('EXIT_'+exit.direction)
+                self.currentExit = exit
+            
     def checkCollisions(self):
         #TODO:NEEDS MASSIVE CLEANING UP
         if self.Game.currentScene and not self.actionMenuVisible:
             #translatedPos = self.Game.Renderer.translatePos(pygame.mouse.get_pos())
-            translatedPos = pygame.mouse.get_pos()
+            pos = pygame.mouse.get_pos()
             if pygame.mouse.get_pos()[1] < 80:
-                    for item in self.Game.Inventory.items:
-                        if(item.rect.collidepoint(translatedPos)):
-                            if self.Game.Inventory.currentItem is not None and item.current is False:
-                                self.Game.TitleManager.setElement(item)
-                                self.Game.TitleManager.setPrefix('COMBINE')
-                                self.Game.TitleManager.setSuffix('WITH')
-                                self.currentItem = item
-                                return item
-                            elif(item.rect.collidepoint(translatedPos)):
-                                self.Game.TitleManager.setElement(item)
-                                self.setCursor('USE')
-                                self.currentItem = item
-                                return item
+                self.findCurrentItem(pos)
             elif pygame.mouse.get_pos()[1] > 660 and self.Game.TopicMenu.visible:
-                self.Game.TopicMenu.clearCurrentTopic()
-                for topic in self.Game.TopicMenu.topics:
-                    if(topic.rect.collidepoint(translatedPos)):
-                        self.Game.TopicMenu.setCurrentTopic(topic)
+                self.findCurrentTopic(pos)
             elif pygame.mouse.get_pos()[1] < 660 and self.Game.TopicMenu.visible:
                 self.Game.TopicMenu.clearCurrentTopic()
             else:
                 if self.Game.currentWindow is not None:
-                    for widget in self.Game.currentWindow.widgets:
-                        if(widget.rect.collidepoint(translatedPos)):
-                            self.Game.TitleManager.setElement(widget)
-                            self.currentElement = widget
-                            self.setCursor('USE')
-                            return self.currentElement
+                    self.findCurrentWidget(pos)
                 else:
-                    for element in self.Game.currentScene.visibleElements:
-                        #Calculate center for item cursor to avoid pixel hunting.
-                        #Also set the prefix correctly.
-                        #TODO: Make this loop smarter. Really.
-                        if self.Game.Cursor.currentItem is not None:
-                            mouse = translatedPos
-                            pos = (mouse[0]+24,mouse[1]+24)
-                        else:
-                            pos = translatedPos
-                        if(element.rect.collidepoint(pos)):
-                            self.Game.TitleManager.setElement(element)
-                            self.currentElement = element
-                            if self.Game.Inventory.currentItem is not None:
-                                self.Game.TitleManager.setPrefix('GIVE')
-                                self.Game.TitleManager.setSuffix('TO')
-                            if self.getCursorName() == 'DEFAULT':
-                                self.setCursor('USE')
-                            return self.currentElement
-                    
                     #Last resorts, are there any exits here?
-                    for exit in self.Game.currentScene.exits:
-                        if(exit.rect.collidepoint(translatedPos)):
-                            self.setCursor('EXIT_'+exit.direction)
-                            self.currentExit = exit
-                            return self.currentExit
-    
+                    if not self.findCurrentElement(pos):
+                        self.findCurrentExit(pos)
+                    
             self.Game.TitleManager.clearElement()
             self.setCursor('DEFAULT')
             self.currentElement = None;
