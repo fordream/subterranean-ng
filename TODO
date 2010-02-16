@@ -7,4 +7,4 @@ x Fixa ämnesmenyn
 x Lösa enpunkts-nedskalning av karaktär
 - Fixa scrollning av rum som är längre än 1024px
 - Simpel fadeout vid rumbyte
-- 
+- Implementera stöd för actionmenu för items
