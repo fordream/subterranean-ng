@@ -140,9 +140,11 @@ class Cursor:
             #translatedPos = self.Game.Renderer.translatePos(pygame.mouse.get_pos())
             pos = pygame.mouse.get_pos()
             if pygame.mouse.get_pos()[1] < 80:
-                self.findCurrentItem(pos)
+                if self.findCurrentItem(pos):
+                    return
             elif pygame.mouse.get_pos()[1] > 660 and self.Game.TopicMenu.visible:
-                self.findCurrentTopic(pos)
+                if self.findCurrentTopic(pos):
+                    return
             elif pygame.mouse.get_pos()[1] < 660 and self.Game.TopicMenu.visible:
                 self.Game.TopicMenu.clearCurrentTopic()
             else:
@@ -150,8 +152,10 @@ class Cursor:
                     self.findCurrentWidget(pos)
                 else:
                     #Last resorts, are there any exits here?
-                    if not self.findCurrentElement(pos):
-                        self.findCurrentExit(pos)
+                    if self.findCurrentElement(pos):
+                        return
+                    elif self.findCurrentExit(pos):
+                        return
                     
             self.Game.TitleManager.clearElement()
             self.setCursor('DEFAULT')
