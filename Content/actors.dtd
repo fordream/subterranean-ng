@@ -1,0 +1,12 @@
+<!DOCTYPE character [
+    <!ELEMENT character     (name,description,location,conversation)>
+    <!ELEMENT name          (#PCDATA)>
+    <!ELEMENT description   (#PCDATA)>
+    <!ELEMENT location      (#PCDATA)>
+    
+    <!ELEMENT conversation  (prereq,topic,line,action)>
+    <!ELEMENT prereq        (#PCDATA)>
+    <!ELEMENT topic         (#PCDATA)>
+    <!ELEMENT action        (#PCDATA)>
+    <!ELEMENT prereq        (#PCDATA)>
+]>

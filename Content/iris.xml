@@ -1,72 +1,80 @@
 <?xml version="1.0"?>
-<!DOCTYPE root-element SYSTEM "./characters.dtd">
+<!DOCTYPE root-element SYSTEM "./actors.dtd">
 
-<character>
-    <name>Iris</name>
+<actor name="Iris">
     <description>Old lady that has a dog.</description>    
-    <location>Scene 1</location>
-    <converstaion>
-        <line actor="Player">
-            Hello, why are you sobbing?    
-        </line>
-        <line actor="Iris">
-            Mr.Tibbles... he's gone! Have you seen him?
-        </line>
-        <line actor="Player">
-            Mr.Tibbles? Is that your husband?
-        </line>
-        <line actor="Iris">
-            No, silly! It's my wonderful little pug!
-        </line>    
-        <line actor="Player">
-            Oh, when did you last see him?
-        </line>
-        <line actor="Iris">
-            I had him in my knee, right before the crash.
-        </line>
-        <line actor="Iris">
-            He must have wandered off and lost himself in this horrible cave. What a horrible, horrible fate!
-        </line>
-        <line actor="Iris">
-            And I'm all out of cigarettes too.
-        </line>
-        <action actor="Iris">
-            *Sob*
-        </action>
-    </converstaion>
+    <scene name="Crash site">
+        <conversation>
+            <line actor="Player">
+                Hello, why are you sobbing?    
+            </line>
+            <line actor="Iris">
+                Mr.Tibbles... he's gone! Have you seen him?
+            </line>
+            <line actor="Player">
+                Mr.Tibbles? Is that your husband?
+            </line>
+            <line actor="Iris">
+                No, silly! It's my wonderful little pug!
+            </line>    
+            <line actor="Player">
+                Oh, when did you last see him?
+            </line>
+            <line actor="Iris">
+                I had him in my knee, right before the crash.
+            </line>
+            <line actor="Iris">
+                He must have wandered off and lost himself in this horrible cave. What a horrible, horrible fate!
+            </line>
+            <line actor="Iris">
+                And I'm all out of cigarettes too.
+            </line>
+            <action actor="Iris">
+                *Sob*
+            </action>
+        </conversation>
+        
+        <conversation>
+            <topic>What does Mr.Tibbles look like?</topic>
+            <line actor="Player">
+                What does Mr.Tibbles look like?
+            </line>
+            <line actor="Iris">
+                He's... he's black.
+            </line>
+            <action actor="Iris">
+                *Sob*
+            </action>
+        </conversation>
+        
+        <conversation>
+            <topic>Do you have a lighter?</topic>
+            <prereq>Started campfire quest</prereq>
+            <action actor="Iris">
+                Yes, I need the occasional cigarette for my nerves.
+            </action>
+            <action actor="Player">
+                Can I have it?
+            </action>
+            <action actor="Iris">
+                Sorry, no.
+            </action>
+        </conversation>
+        
+        <conversation>
+            <topic>Does Mr.Tibbles like sandwiches?</topic>
+            <prereq>Has sandwich</prereq>
+            <action actor="Iris">
+                Only if it has ham in it. He loves ham!
+            </action>
+        </conversation>
+    </scene>
     
-    <converstaion>
-        <topic>What does Mr.Tibbles look like?</topic>
-        <line actor="Player">
-            What does Mr.Tibbles look like?
-        </line>
-        <line actor="Iris">
-            He's... he's black.
-        </line>
-        <action actor="Iris">
-            *Sob*
-        </action>
-    </converstaion>
-    
-    <converstaion>
-        <topic>Do you have a lighter?</topic>
-        <prereq>Started campfire quest</prereq>
-        <action actor="Iris">
-            Yes, I need the occasional cigarette for my nerves.
-        </action>
-        <action actor="Player">
-            Can I have it?
-        </action>
-        <action actor="Iris">
-            Sorry, no.
-        </action>
-    </converstaion>
-    
-    <converstaion>
-        <topic>Does Mr.Tibbles like sandwiches?</topic>
-        <prereq>Has sandwich</prereq>
-        <action actor="Iris">
-            Only if it has ham in it. He loves ham!
-        </action>
-    </converstaion>
-</character>
+    <scene name="Prison cell">
+        <conversation>
+            <action actor="Iris">
+                Help!
+            </action>
+        </conversation>
+    </scene>
+</actor>
