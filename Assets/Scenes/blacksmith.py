@@ -28,10 +28,8 @@ class Room(Scene):
         self.Game.AudioController.playAmbienceSound('AMBI_DEFAULT')
         self.setInsertPoint((360,420))      
         
-        self.setFarthestPoint(415)
-        self.setClosestPoint(715)
-        self.setFarthestScale(50)
-        self.setClosestScale(100)
-
+        self.setFarthestPoint(0)
+        self.setClosestPoint(625)
+        
         self.show()
         self.Game.Player.scriptWalk((360,490))

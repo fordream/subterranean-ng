@@ -33,6 +33,7 @@ class VisibleElement(Element):
         self.basePos = (0,0)
         self.actionPos = None
         self.image = None
+        self.originalRect = None
         self.rect = None
         self.retrievable = False
         self.usable = False
@@ -55,20 +56,23 @@ class VisibleElement(Element):
 
     def setImage(self,image):
         self.image = image
-        if self.rect is None:
-            self.rect = self.image.get_rect()
+        if self.originalRect is None:
+            self.originalRect = self.image.get_rect()
+        self.rect = self.originalRect.copy()
+        #print self.name,self.rect,self.originalRect.copy()
     
     def setPosition(self,pos):
         self.pos = pos
-        self.rect.move_ip(pos)
-        if self.rect is not None:
+        self.originalRect.move_ip(pos)
+        if self.originalRect is not None:
             self.setBasePosition()
+        self.translateRect(0)
                 
     def getPosition(self):
         return self.pos
 
     def setBasePosition(self):
-        self.basePos = self.rect.midbottom
+        self.basePos = self.originalRect.midbottom
 
     def getBasePosition(self):
         return self.basePos
@@ -133,6 +137,22 @@ class VisibleElement(Element):
     def runGiveMethod(self,item):
         method = self.giveMethods[item]
         method()
+
+    def translateRect(self,offset):
+        if not self.rect:
+            self.rect = self.originalRect.copy()
+        if offset > 0:
+            x = self.originalRect.left+offset
+        elif offset < 0:
+            x = self.originalRect.left-offset
+        else:
+            return
+        self.rect.left = x
+        
+    def update(self,sceneOffset):
+        self.translateRect(sceneOffset)
+        print self.name,":",self.rect,":",self.originalRect
+        #self.rect = self.originalRect
     
     def toItem(self):
         #Gets properties and returns an Item
@@ -178,8 +198,9 @@ class AnimatedElement(VisibleElement):
             
     def getSequence(self):
         return self.currentSequence
-    
-    def update(self):
+        
+    def update(self,sceneOffset):
+        self.translateRect(sceneOffset)
         if self.currentSequence is not None:
             try:
                 frame = self.sequences[self.currentSequence][self.currentFrame]
@@ -205,8 +226,8 @@ class Character(AnimatedElement):
 
     def setImage(self,image):
         self.image = image
-        if self.rect is None:
-            self.rect = self.image.get_rect()
+        if self.originalRect is None:
+            self.originalRect = self.image.get_rect()
         
     def loop(self):
         print self.name,"looped"
@@ -229,7 +250,7 @@ class Character(AnimatedElement):
         return False
                     
     def getTextPos(self):
-        return (self.rect.centerx,self.pos[1]-30)
+        return (self.originalRect.centerx,self.pos[1]-30)
 
     def setTextColor(self,textColor):
         self.textColor = textColor

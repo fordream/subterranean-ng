@@ -48,7 +48,7 @@ class Game:
         self.EventManager = EventManager(self)
         self.parseArguments(arguments)
 
-        self.loadScene("crashsite")
+        self.loadScene("blacksmith")
         self.run()
         
     def setupScreen(self,fullscreen=False):

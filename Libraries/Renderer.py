@@ -104,7 +104,7 @@ class Renderer:
             self.scene.blit(self.Game.currentScene.getBackground(),(0,0))
             
             #Draw room objects
-            self.Game.currentScene.visibleElements.update()
+            self.Game.currentScene.visibleElements.update(self.Game.currentScene.offset)
             self.Game.currentScene.visibleElements.draw(self.scene)
         
             #Draw main character

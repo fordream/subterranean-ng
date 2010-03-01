@@ -11,6 +11,7 @@ class Player(Character):
         self.leftFoot = False
                 
         self.Game = game
+        self.originalRect = None
         self.rect = None
         self.visible = False
         self.frameKey = 0
@@ -181,7 +182,7 @@ class Player(Character):
         startY = self.getY()/16
         endX = x/16
         endY = y/16
-        astar = AStar.AStar(AStar.SQ_MapHandler(self.Game.currentScene.mapData,64,48))
+        astar = AStar.AStar(AStar.SQ_MapHandler(self.Game.currentScene.mapData,self.Game.currentScene.mapWidth,48))
         start = AStar.SQ_Location(startX,startY)
         end = AStar.SQ_Location(endX,endY)
         path = astar.findPath(start,end)

@@ -12,6 +12,8 @@ class Scene:
         self.visibleElements = pygame.sprite.Group()
         self.hiddenElements = pygame.sprite.Group()
         self.mapData = []
+        self.mapWidth = 64
+        self.offset = 100
         self.insertPoint = ()
         self.backgroundImage = None
         self.foregroundImage = None
@@ -95,7 +97,6 @@ class Scene:
                     self.mapData.append(-1)
                 elif char == '1':
                     self.mapData.append(int(char))
-        print self.mapData
         self.mapFile.close()
         
     def loadItem(self,itemName):
