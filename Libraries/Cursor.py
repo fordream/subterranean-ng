@@ -57,29 +57,7 @@ class Cursor:
             
     def getCursorName(self):
         return self.cursorName
-        
-    def nextCursor(self):
-        keys = self.cursors.keys()
-        cursorIndex = keys.index(self.cursorName)
-        if cursorIndex < len(self.cursors)-1:
-            self.setCursor(keys[cursorIndex + 1])
-        else:
-            self.setCursor("USE")
 
-    def previousCursor(self):
-        keys = self.cursors.keys()
-        cursorIndex = keys.index(self.cursorName)
-        if cursorIndex >  1:
-            self.setCursor(keys[cursorIndex - 1])
-        else:
-            self.setCursor(keys[-1])
-                                
-    def scrollCursor(self,direction):
-        if direction == 4:
-            self.setCursor(self.nextCursor())
-        else:
-            self.setCursor(self.previousCursor())
-            
     def findCurrentItem(self,pos):
         for item in self.Game.Inventory.items:
             if(item.rect.collidepoint(pos)):
@@ -93,7 +71,6 @@ class Cursor:
                     self.setCursor('USE')
                     self.currentItem = item
                     return True
-        return False
                     
     def findCurrentTopic(self,pos):
         self.Game.TopicMenu.clearCurrentTopic()
@@ -101,8 +78,7 @@ class Cursor:
             if(topic.rect.collidepoint(pos)):
                 self.Game.TopicMenu.setCurrentTopic(topic)
                 return True
-        return False
-                
+
     def findCurrentWidget(self,pos):
         for widget in self.Game.currentWindow.widgets:
             if(widget.rect.collidepoint(pos)):
@@ -110,8 +86,7 @@ class Cursor:
                 self.currentElement = widget
                 self.setCursor('USE')
                 return True
-        return False
-                
+
     def findCurrentElement(self,pos):
         if self.Game.Cursor.currentItem is not None:
             mouse = pos
@@ -123,45 +98,48 @@ class Cursor:
                 if self.Game.Inventory.currentItem:
                     self.Game.TitleManager.setPrefix('GIVE')
                     self.Game.TitleManager.setSuffix('TO')
-                if self.getCursorName() == 'DEFAULT':
+                    return True
+                elif self.getCursorName() == 'DEFAULT':
                     self.setCursor('USE')
-                    return True;
-        return False
-                
+                    return True
+
     def findCurrentExit(self,pos):
         for exit in self.Game.currentScene.exits:
             if(exit.rect.collidepoint(pos)):
                 self.setCursor('EXIT_'+exit.direction)
                 self.currentExit = exit
+                return True
             
     def checkCollisions(self):
-        #TODO:NEEDS MASSIVE CLEANING UP
+        foundTarget = False
         if self.Game.currentScene and not self.actionMenuVisible:
             #translatedPos = self.Game.Renderer.translatePos(pygame.mouse.get_pos())
             pos = pygame.mouse.get_pos()
-            if pygame.mouse.get_pos()[1] < 80:
-                if self.findCurrentItem(pos):
-                    return
-            elif pygame.mouse.get_pos()[1] > 660 and self.Game.TopicMenu.visible:
-                if self.findCurrentTopic(pos):
-                    return
-            elif pygame.mouse.get_pos()[1] < 660 and self.Game.TopicMenu.visible:
+            if pygame.mouse.get_pos()[1] < 80 and self.findCurrentItem(pos):
+                foundTarget = True
+                #print "item:",foundTarget
+            if pygame.mouse.get_pos()[1] > 660 and self.Game.TopicMenu.visible and self.findCurrentTopic(pos):
+                foundTarget = True
+                #print "topic:",foundTarget
+            if pygame.mouse.get_pos()[1] < 660 and not self.Game.TopicMenu.visible:
                 self.Game.TopicMenu.clearCurrentTopic()
-            else:
                 if self.Game.currentWindow is not None:
                     self.findCurrentWidget(pos)
-                else:
-                    #Last resorts, are there any exits here?
-                    if self.findCurrentElement(pos):
-                        return
-                    elif self.findCurrentExit(pos):
-                        return
-                    
+                    foundTarget = True
+                    #print "widget:",foundTarget
+                if self.findCurrentElement(pos):
+                    foundTarget = True
+                    #print "elem:",foundTarget
+                if self.findCurrentExit(pos):
+                    foundTarget = True
+                    #print "exit:",foundTarget
+                         
+        if not foundTarget:
             self.Game.TitleManager.clearElement()
             self.setCursor('DEFAULT')
             self.currentElement = None;
             self.currentExit = None
-    
+
     def showActionMenu(self):
         self.actionMenuVisible = True
         self.actionElement = self.currentElement

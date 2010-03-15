@@ -150,9 +150,10 @@ class VisibleElement(Element):
         self.rect.left = x
         
     def update(self,sceneOffset):
-        self.translateRect(sceneOffset)
-        print self.name,":",self.rect,":",self.originalRect
-        #self.rect = self.originalRect
+        #self.translateRect(sceneOffset)
+        #print self.name,":",self.rect,":",self.originalRect
+        self.rect = self.originalRect
+        pass
     
     def toItem(self):
         #Gets properties and returns an Item
@@ -200,7 +201,8 @@ class AnimatedElement(VisibleElement):
         return self.currentSequence
         
     def update(self,sceneOffset):
-        self.translateRect(sceneOffset)
+        #self.translateRect(sceneOffset)
+        self.rect = self.originalRect
         if self.currentSequence is not None:
             try:
                 frame = self.sequences[self.currentSequence][self.currentFrame]
