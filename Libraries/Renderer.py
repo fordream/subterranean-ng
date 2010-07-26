@@ -72,7 +72,6 @@ class Renderer:
         self.Timer.setFPS(25)
         
     def loadGraphics(self):
-        pygame.display.set_icon(self.Game.get('ICON'))
         self.logo = self.Game.get('LOGO')
         self.inventoryImage = self.Game.get('INVENTORY')
         self.borderImage = self.Game.get('BORDER')
