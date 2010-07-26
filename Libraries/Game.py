@@ -53,6 +53,7 @@ class Game:
         
     def setupScreen(self,fullscreen=False):
         #There seems to be no way to make this work right other than doing this:
+        pygame.display.set_icon(pygame.image.load(os.path.join('Resources','Icons','gameicon.png')))
         if fullscreen:
             self.window = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
         else:
