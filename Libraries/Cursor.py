@@ -111,34 +111,29 @@ class Cursor:
                 return True
             
     def checkCollisions(self):
-        foundTarget = False
+        #TODO: I hate this method. Please refactor
+        #First clear whatever was activated before
+        self.Game.TitleManager.clearElement()
+        self.setCursor('DEFAULT')
+        self.currentElement = None;
+        self.currentExit = None
+        
+        #Then start the search for something new.
         if self.Game.currentScene and not self.actionMenuVisible:
             #translatedPos = self.Game.Renderer.translatePos(pygame.mouse.get_pos())
             pos = pygame.mouse.get_pos()
             if pygame.mouse.get_pos()[1] < 80 and self.findCurrentItem(pos):
                 foundTarget = True
-                #print "item:",foundTarget
+                print "item:",foundTarget
             if pygame.mouse.get_pos()[1] > 660 and self.Game.TopicMenu.visible and self.findCurrentTopic(pos):
                 foundTarget = True
-                #print "topic:",foundTarget
+                print "topic:",foundTarget
             if pygame.mouse.get_pos()[1] < 660 and not self.Game.TopicMenu.visible:
                 self.Game.TopicMenu.clearCurrentTopic()
                 if self.Game.currentWindow is not None:
                     self.findCurrentWidget(pos)
-                    foundTarget = True
-                    #print "widget:",foundTarget
-                if self.findCurrentElement(pos):
-                    foundTarget = True
-                    #print "elem:",foundTarget
-                if self.findCurrentExit(pos):
-                    foundTarget = True
-                    #print "exit:",foundTarget
-                         
-        if not foundTarget:
-            self.Game.TitleManager.clearElement()
-            self.setCursor('DEFAULT')
-            self.currentElement = None;
-            self.currentExit = None
+                self.findCurrentElement(pos)
+                self.findCurrentExit(pos)
 
     def showActionMenu(self):
         self.actionMenuVisible = True
